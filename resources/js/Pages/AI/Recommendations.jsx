@@ -15,8 +15,8 @@ export default function Recommendations({ recommendations, userType, hasError })
     const renderFreelancerRecommendations = () => {
         if (!recommendations || recommendations.length === 0) {
             return (
-                <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div className="p-6 text-center">
+                <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-xl border border-gray-200">
+                    <div className="p-8 text-center">
                         <div className="text-6xl mb-4">🔍</div>
                         <h3 className="text-lg font-medium text-gray-900 mb-2">
                             No Job Matches Found
@@ -33,8 +33,8 @@ export default function Recommendations({ recommendations, userType, hasError })
         return (
             <div className="space-y-6">
                 {recommendations.map((match, index) => (
-                    <div key={index} className="bg-white overflow-hidden shadow-sm sm:rounded-lg border-l-4 border-blue-500">
-                        <div className="p-6">
+                    <div key={index} className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-xl border-l-4 border-blue-500 border border-gray-200">
+                        <div className="p-8">
                             <div className="flex justify-between items-start mb-4">
                                 <div className="flex-1">
                                     <div className="flex items-center gap-2 mb-2">
@@ -55,7 +55,7 @@ export default function Recommendations({ recommendations, userType, hasError })
                                             </span>
                                         </span>
                                         {match.job.experience_level && (
-                                            <span className="px-2 py-1 bg-gray-100 rounded text-xs">
+                                            <span className="px-3 py-1 bg-gray-100 rounded-xl text-sm font-medium shadow-md">
                                                 {match.job.experience_level.charAt(0).toUpperCase() + match.job.experience_level.slice(1)}
                                             </span>
                                         )}
@@ -73,7 +73,7 @@ export default function Recommendations({ recommendations, userType, hasError })
                                 </div>
                             </div>
 
-                            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4 mb-4 border border-blue-200">
+                            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 mb-4 border border-blue-200 shadow-md">
                                 <h4 className="text-sm font-semibold text-blue-900 mb-2 flex items-center gap-2">
                                     <span>🤖</span> AI Analysis - Why this matches your profile:
                                 </h4>
@@ -85,7 +85,7 @@ export default function Recommendations({ recommendations, userType, hasError })
                                     <h4 className="text-xs font-medium text-gray-700 mb-2">Required Skills:</h4>
                                     <div className="flex flex-wrap gap-2">
                                         {match.job.required_skills.map((skill, idx) => (
-                                            <span key={idx} className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+                                            <span key={idx} className="px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-xl shadow-md">
                                                 {skill}
                                             </span>
                                         ))}
@@ -102,7 +102,7 @@ export default function Recommendations({ recommendations, userType, hasError })
                                 </div>
                                 <Link
                                     href={route('jobs.show', match.job.id)}
-                                    className="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 transition-all shadow-md hover:shadow-lg"
+                                    className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 border border-transparent rounded-xl font-semibold text-sm text-white uppercase tracking-widest shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
                                 >
                                     View Job Details →
                                 </Link>
@@ -117,8 +117,8 @@ export default function Recommendations({ recommendations, userType, hasError })
     const renderEmployerRecommendations = () => (
         <div className="space-y-8">
             {Object.entries(recommendations).map(([jobId, jobData]) => (
-                <div key={jobId} className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div className="p-6">
+                <div key={jobId} className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-xl border border-gray-200">
+                    <div className="p-8">
                         <h3 className="text-lg font-semibold text-gray-900 mb-4">
                             Matches for: {jobData.job.title}
                         </h3>
@@ -138,7 +138,7 @@ export default function Recommendations({ recommendations, userType, hasError })
                                                         <h4 className="text-sm font-medium text-green-700 mb-2">🎯 Excellent Matches ({goodMatches.length})</h4>
                                                     </div>
                                                     {goodMatches.map((match, index) => (
-                                                        <div key={index} className="border border-green-200 bg-green-50 rounded-lg p-4">
+                                                        <div key={index} className="border border-green-200 bg-gradient-to-br from-green-50 to-white rounded-xl p-6 shadow-md">
                                                             <div className="flex justify-between items-start">
                                                                 <div className="flex-1">
                                                                     <h4 className="font-medium text-gray-900">
@@ -156,13 +156,13 @@ export default function Recommendations({ recommendations, userType, hasError })
                                                                 </div>
                                                             </div>
 
-                                                            <div className="bg-green-100 rounded-lg p-3 mt-3">
+                                                            <div className="bg-green-100 rounded-xl p-4 mt-3 shadow-sm">
                                                                 <p className="text-sm text-gray-700">{match.reason}</p>
                                                             </div>
 
                                                             <div className="mt-4 flex justify-end">
                                                                 <button
-                                                                    className="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 opacity-50 cursor-not-allowed"
+                                                                    className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 border border-transparent rounded-xl font-semibold text-sm text-white uppercase tracking-widest shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 opacity-50 cursor-not-allowed"
                                                                     disabled
                                                                 >
                                                                     View Profile (Coming Soon)
@@ -180,7 +180,7 @@ export default function Recommendations({ recommendations, userType, hasError })
                                                         <p className="text-xs text-gray-600">These gig workers have relevant skills and could be a good fit with some training.</p>
                                                     </div>
                                                     {fairMatches.map((match, index) => (
-                                                        <div key={index} className="border border-blue-200 bg-blue-50 rounded-lg p-4">
+                                                        <div key={index} className="border border-blue-200 bg-gradient-to-br from-blue-50 to-white rounded-xl p-6 shadow-md">
                                                             <div className="flex justify-between items-start">
                                                                 <div className="flex-1">
                                                                     <h4 className="font-medium text-gray-900">
@@ -198,13 +198,13 @@ export default function Recommendations({ recommendations, userType, hasError })
                                                                 </div>
                                                             </div>
 
-                                                            <div className="bg-blue-100 rounded-lg p-3 mt-3">
+                                                            <div className="bg-blue-100 rounded-xl p-4 mt-3 shadow-sm">
                                                                 <p className="text-sm text-gray-700">{match.reason}</p>
                                                             </div>
 
                                                             <div className="mt-4 flex justify-end">
                                                                 <button
-                                                                    className="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 opacity-50 cursor-not-allowed"
+                                                                    className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 border border-transparent rounded-xl font-semibold text-sm text-white uppercase tracking-widest shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 opacity-50 cursor-not-allowed"
                                                                     disabled
                                                                 >
                                                                     View Profile (Coming Soon)
@@ -222,7 +222,7 @@ export default function Recommendations({ recommendations, userType, hasError })
                                                         <p className="text-xs text-gray-600">These gig workers show some relevant background and could develop the needed skills.</p>
                                                     </div>
                                                     {basicMatches.map((match, index) => (
-                                                        <div key={index} className="border border-yellow-200 bg-yellow-50 rounded-lg p-4">
+                                                        <div key={index} className="border border-yellow-200 bg-gradient-to-br from-yellow-50 to-white rounded-xl p-6 shadow-md">
                                                             <div className="flex justify-between items-start">
                                                                 <div className="flex-1">
                                                                     <h4 className="font-medium text-gray-900">
@@ -240,13 +240,13 @@ export default function Recommendations({ recommendations, userType, hasError })
                                                                 </div>
                                                             </div>
 
-                                                            <div className="bg-yellow-100 rounded-lg p-3 mt-3">
+                                                            <div className="bg-yellow-100 rounded-xl p-4 mt-3 shadow-sm">
                                                                 <p className="text-sm text-gray-700">{match.reason}</p>
                                                             </div>
 
                                                             <div className="mt-4 flex justify-end">
                                                                 <button
-                                                                    className="inline-flex items-center px-4 py-2 bg-yellow-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-yellow-700 opacity-50 cursor-not-allowed"
+                                                                    className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 border border-transparent rounded-xl font-semibold text-sm text-white uppercase tracking-widest shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 opacity-50 cursor-not-allowed"
                                                                     disabled
                                                                 >
                                                                     View Profile (Coming Soon)
@@ -288,11 +288,16 @@ export default function Recommendations({ recommendations, userType, hasError })
             }
         >
             <Head title="AI Recommendations" />
+            <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet" />
 
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-gradient-to-r from-blue-600 to-indigo-600 overflow-hidden shadow-lg sm:rounded-lg mb-6">
-                        <div className="p-6 text-white">
+            <div className="relative py-12 bg-white overflow-hidden">
+                {/* Animated Background Shapes */}
+                <div className="absolute top-0 left-0 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
+                <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-700/20 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
+
+                <div className="relative z-20 max-w-7xl mx-auto sm:px-6 lg:px-8">
+                    <div className="bg-gradient-to-r from-blue-600 to-indigo-600 overflow-hidden shadow-xl sm:rounded-xl mb-8 border border-blue-500">
+                        <div className="p-8 text-white">
                             <div className="flex items-center gap-3 mb-2">
                                 <span className="text-3xl">🤖</span>
                                 <h3 className="text-xl font-bold">
@@ -323,8 +328,8 @@ export default function Recommendations({ recommendations, userType, hasError })
                     </div>
 
                     {hasError ? (
-                        <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                            <div className="p-6 text-center">
+                        <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-xl border border-gray-200">
+                            <div className="p-8 text-center">
                                 <div className="text-6xl mb-4">⚠️</div>
                                 <h3 className="text-lg font-medium text-gray-900 mb-2">
                                     Recommendations Temporarily Unavailable
@@ -334,7 +339,7 @@ export default function Recommendations({ recommendations, userType, hasError })
                                 </p>
                                 <button
                                     onClick={() => window.location.reload()}
-                                    className="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700"
+                                    className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 border border-transparent rounded-xl font-semibold text-sm text-white uppercase tracking-widest shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
                                 >
                                     Try Again
                                 </button>
@@ -347,6 +352,14 @@ export default function Recommendations({ recommendations, userType, hasError })
                     )}
                 </div>
             </div>
+
+            <style>{`
+                body {
+                    background: white;
+                    color: #333;
+                    font-family: 'Inter', sans-serif;
+                }
+            `}</style>
         </AuthenticatedLayout>
     );
 }

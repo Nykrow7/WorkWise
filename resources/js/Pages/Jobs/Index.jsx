@@ -186,13 +186,18 @@ export default function JobsIndex({ jobs, filters = {} }) {
             }
         >
             <Head title={isEmployer ? 'My Jobs' : 'Browse Jobs'} />
+            <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet" />
 
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div className="relative py-12 bg-white overflow-hidden">
+                {/* Animated Background Shapes */}
+                <div className="absolute top-0 left-0 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
+                <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-700/20 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
+
+                <div className="relative z-20 max-w-7xl mx-auto sm:px-6 lg:px-8">
                     {/* Search and Filters */}
                     {!isEmployer && (
-                        <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
-                            <div className="p-6">
+                        <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-xl mb-8 border border-gray-200">
+                            <div className="p-8">
                                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
                                     <div className="md:col-span-2">
                                         <input
@@ -200,14 +205,14 @@ export default function JobsIndex({ jobs, filters = {} }) {
                                             value={search}
                                             onChange={(e) => setSearch(e.target.value)}
                                             placeholder="Search jobs by title, skills, or description..."
-                                            className="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                            className="w-full border-gray-300 rounded-xl shadow-lg focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 hover:shadow-xl"
                                         />
                                     </div>
                                     <div>
                                         <select
                                             value={budgetRange}
                                             onChange={(e) => setBudgetRange(e.target.value)}
-                                            className="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                            className="w-full border-gray-300 rounded-xl shadow-lg focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 hover:shadow-xl"
                                         >
                                             <option value="all">All Budgets</option>
                                             <option value="0-25000">₱0 - ₱25,000</option>
@@ -220,7 +225,7 @@ export default function JobsIndex({ jobs, filters = {} }) {
                                         <select
                                             value={experienceLevel}
                                             onChange={(e) => setExperienceLevel(e.target.value)}
-                                            className="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                            className="w-full border-gray-300 rounded-xl shadow-lg focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 hover:shadow-xl"
                                         >
                                             <option value="all">All Levels</option>
                                             <option value="beginner">Beginner</option>
@@ -229,16 +234,16 @@ export default function JobsIndex({ jobs, filters = {} }) {
                                         </select>
                                     </div>
                                 </div>
-                                <div className="flex items-center space-x-3">
+                                <div className="flex items-center space-x-4">
                                     <button
                                         onClick={clearFilters}
-                                        className="inline-flex items-center px-4 py-2 bg-gray-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150"
+                                        className="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
                                     >
                                         Clear Filters
                                     </button>
                                     <Link
                                         href={route('ai.recommendations')}
-                                        className="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 focus:bg-green-700 active:bg-green-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition ease-in-out duration-150"
+                                        className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
                                     >
                                         🤖 AI Recommendations
                                     </Link>
@@ -249,13 +254,17 @@ export default function JobsIndex({ jobs, filters = {} }) {
 
                     {/* Jobs List */}
                     {jobs.data && jobs.data.length === 0 ? (
-                        <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                            <div className="p-12 text-center">
-                                <div className="text-6xl mb-4">💼</div>
-                                <h3 className="text-lg font-medium text-gray-900 mb-2">
-                                    {isEmployer ? 'No jobs posted yet' : 'No jobs found'}
+                        <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-xl border border-gray-200">
+                            <div className="p-16 text-center">
+                                <div className="w-24 h-24 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center mx-auto mb-6">
+                                    <svg className="w-12 h-12 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6a2 2 0 01-2 2H8a2 2 0 01-2-2V8a2 2 0 012-2h8zM16 10h.01M12 14h.01M8 14h.01M8 10h.01" />
+                                    </svg>
+                                </div>
+                                <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                                    {isEmployer ? 'No Jobs Posted Yet' : 'No Jobs Found'}
                                 </h3>
-                                <p className="text-gray-600 mb-6">
+                                <p className="text-gray-600 text-lg mb-8 max-w-md mx-auto leading-relaxed">
                                     {isEmployer
                                         ? "Start by posting your first job to find talented gig workers."
                                         : "Try adjusting your search criteria or check back later for new opportunities."
@@ -264,70 +273,75 @@ export default function JobsIndex({ jobs, filters = {} }) {
                                 {isEmployer && (
                                     <Link
                                         href={route('jobs.create')}
-                                        className="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150"
+                                        className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-4 px-8 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 inline-flex items-center"
                                     >
+                                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                        </svg>
                                         Post Your First Job
                                     </Link>
                                 )}
                             </div>
                         </div>
                     ) : (
-                        <div className="space-y-6">
+                        <div className="space-y-8">
                             {jobs.data && jobs.data.map((job) => (
-                                <div key={job.id} className="bg-white overflow-hidden shadow-sm sm:rounded-lg hover:shadow-md transition-shadow">
-                                    <div className="p-6">
+                                <div key={job.id} className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-xl border border-gray-200">
+                                    <div className="p-8">
                                         <div className="flex items-start justify-between">
                                             <div className="flex-1">
-                                                <div className="flex items-center space-x-3 mb-3">
-                                                    <h3 className="text-lg font-semibold text-gray-900">
-                                                        <Link 
+                                                <div className="flex items-center space-x-4 mb-4">
+                                                    <h3 className="text-xl font-bold text-gray-900">
+                                                        <Link
                                                             href={`/jobs/${job.id}`}
-                                                            className="hover:text-blue-600 transition-colors"
+                                                            className="hover:text-blue-600 transition-colors duration-300"
                                                         >
                                                             {job.title}
                                                         </Link>
                                                     </h3>
-                                                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusBadge(job.status)}`}>
+                                                    <span className={`inline-flex items-center px-3 py-1 rounded-xl text-sm font-semibold shadow-md ${getStatusBadge(job.status)}`}>
                                                         {job.status === 'open' ? 'Open' : job.status.replace('_', ' ')}
                                                     </span>
                                                 </div>
 
-                                                <p className="text-gray-700 mb-4 line-clamp-3 break-all">
+                                                <p className="text-gray-700 text-lg mb-6 line-clamp-3 break-all leading-relaxed">
                                                     {job.description}
                                                 </p>
 
-                                                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-                                                    <div>
-                                                        <div className="text-sm text-gray-500">Budget</div>
-                                                        <div className="font-semibold text-green-600">
-                                                            {getBudgetDisplay(job)}
+                                                <div className="bg-gradient-to-br from-blue-50 to-white p-6 rounded-xl border border-blue-100 mb-6">
+                                                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                                                        <div>
+                                                            <div className="text-sm font-medium text-blue-600 mb-1">Budget</div>
+                                                            <div className="font-bold text-green-600 text-lg">
+                                                                {getBudgetDisplay(job)}
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <div>
-                                                        <div className="text-sm text-gray-500">Duration</div>
-                                                        <div className="font-semibold">
-                                                            {job.estimated_duration_days} days
+                                                        <div>
+                                                            <div className="text-sm font-medium text-blue-600 mb-1">Duration</div>
+                                                            <div className="font-bold text-gray-900 text-lg">
+                                                                {job.estimated_duration_days} days
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <div>
-                                                        <div className="text-sm text-gray-500">Experience</div>
-                                                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getExperienceBadge(job.experience_level)}`}>
-                                                            {job.experience_level}
-                                                        </span>
-                                                    </div>
-                                                    <div>
-                                                        <div className="text-sm text-gray-500">Location</div>
-                                                        <div className="font-semibold">
-                                                            {job.is_remote ? '🌐 Remote' : `📍 ${job.location || 'Lapu-Lapu City'}`}
+                                                        <div>
+                                                            <div className="text-sm font-medium text-blue-600 mb-1">Experience</div>
+                                                            <span className={`inline-flex items-center px-3 py-1 rounded-xl text-sm font-semibold shadow-md ${getExperienceBadge(job.experience_level)}`}>
+                                                                {job.experience_level}
+                                                            </span>
+                                                        </div>
+                                                        <div>
+                                                            <div className="text-sm font-medium text-blue-600 mb-1">Location</div>
+                                                            <div className="font-bold text-gray-900 text-lg">
+                                                                {job.is_remote ? '🌐 Remote' : `📍 ${job.location || 'Lapu-Lapu City'}`}
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
 
-                                                <div className="mb-4">
-                                                    <div className="text-sm text-gray-500 mb-2">Required Skills</div>
-                                                    <div className="flex flex-wrap gap-2">
+                                                <div className="mb-6">
+                                                    <div className="text-sm font-medium text-blue-600 mb-3">Required Skills</div>
+                                                    <div className="flex flex-wrap gap-3">
                                                         {parseSkills(job?.required_skills || []).map((skill, index) => (
-                                                            <span key={index} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                            <span key={index} className="inline-flex items-center px-4 py-2 rounded-xl text-sm font-semibold bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 shadow-md hover:shadow-lg transition-all duration-300">
                                                                 {skill}
                                                             </span>
                                                         ))}
@@ -376,7 +390,7 @@ export default function JobsIndex({ jobs, filters = {} }) {
                                                                 </button>
                                                                 <Link
                                                                     href={`/jobs/${job.id}`}
-                                                                    className="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                                                    className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-2 px-4 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
                                                                 >
                                                                     View Proposals ({job.bids_count || 0})
                                                                 </Link>
@@ -392,7 +406,7 @@ export default function JobsIndex({ jobs, filters = {} }) {
                                                                 {job.status === 'open' && (
                                                                     <Link
                                                                         href={`/jobs/${job.id}`}
-                                                                        className="inline-flex items-center px-3 py-1.5 border border-blue-300 shadow-sm text-sm font-medium rounded-md text-blue-700 bg-blue-50 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                                                        className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-2 px-4 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
                                                                     >
                                                                         Submit Proposal
                                                                     </Link>
@@ -409,7 +423,7 @@ export default function JobsIndex({ jobs, filters = {} }) {
 
                             {/* Pagination */}
                             {jobs.links && jobs.links.length > 3 && (
-                                <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6 rounded-lg shadow-sm">
+                                <div className="bg-white/70 backdrop-blur-sm px-6 py-4 flex items-center justify-between border border-gray-200 sm:px-8 rounded-xl shadow-lg">
                                     <div className="flex-1 flex justify-between sm:hidden">
                                         {jobs.prev_page_url && (
                                             <Link
@@ -462,22 +476,22 @@ export default function JobsIndex({ jobs, filters = {} }) {
 
                     {/* Quick Stats for Gig Workers */}
                     {!isEmployer && jobs.data && jobs.data.length > 0 && (
-                        <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
-                            <h3 className="text-lg font-semibold text-blue-900 mb-4">Market Insights</h3>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-blue-800">
-                                <div>
-                                    <div className="font-medium">Total Jobs Available</div>
-                                    <div className="text-2xl font-bold text-blue-600">{jobs.total || jobs.data.length}</div>
+                        <div className="mt-12 bg-gradient-to-br from-blue-50 to-white border border-blue-200 rounded-xl p-8 shadow-lg">
+                            <h3 className="text-2xl font-bold text-blue-900 mb-6">Market Insights</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-blue-800">
+                                <div className="text-center">
+                                    <div className="font-semibold text-blue-700 mb-2">Total Jobs Available</div>
+                                    <div className="text-3xl font-bold text-blue-600">{jobs.total || jobs.data.length}</div>
                                 </div>
-                                <div>
-                                    <div className="font-medium">Average Budget</div>
-                                    <div className="text-2xl font-bold text-green-600">
+                                <div className="text-center">
+                                    <div className="font-semibold text-blue-700 mb-2">Average Budget</div>
+                                    <div className="text-3xl font-bold text-green-600">
                                         ₱{formatAmount(Math.round(jobs.data.reduce((sum, job) => sum + ((job.budget_min + job.budget_max) / 2), 0) / jobs.data.length) || 0)}
                                     </div>
                                 </div>
-                                <div>
-                                    <div className="font-medium">Remote Opportunities</div>
-                                    <div className="text-2xl font-bold text-purple-600">
+                                <div className="text-center">
+                                    <div className="font-semibold text-blue-700 mb-2">Remote Opportunities</div>
+                                    <div className="text-3xl font-bold text-purple-600">
                                         {Math.round((jobs.data.filter(job => job.is_remote).length / jobs.data.length) * 100) || 0}%
                                     </div>
                                 </div>
@@ -489,8 +503,8 @@ export default function JobsIndex({ jobs, filters = {} }) {
 
             {/* Confirmation Modal */}
             {confirmModal.isOpen && (
-                <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-                    <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+                <div className="fixed inset-0 bg-gray-600/50 backdrop-blur-sm overflow-y-auto h-full w-full z-50">
+                    <div className="relative top-20 mx-auto p-6 border border-gray-200 w-96 shadow-2xl rounded-xl bg-white/90 backdrop-blur-sm">
                         <div className="mt-3 text-center">
                             <div className={`mx-auto flex items-center justify-center h-12 w-12 rounded-full ${
                                 confirmModal.confirmColor === 'red' ? 'bg-red-100' : 'bg-yellow-100'
@@ -510,25 +524,21 @@ export default function JobsIndex({ jobs, filters = {} }) {
                                     {confirmModal.message}
                                 </p>
                             </div>
-                            <div className="items-center px-4 py-3">
+                            <div className="items-center px-6 py-4">
                                 <button
                                     onClick={confirmAction}
                                     disabled={processing}
-                                    className={`px-4 py-2 ${
+                                    className={`px-6 py-3 ${
                                         confirmModal.confirmColor === 'red'
-                                            ? 'bg-red-500 hover:bg-red-700'
-                                            : 'bg-yellow-500 hover:bg-yellow-700'
-                                    } text-white text-base font-medium rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 ${
-                                        confirmModal.confirmColor === 'red'
-                                            ? 'focus:ring-red-500'
-                                            : 'focus:ring-yellow-500'
-                                    } disabled:opacity-50`}
+                                            ? 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700'
+                                            : 'bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700'
+                                    } text-white font-semibold rounded-xl w-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:transform-none`}
                                 >
                                     {processing ? 'Processing...' : confirmModal.confirmText}
                                 </button>
                                 <button
                                     onClick={() => setConfirmModal({ ...confirmModal, isOpen: false })}
-                                    className="mt-3 px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 text-base font-medium rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                                    className="mt-4 px-6 py-3 bg-gradient-to-r from-gray-400 to-gray-500 hover:from-gray-500 hover:to-gray-600 text-white font-semibold rounded-xl w-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
                                 >
                                     Cancel
                                 </button>
@@ -537,6 +547,14 @@ export default function JobsIndex({ jobs, filters = {} }) {
                     </div>
                 </div>
             )}
+
+            <style>{`
+                body {
+                    background: white;
+                    color: #333;
+                    font-family: 'Inter', sans-serif;
+                }
+            `}</style>
         </AuthenticatedLayout>
     );
 }

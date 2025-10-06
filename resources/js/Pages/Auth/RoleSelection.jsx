@@ -1,5 +1,5 @@
 import { Head, Link, useForm } from '@inertiajs/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function RoleSelection() {
     const [selectedRole, setSelectedRole] = useState(null);
@@ -27,6 +27,25 @@ export default function RoleSelection() {
             alert('Please select a role before continuing.');
         }
     };
+
+    useEffect(() => {
+        // Intersection Observer for animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('[data-observer-target]').forEach(el => {
+            observer.observe(el);
+        });
+
+        return () => {
+            observer.disconnect();
+        };
+    }, []);
 
     const roles = [
         {
@@ -68,20 +87,25 @@ export default function RoleSelection() {
     return (
         <>
             <Head title="Join WorkWise" />
+            <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet" />
 
-            <div className="min-h-screen bg-white">
+            <div className="relative min-h-screen bg-white">
+                {/* Animated Background Shapes */}
+                <div className="absolute top-0 left-0 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
+                <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-700/20 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
+
                 {/* Header */}
-                <header className="border-b border-gray-200">
+                <header className="relative z-10 border-b border-gray-200">
                     <div className="mx-auto" style={{ paddingLeft: '0.45in', paddingRight: '0.45in' }}>
                         <div className="flex justify-between items-center h-16">
                             <Link href="/" className="flex items-center">
-                                <span className="text-2xl font-bold text-blue-600">WorkWise</span>
+                                <span className="text-2xl font-bold text-blue-600 hover:text-blue-700 transition-all duration-700">WorkWise</span>
                             </Link>
                             <div className="flex items-center space-x-4">
                                 <span className="text-sm text-gray-600">Already have an account?</span>
                                 <Link
                                     href="/login"
-                                    className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                                    className="text-sm text-blue-600 hover:text-blue-700 font-medium transition-all duration-700"
                                 >
                                     Log in
                                 </Link>
@@ -91,10 +115,10 @@ export default function RoleSelection() {
                 </header>
 
                 {/* Main Content */}
-                <div className="max-w-4xl mx-auto pt-12 pb-16 px-4">
+                <div className="relative z-10 max-w-4xl mx-auto pt-12 pb-16 px-4">
                     {/* Header */}
-                    <div className="text-center mb-12">
-                        <h1 className="text-4xl font-normal text-gray-900 mb-4">
+                    <div className="text-center mb-12" data-observer-target>
+                        <h1 className="text-4xl font-bold text-gray-900 mb-4">
                             Join as a gig worker or employer
                         </h1>
                         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
@@ -103,15 +127,15 @@ export default function RoleSelection() {
                     </div>
 
                     {/* Role Selection Cards */}
-                    <div className="grid md:grid-cols-2 gap-8 mb-12">
+                    <div className="grid md:grid-cols-2 gap-8 mb-12" data-observer-target>
                         {roles.map((role) => (
                             <div
                                 key={role.type}
                                 onClick={() => handleRoleSelect(role.type)}
-                                className={`relative cursor-pointer rounded-2xl border-2 p-8 transition-all duration-200 hover:shadow-xl ${
+                                className={`relative cursor-pointer bg-white/70 backdrop-blur-sm rounded-xl border border-white/20 p-8 transition-all duration-700 hover:shadow-xl hover:scale-105 ${
                                     selectedRole === role.type
-                                        ? 'border-blue-500 bg-blue-50 shadow-lg transform scale-105'
-                                        : 'border-gray-200 bg-white hover:border-gray-300'
+                                        ? 'border-blue-500 bg-blue-50/80 shadow-lg transform scale-105'
+                                        : 'border-gray-200 bg-white/70 hover:border-gray-300'
                                 }`}
                             >
                                 {/* Selection indicator */}
@@ -165,11 +189,11 @@ export default function RoleSelection() {
                     </div>
 
                     {/* Continue Button */}
-                    <div className="text-center">
+                    <div className="text-center" data-observer-target>
                         <button
                             onClick={handleContinue}
                             disabled={!selectedRole || processing}
-                            className={`inline-flex items-center px-8 py-4 border border-transparent text-lg font-medium rounded-full transition-all duration-200 ${
+                            className={`inline-flex items-center px-8 py-4 border border-transparent text-lg font-semibold rounded-lg transition-all duration-700 hover:shadow-lg hover:scale-105 ${
                                 selectedRole && !processing
                                     ? 'text-white bg-blue-600 hover:bg-blue-700'
                                     : 'text-gray-400 bg-gray-200 cursor-not-allowed'
@@ -195,16 +219,34 @@ export default function RoleSelection() {
                     </div>
 
                     {/* Footer */}
-                    <div className="text-center mt-12">
+                    <div className="text-center mt-12" data-observer-target>
                         <p className="text-gray-500">
                             Already have an account?{' '}
-                            <Link href="/login" className="text-blue-600 hover:text-blue-700 font-medium">
+                            <Link href="/login" className="text-blue-600 hover:text-blue-700 font-medium transition-all duration-700">
                                 Log in
                             </Link>
                         </p>
                     </div>
                 </div>
             </div>
+
+            <style>{`
+                body {
+                    background: white;
+                    color: #333;
+                    font-family: 'Inter', sans-serif;
+                }
+
+                [data-observer-target] {
+                    opacity: 0;
+                    transform: translateY(20px);
+                    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+                }
+                [data-observer-target].is-visible {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            `}</style>
         </>
     );
 }

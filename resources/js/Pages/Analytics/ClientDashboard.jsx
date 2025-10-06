@@ -30,7 +30,7 @@ export default function ClientDashboard({ overview, monthly_spending, recent_pro
         };
 
         return (
-            <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-xl border border-gray-200">
                 <div className="p-6">
                     <div className="flex items-center">
                         <div className="flex-shrink-0">
@@ -68,13 +68,13 @@ export default function ClientDashboard({ overview, monthly_spending, recent_pro
                     <div className="flex space-x-2">
                         <Link
                             href="/analytics/projects"
-                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-sm"
+                            className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-2 px-4 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 text-sm"
                         >
                             Detailed Reports
                         </Link>
                         <a
                             href="/analytics/export?type=spending&period=12months&format=pdf"
-                            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded text-sm"
+                            className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-2 px-4 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 text-sm"
                             download
                         >
                             Export PDF
@@ -84,9 +84,14 @@ export default function ClientDashboard({ overview, monthly_spending, recent_pro
             }
         >
             <Head title="Analytics Dashboard" />
+            <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet" />
 
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+            <div className="relative py-12 bg-white overflow-hidden">
+                {/* Animated Background Shapes */}
+                <div className="absolute top-0 left-0 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
+                <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-700/20 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
+
+                <div className="relative z-20 max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
                     
                     {/* Overview Stats */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
@@ -123,7 +128,7 @@ export default function ClientDashboard({ overview, monthly_spending, recent_pro
                     </div>
 
                     {/* Spending Chart */}
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-xl border border-gray-200">
                         <div className="p-6">
                             <h3 className="text-lg font-medium text-gray-900 mb-4">Monthly Spending</h3>
                             <div className="h-80">
@@ -150,11 +155,11 @@ export default function ClientDashboard({ overview, monthly_spending, recent_pro
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         {/* Hiring Insights */}
-                        <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                            <div className="p-6">
+                        <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-xl border border-gray-200">
+                            <div className="p-8">
                                 <h3 className="text-lg font-medium text-gray-900 mb-4">Hiring Insights</h3>
                                 <div className="space-y-4">
-                                    <div className="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
+                                    <div className="flex justify-between items-center p-6 bg-gradient-to-br from-blue-50 to-white rounded-xl border border-blue-100 shadow-md">
                                         <div>
                                             <p className="text-sm font-medium text-gray-600">Average Project Duration</p>
                                             <p className="text-2xl font-bold text-gray-900">
@@ -166,9 +171,9 @@ export default function ClientDashboard({ overview, monthly_spending, recent_pro
                                         </div>
                                     </div>
                                     
-                                    <div className="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
+                                    <div className="flex justify-between items-center p-6 bg-gradient-to-br from-green-50 to-white rounded-xl border border-green-100 shadow-md">
                                         <div>
-                                            <p className="text-sm font-medium text-gray-600">Repeat Gig Workers</p>
+                                            <p className="text-sm font-medium text-green-600">Repeat Gig Workers</p>
                                             <p className="text-2xl font-bold text-gray-900">
                                                 {hiring_insights.repeat_freelancers}
                                             </p>
@@ -178,9 +183,9 @@ export default function ClientDashboard({ overview, monthly_spending, recent_pro
                                         </div>
                                     </div>
                                     
-                                    <div className="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
+                                    <div className="flex justify-between items-center p-6 bg-gradient-to-br from-purple-50 to-white rounded-xl border border-purple-100 shadow-md">
                                         <div>
-                                            <p className="text-sm font-medium text-gray-600">Average Project Cost</p>
+                                            <p className="text-sm font-medium text-purple-600">Average Project Cost</p>
                                             <p className="text-2xl font-bold text-gray-900">
                                                 {formatCurrency(hiring_insights.avg_project_cost)}
                                             </p>
@@ -194,8 +199,8 @@ export default function ClientDashboard({ overview, monthly_spending, recent_pro
                         </div>
 
                         {/* Recent Projects */}
-                        <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                            <div className="p-6">
+                        <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-xl border border-gray-200">
+                            <div className="p-8">
                                 <div className="flex justify-between items-center mb-4">
                                     <h3 className="text-lg font-medium text-gray-900">Recent Projects</h3>
                                     <Link
@@ -241,13 +246,13 @@ export default function ClientDashboard({ overview, monthly_spending, recent_pro
                     </div>
 
                     {/* Quick Actions */}
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div className="p-6">
+                    <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-xl border border-gray-200">
+                        <div className="p-8">
                             <h3 className="text-lg font-medium text-gray-900 mb-4">Quick Actions</h3>
                             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                                 <Link
                                     href="/analytics/projects"
-                                    className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                                    className="flex items-center p-6 border border-blue-200 rounded-xl hover:bg-blue-50 hover:shadow-lg transform hover:scale-105 transition-all duration-300 bg-gradient-to-br from-blue-50/50 to-white"
                                 >
                                     <ClipboardDocumentListIcon className="w-8 h-8 text-blue-500 mr-3" />
                                     <div>
@@ -258,7 +263,7 @@ export default function ClientDashboard({ overview, monthly_spending, recent_pro
                                 
                                 <Link
                                     href="/analytics/performance"
-                                    className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                                    className="flex items-center p-6 border border-green-200 rounded-xl hover:bg-green-50 hover:shadow-lg transform hover:scale-105 transition-all duration-300 bg-gradient-to-br from-green-50/50 to-white"
                                 >
                                     <ChartBarIcon className="w-8 h-8 text-green-500 mr-3" />
                                     <div>
@@ -269,7 +274,7 @@ export default function ClientDashboard({ overview, monthly_spending, recent_pro
                                 
                                 <Link
                                     href="/jobs/create"
-                                    className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                                    className="flex items-center p-6 border border-purple-200 rounded-xl hover:bg-purple-50 hover:shadow-lg transform hover:scale-105 transition-all duration-300 bg-gradient-to-br from-purple-50/50 to-white"
                                 >
                                     <BriefcaseIcon className="w-8 h-8 text-purple-500 mr-3" />
                                     <div>
@@ -280,7 +285,7 @@ export default function ClientDashboard({ overview, monthly_spending, recent_pro
                                 
                                 <a
                                     href="/analytics/export?type=projects&period=12months&format=pdf"
-                                    className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                                    className="flex items-center p-6 border border-indigo-200 rounded-xl hover:bg-indigo-50 hover:shadow-lg transform hover:scale-105 transition-all duration-300 bg-gradient-to-br from-indigo-50/50 to-white"
                                     download
                                 >
                                     <ArrowTrendingUpIcon className="w-8 h-8 text-indigo-500 mr-3" />
@@ -294,6 +299,14 @@ export default function ClientDashboard({ overview, monthly_spending, recent_pro
                     </div>
                 </div>
             </div>
+
+            <style>{`
+                body {
+                    background: white;
+                    color: #333;
+                    font-family: 'Inter', sans-serif;
+                }
+            `}</style>
         </AuthenticatedLayout>
     );
 }

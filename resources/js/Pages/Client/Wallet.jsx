@@ -101,9 +101,14 @@ export default function ClientWallet({ deposits, paidProjects, transactions, tot
             header={<h2 className="font-semibold text-xl text-gray-800 leading-tight"> Employer Wallet</h2>}
         >
             <Head title="Employer Wallet" />
+            <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet" />
 
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div className="relative py-12 bg-white overflow-hidden">
+                {/* Animated Background Shapes */}
+                <div className="absolute top-0 left-0 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
+                <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-700/20 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
+
+                <div className="relative z-20 max-w-7xl mx-auto sm:px-6 lg:px-8">
                     {flash?.success && (
                         <div className="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
                             {flash.success}
@@ -113,7 +118,7 @@ export default function ClientWallet({ deposits, paidProjects, transactions, tot
                     {/* Wallet Overview */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                         {/* Escrow Balance */}
-                        <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+                        <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-xl border border-gray-200 p-8">
                             <div className="flex items-center justify-between">
                                 <div>
                                     <h3 className="text-lg font-semibold text-gray-900 mb-2">Escrow Balance</h3>
@@ -124,7 +129,7 @@ export default function ClientWallet({ deposits, paidProjects, transactions, tot
                                 </div>
                                 <button
                                     onClick={() => setShowAmountModal(true)}
-                                    className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-md transition-colors"
+                                    className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
                                 >
                                     Add Funds
                                 </button>
@@ -132,7 +137,7 @@ export default function ClientWallet({ deposits, paidProjects, transactions, tot
                         </div>
 
                         {/* Total Spent */}
-                        <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+                        <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-xl border border-gray-200 p-8">
                             <div className="flex items-center">
                                 <div className="p-3 rounded-full bg-blue-100 mr-4">
                                     <svg className="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
@@ -151,12 +156,12 @@ export default function ClientWallet({ deposits, paidProjects, transactions, tot
 
                     {/* Recent Projects */}
                     {paidProjects && paidProjects.length > 0 && (
-                        <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-8">
-                            <div className="p-6">
+                        <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-xl border border-gray-200 mb-8">
+                            <div className="p-8">
                                 <h3 className="text-lg font-medium mb-4">💼 Recent Project Payments</h3>
                                 <div className="space-y-4">
                                     {paidProjects.map((project) => (
-                                        <div key={project.id} className="border border-gray-200 rounded-lg p-4">
+                                        <div key={project.id} className="border border-blue-100 rounded-xl p-6 bg-gradient-to-br from-blue-50 to-white shadow-md">
                                             <div className="flex justify-between items-start">
                                                 <div>
                                                     <h4 className="font-medium text-gray-900">{project.job.title}</h4>
@@ -186,8 +191,8 @@ export default function ClientWallet({ deposits, paidProjects, transactions, tot
                     )}
 
                     {/* Deposit History */}
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div className="p-6">
+                    <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-xl border border-gray-200">
+                        <div className="p-8">
                             <h3 className="text-lg font-medium mb-4">💳 Deposit History</h3>
                             {deposits?.data?.length > 0 ? (
                                 <div className="overflow-x-auto">
@@ -301,14 +306,14 @@ export default function ClientWallet({ deposits, paidProjects, transactions, tot
                                             setAmount('');
                                             setIntentError(null);
                                         }}
-                                        className="flex-1 bg-gray-200 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-300 transition-colors"
+                                        className="flex-1 bg-gray-200 text-gray-800 py-3 px-6 rounded-xl hover:bg-gray-300 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
                                     >
                                         Cancel
                                     </button>
                                     <button
                                         onClick={handleDeposit}
                                         disabled={!amount || parseFloat(amount) <= 0 || isCreatingIntent}
-                                        className="flex-1 bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 transition-colors"
+                                        className="flex-1 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:transform-none"
                                     >
                                         {isCreatingIntent ? 'Creating...' : 'Continue to Payment'}
                                     </button>
@@ -371,6 +376,14 @@ export default function ClientWallet({ deposits, paidProjects, transactions, tot
                     )}
                 </div>
             </div>
+
+            <style>{`
+                body {
+                    background: white;
+                    color: #333;
+                    font-family: 'Inter', sans-serif;
+                }
+            `}</style>
         </AuthenticatedLayout>
     );
 }

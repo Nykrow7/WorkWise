@@ -294,14 +294,19 @@ export default function ProjectShow({ project, hasPayment, canReview, isEmployer
             }
         >
             <Head title={`Project: ${project.job.title}`} />
+            <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet" />
 
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div className="relative py-12 bg-white overflow-hidden">
+                {/* Animated Background Shapes */}
+                <div className="absolute top-0 left-0 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
+                <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-700/20 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
+
+                <div className="relative z-20 max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         {/* Main Content */}
                         <div className="lg:col-span-2 space-y-6">
                             {/* Project Overview */}
-                            <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                            <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-xl border border-gray-200">
                                 <div className="p-6">
                                     <h3 className="text-lg font-semibold mb-4">Project Overview</h3>
                                     <div className="prose max-w-none">
@@ -338,7 +343,7 @@ export default function ProjectShow({ project, hasPayment, canReview, isEmployer
                                             {!isEmployer && (
                                                 <button
                                                     onClick={handleComplete}
-                                                    className="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 focus:bg-green-700 active:bg-green-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition ease-in-out duration-150"
+                                                    className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 border border-transparent rounded-xl font-semibold text-sm text-white uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 ease-in-out"
                                                 >
                                                     ✅ Mark as Completed
                                                 </button>
@@ -347,7 +352,7 @@ export default function ProjectShow({ project, hasPayment, canReview, isEmployer
                                             {isEmployer && (
                                                 <button
                                                     onClick={() => setShowRevisionForm(true)}
-                                                    className="inline-flex items-center px-4 py-2 bg-yellow-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-yellow-700 focus:bg-yellow-700 active:bg-yellow-900 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 transition ease-in-out duration-150"
+                                                    className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 border border-transparent rounded-xl font-semibold text-sm text-white uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 ease-in-out"
                                                 >
                                                     🔄 Request Revision
                                                 </button>
@@ -355,7 +360,7 @@ export default function ProjectShow({ project, hasPayment, canReview, isEmployer
 
                                             <button
                                                 onClick={() => handleSendMessage(isEmployer ? project.gig_worker.id : project.employer.id)}
-                                                className="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150"
+                                                className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 border border-transparent rounded-xl font-semibold text-sm text-white uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 ease-in-out"
                                             >
                                                 💬 Send Message
                                             </button>
@@ -617,7 +622,7 @@ export default function ProjectShow({ project, hasPayment, canReview, isEmployer
                                     <div className="space-y-2">
                                         <button
                                             onClick={() => handleSendMessage(isEmployer ? project.gig_worker.id : project.employer.id)}
-                                            className="block w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md"
+                                            className="block w-full text-left px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100 hover:text-blue-700 rounded-xl border border-transparent hover:border-blue-200 transform hover:scale-[1.02] transition-all duration-300 ease-in-out hover:shadow-md"
                                         >
                                             💬 Send Message
                                         </button>
@@ -771,6 +776,14 @@ export default function ProjectShow({ project, hasPayment, canReview, isEmployer
                 onClose={() => setShowMessagesModal(false)}
                 initialUserId={selectedUserId}
             />
+
+            <style>{`
+                body {
+                    background: white;
+                    color: #333;
+                    font-family: 'Inter', sans-serif;
+                }
+            `}</style>
         </AuthenticatedLayout>
     );
 }

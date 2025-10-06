@@ -49,9 +49,14 @@ export default function FreelancerWallet({
             header={<h2 className="font-semibold text-xl text-gray-800 leading-tight"> My Earnings</h2>}
         >
             <Head title="My Earnings" />
+            <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet" />
 
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div className="relative py-12 bg-white overflow-hidden">
+                {/* Animated Background Shapes */}
+                <div className="absolute top-0 left-0 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
+                <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-700/20 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
+
+                <div className="relative z-20 max-w-7xl mx-auto sm:px-6 lg:px-8">
                     {flash?.success && (
                         <div className="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
                             {flash.success}
@@ -61,7 +66,7 @@ export default function FreelancerWallet({
                     {/* Earnings Overview */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                         {/* Total Earnings */}
-                        <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+                        <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-xl border border-gray-200 p-8">
                             <div className="flex items-center">
                                 <div className="p-3 rounded-full bg-green-100 mr-4">
                                     <svg className="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
@@ -78,7 +83,7 @@ export default function FreelancerWallet({
                         </div>
 
                         {/* Pending Payments */}
-                        <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+                        <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-xl border border-gray-200 p-8">
                             <div className="flex items-center">
                                 <div className="p-3 rounded-full bg-yellow-100 mr-4">
                                     <svg className="w-6 h-6 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
@@ -95,7 +100,7 @@ export default function FreelancerWallet({
                         </div>
 
                         {/* Available Balance */}
-                        <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+                        <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-xl border border-gray-200 p-8">
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center">
                                     <div className="p-3 rounded-full bg-blue-100 mr-4">
@@ -113,7 +118,7 @@ export default function FreelancerWallet({
                                 <button
                                     onClick={() => setShowWithdrawalModal(true)}
                                     disabled={availableBalance <= 0}
-                                    className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium py-2 px-4 rounded-md transition-colors"
+                                    className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
                                 >
                                     Withdraw
                                 </button>
@@ -123,12 +128,12 @@ export default function FreelancerWallet({
 
                     {/* Pending Payments Section */}
                     {pendingPayments.length > 0 && (
-                        <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-8">
-                            <div className="p-6">
+                        <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-xl border border-gray-200 mb-8">
+                            <div className="p-8">
                                 <h3 className="text-lg font-medium mb-4">⏳ Pending Payments (Escrowed or Awaiting Release)</h3>
                                 <div className="space-y-4">
                                     {pendingPayments.map((project) => (
-                                        <div key={project.id} className="border border-yellow-200 bg-yellow-50 rounded-lg p-4">
+                                        <div key={project.id} className="border border-yellow-200 bg-gradient-to-br from-yellow-50 to-white rounded-xl p-6 shadow-md">
                                             <div className="flex justify-between items-start">
                                                 <div>
                                                     <h4 className="font-medium text-gray-900">{project.job.title}</h4>
@@ -144,11 +149,11 @@ export default function FreelancerWallet({
                                                         {currency.symbol}{formatAmount(project.net_amount)}
                                                     </p>
                                                     {project.status === 'completed' ? (
-                                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                                        <span className="inline-flex items-center px-3 py-1 rounded-xl text-sm font-semibold shadow-md bg-yellow-100 text-yellow-800">
                                                             Awaiting Release
                                                         </span>
                                                     ) : (
-                                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                        <span className="inline-flex items-center px-3 py-1 rounded-xl text-sm font-semibold shadow-md bg-blue-100 text-blue-800">
                                                             In Progress (Escrowed)
                                                         </span>
                                                     )}
@@ -162,8 +167,8 @@ export default function FreelancerWallet({
                     )}
 
                     {/* Recent Payments */}
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div className="p-6">
+                    <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-xl border border-gray-200">
+                        <div className="p-8">
                             <h3 className="text-lg font-medium mb-4">💸 Recent Payments Received</h3>
                             {transactions.data.length > 0 ? (
                                 <div className="overflow-x-auto">
@@ -221,7 +226,7 @@ export default function FreelancerWallet({
                     {/* Withdrawal Modal */}
                     {showWithdrawalModal && (
                         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-                            <div className="bg-white rounded-lg p-6 max-w-md w-full">
+                            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-8 max-w-md w-full shadow-2xl border border-gray-200">
                                 <h3 className="text-lg font-medium mb-4">Withdraw Funds</h3>
                                 <form onSubmit={handleWithdrawal}>
                                     <div className="mb-4">
@@ -235,7 +240,7 @@ export default function FreelancerWallet({
                                             step="0.01"
                                             value={data.amount}
                                             onChange={(e) => setData('amount', e.target.value)}
-                                            className="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                            className="w-full border-gray-300 rounded-xl shadow-lg focus:ring-blue-500 focus:border-blue-500"
                                             required
                                         />
                                         {errors.amount && <p className="mt-1 text-sm text-red-600">{errors.amount}</p>}
@@ -249,7 +254,7 @@ export default function FreelancerWallet({
                                             value={data.bank_account}
                                             onChange={(e) => setData('bank_account', e.target.value)}
                                             placeholder="Account ending in ****1234"
-                                            className="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                            className="w-full border-gray-300 rounded-xl shadow-lg focus:ring-blue-500 focus:border-blue-500"
                                             required
                                         />
                                         {errors.bank_account && <p className="mt-1 text-sm text-red-600">{errors.bank_account}</p>}
@@ -258,14 +263,14 @@ export default function FreelancerWallet({
                                         <button
                                             type="button"
                                             onClick={() => setShowWithdrawalModal(false)}
-                                            className="flex-1 bg-gray-200 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-300"
+                                            className="flex-1 bg-gray-200 text-gray-800 py-3 px-6 rounded-xl hover:bg-gray-300 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
                                         >
                                             Cancel
                                         </button>
                                         <button
                                             type="submit"
                                             disabled={processing}
-                                            className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:opacity-50"
+                                            className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 disabled:opacity-50"
                                         >
                                             {processing ? 'Processing...' : 'Withdraw'}
                                         </button>
@@ -276,6 +281,14 @@ export default function FreelancerWallet({
                     )}
                 </div>
             </div>
+
+            <style>{`
+                body {
+                    background: white;
+                    color: #333;
+                    font-family: 'Inter', sans-serif;
+                }
+            `}</style>
         </AuthenticatedLayout>
     );
 }

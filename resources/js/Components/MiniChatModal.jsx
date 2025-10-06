@@ -210,8 +210,8 @@ const MiniChatModal = forwardRef(({ isOpen = true, unreadCount = 0, targetUserId
     if (!isOpen) return null;
 
     return (
-        <div className={`fixed bottom-4 right-4 bg-white rounded-xl shadow-2xl flex flex-col border border-gray-200 transition-all duration-300 ${
-            isMinimized ? 'w-16 h-16' : 'w-96 h-[500px]'
+        <div className={`fixed bottom-4 right-4 bg-white rounded-lg shadow-lg flex flex-col border border-gray-300 transition-all duration-300 z-[9999] ${
+            isMinimized ? 'w-12 h-12' : 'w-96 h-[500px]'
         }`}>
             {/* Header */}
             <header 
@@ -482,16 +482,16 @@ const MiniChatModal = forwardRef(({ isOpen = true, unreadCount = 0, targetUserId
 
             {/* Minimized View */}
             {isMinimized && (
-                <div 
-                    className="w-full h-full flex items-center justify-center cursor-pointer rounded-xl"
+                <div
+                    className="w-full h-full flex items-center justify-center cursor-pointer rounded-lg hover:bg-gray-50 transition-colors"
                     onClick={toggleMinimize}
                 >
                     <div className="relative">
-                        <svg className="w-8 h-8 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                        <svg className="w-5 h-5 text-gray-500 hover:text-gray-700 transition-colors" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clipRule="evenodd" />
                         </svg>
                         {unreadCount > 0 && (
-                            <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white"></div>
+                            <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full border border-white"></div>
                         )}
                     </div>
                 </div>

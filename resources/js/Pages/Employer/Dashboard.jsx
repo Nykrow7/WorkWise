@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, usePage } from '@inertiajs/react';
 import {
@@ -41,6 +41,25 @@ export default function EmployerDashboard({
     const { auth } = usePage().props;
     const user = auth.user;
 
+    useEffect(() => {
+        // Intersection Observer for animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('[data-observer-target]').forEach(el => {
+            observer.observe(el);
+        });
+
+        return () => {
+            observer.disconnect();
+        };
+    }, []);
+
     const formatAmount = (value) => {
         const number = Number(value ?? 0);
         return number.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -56,19 +75,19 @@ export default function EmployerDashboard({
         };
 
         return (
-            <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div className="p-6">
-                    <div className="flex items-center">
+            <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-lg border border-gray-200 h-full">
+                <div className="p-4 lg:p-6">
+                    <div className="flex items-start h-full">
                         <div className="flex-shrink-0">
-                            <div className={`w-8 h-8 ${colorClasses[color]} rounded-full flex items-center justify-center`}>
-                                <Icon className="w-4 h-4 text-white" />
+                            <div className={`w-10 h-10 ${colorClasses[color]} rounded-full flex items-center justify-center`}>
+                                <Icon className="w-5 h-5 text-white" />
                             </div>
                         </div>
-                        <div className="ml-4 flex-1">
-                            <div className="text-sm font-medium text-gray-500">{title}</div>
-                            <div className="text-2xl font-bold text-gray-900">{value}</div>
+                        <div className="ml-3 lg:ml-4 flex-1 min-w-0">
+                            <div className="text-xs lg:text-sm font-medium text-gray-500 break-words leading-tight">{title}</div>
+                            <div className="text-lg lg:text-xl font-bold text-gray-900 break-words leading-tight mt-1">{value}</div>
                             {subtitle && (
-                                <div className="text-xs text-gray-500 mt-1">{subtitle}</div>
+                                <div className="text-xs text-gray-500 mt-2 break-words leading-relaxed">{subtitle}</div>
                             )}
                         </div>
                     </div>
@@ -78,11 +97,11 @@ export default function EmployerDashboard({
     };
 
     const JobCard = ({ job }) => (
-        <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg border border-gray-200">
+        <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-lg border border-gray-200">
             <div className="p-4">
                 <div className="flex justify-between items-start">
                     <div className="flex-1">
-                        <h4 className="font-medium text-gray-900 truncate">{job.title}</h4>
+                        <h4 className="font-medium text-gray-900 break-words">{job.title}</h4>
                         <div className="flex items-center mt-2 space-x-4 text-sm text-gray-500">
                             <span className="flex items-center">
                                 <EyeIcon className="w-4 h-4 mr-1" />
@@ -114,13 +133,13 @@ export default function EmployerDashboard({
     );
 
     const ProposalCard = ({ proposal }) => (
-        <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg border border-gray-200">
+        <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-lg border border-gray-200">
             <div className="p-4">
                 <div className="flex justify-between items-start">
                     <div className="flex-1">
-                        <h4 className="font-medium text-gray-900">{proposal.gig_worker_name}</h4>
-                        <p className="text-sm text-gray-600 mt-1">for "{proposal.job_title}"</p>
-                        <p className="text-sm text-gray-500 mt-2 line-clamp-2">{proposal.proposal_message}</p>
+                        <h4 className="font-medium text-gray-900 break-words">{proposal.gig_worker_name}</h4>
+                        <p className="text-sm text-gray-600 mt-1 break-words">for "{proposal.job_title}"</p>
+                        <p className="text-sm text-gray-500 mt-2 break-words">{proposal.proposal_message}</p>
                         <div className="flex items-center mt-3 space-x-4 text-sm text-gray-500">
                             <span className="flex items-center">
                                 <CurrencyDollarIcon className="w-4 h-4 mr-1" />
@@ -152,12 +171,12 @@ export default function EmployerDashboard({
     );
 
     const ContractCard = ({ contract }) => (
-        <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg border border-gray-200">
+        <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-lg border border-gray-200">
             <div className="p-4">
                 <div className="flex justify-between items-start">
                     <div className="flex-1">
-                        <h4 className="font-medium text-gray-900">{contract.job_title}</h4>
-                        <p className="text-sm text-gray-600 mt-1">with {contract.gig_worker_name}</p>
+                        <h4 className="font-medium text-gray-900 break-words">{contract.job_title}</h4>
+                        <p className="text-sm text-gray-600 mt-1 break-words">with {contract.gig_worker_name}</p>
                         <div className="flex items-center mt-3 space-x-4 text-sm text-gray-500">
                             <span className="flex items-center">
                                 <CurrencyDollarIcon className="w-4 h-4 mr-1" />
@@ -212,17 +231,17 @@ export default function EmployerDashboard({
     );
 
     const NotificationCard = ({ notification }) => (
-        <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg border border-gray-200">
+        <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-lg border border-gray-200">
             <div className="p-4">
                 <div className="flex justify-between items-start">
                     <div className="flex-1">
                         <div className="flex items-center">
-                            <h4 className="font-medium text-gray-900">{notification.title}</h4>
+                            <h4 className="font-medium text-gray-900 break-words">{notification.title}</h4>
                             {!notification.is_read && (
-                                <div className="w-2 h-2 bg-red-500 rounded-full ml-2"></div>
+                                <div className="w-2 h-2 bg-red-500 rounded-full ml-2 flex-shrink-0"></div>
                             )}
                         </div>
-                        <p className="text-sm text-gray-600 mt-1">{notification.message}</p>
+                        <p className="text-sm text-gray-600 mt-1 break-words">{notification.message}</p>
                         <div className="text-xs text-gray-500 mt-2">
                             {new Date(notification.created_at).toLocaleDateString()}
                         </div>
@@ -263,12 +282,12 @@ export default function EmployerDashboard({
     );
 
     const DeadlineCard = ({ deadline }) => (
-        <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg border border-gray-200">
+        <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-lg border border-gray-200">
             <div className="p-4">
                 <div className="flex justify-between items-start">
                     <div className="flex-1">
-                        <h4 className="font-medium text-gray-900">{deadline.milestone_name}</h4>
-                        <p className="text-sm text-gray-600 mt-1">Due: {new Date(deadline.due_date).toLocaleDateString()}</p>
+                        <h4 className="font-medium text-gray-900 break-words">{deadline.milestone_name}</h4>
+                        <p className="text-sm text-gray-600 mt-1 break-words">Due: {new Date(deadline.due_date).toLocaleDateString()}</p>
                         <div className="mt-2">
                             <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                                 deadline.status === 'overdue' ? 'bg-red-100 text-red-800' :
@@ -316,23 +335,23 @@ export default function EmployerDashboard({
         };
 
         return (
-            <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div className="p-6">
-                    <div className="flex items-center">
+            <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-lg border border-gray-200 h-full">
+                <div className="p-4 lg:p-6">
+                    <div className="flex items-start h-full">
                         <div className="flex-shrink-0">
-                            <div className={`w-8 h-8 ${colorClasses[color]} rounded-full flex items-center justify-center`}>
-                                <Icon className="w-4 h-4 text-white" />
+                            <div className={`w-10 h-10 ${colorClasses[color]} rounded-full flex items-center justify-center`}>
+                                <Icon className="w-5 h-5 text-white" />
                             </div>
                         </div>
-                        <div className="ml-4 flex-1">
-                            <div className="text-sm font-medium text-gray-500">{title}</div>
-                            <div className="text-2xl font-bold text-gray-900">{value}</div>
-                            <div className="flex items-center mt-1">
+                        <div className="ml-3 lg:ml-4 flex-1 min-w-0">
+                            <div className="text-xs lg:text-sm font-medium text-gray-500 break-words leading-tight">{title}</div>
+                            <div className="text-lg lg:text-xl font-bold text-gray-900 break-words leading-tight mt-1">{value}</div>
+                            <div className="flex items-start mt-2">
                                 {subtitle && (
-                                    <div className="text-xs text-gray-500">{subtitle}</div>
+                                    <div className="text-xs text-gray-500 break-words flex-1 leading-relaxed">{subtitle}</div>
                                 )}
                                 {trend && trendValue && (
-                                    <div className={`ml-2 flex items-center text-xs ${trendColors[trend]}`}>
+                                    <div className={`ml-2 flex items-center text-xs ${trendColors[trend]} flex-shrink-0`}>
                                         {trend === 'up' && <ArrowTrendingUpIcon className="w-3 h-3 mr-1" />}
                                         {trend === 'down' && <span className="mr-1">↓</span>}
                                         {trend === 'stable' && <span className="mr-1">→</span>}
@@ -348,7 +367,7 @@ export default function EmployerDashboard({
     };
 
     const ActivityCard = ({ activity }) => (
-        <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg border border-gray-200">
+        <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-lg border border-gray-200">
             <div className="p-4">
                 <div className="flex items-start">
                     <div className="flex-shrink-0">
@@ -369,9 +388,9 @@ export default function EmployerDashboard({
                         </div>
                     </div>
                     <div className="ml-3 flex-1">
-                        <p className="text-sm font-medium text-gray-900">{activity.title}</p>
-                        <p className="text-sm text-gray-600">{activity.description}</p>
-                        <p className="text-xs text-gray-500 mt-1">{activity.time}</p>
+                        <p className="text-sm font-medium text-gray-900 break-words">{activity.title}</p>
+                        <p className="text-sm text-gray-600 break-words">{activity.description}</p>
+                        <p className="text-xs text-gray-500 mt-1 break-words">{activity.time}</p>
                     </div>
                     {activity.action_url && (
                         <div className="ml-3">
@@ -391,6 +410,21 @@ export default function EmployerDashboard({
     const SearchAndFilterBar = ({ onSearch, onFilter, searchTerm, activeFilter }) => {
         const [isFilterOpen, setIsFilterOpen] = React.useState(false);
         const [isExportOpen, setIsExportOpen] = React.useState(false);
+
+        const closeAllDropdowns = () => {
+            setIsFilterOpen(false);
+            setIsExportOpen(false);
+        };
+
+        const toggleFilter = () => {
+            closeAllDropdowns();
+            setIsFilterOpen(!isFilterOpen);
+        };
+
+        const toggleExport = () => {
+            closeAllDropdowns();
+            setIsExportOpen(!isExportOpen);
+        };
         const [suggestions, setSuggestions] = React.useState([]);
         const [isLoading, setIsLoading] = React.useState(false);
         const [isExporting, setIsExporting] = React.useState(false);
@@ -462,7 +496,7 @@ export default function EmployerDashboard({
 
         const handleExport = async (type, format = 'csv') => {
             setIsExporting(true);
-            setIsExportOpen(false);
+            closeAllDropdowns();
 
             try {
                 const response = await fetch('/api/export', {
@@ -521,8 +555,7 @@ export default function EmployerDashboard({
         React.useEffect(() => {
             const handleClickOutside = (event) => {
                 if (!event.target.closest('.export-dropdown') && !event.target.closest('.filter-dropdown')) {
-                    setIsExportOpen(false);
-                    setIsFilterOpen(false);
+                    closeAllDropdowns();
                 }
             };
 
@@ -531,10 +564,10 @@ export default function EmployerDashboard({
         }, []);
 
         return (
-            <div className="bg-white shadow-sm border border-gray-200 rounded-lg p-4 mb-6">
+            <div className="bg-white/70 backdrop-blur-sm shadow-lg border border-gray-200 rounded-lg p-4 mb-6 relative z-30 overflow-visible">
                 <div className="flex flex-col md:flex-row gap-4 items-center">
                     {/* Search Input */}
-                    <div className="flex-1 relative">
+                    <div className="flex-1 relative z-10" style={{ position: 'relative' }}>
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             {isLoading ? (
                                 <div className="animate-spin h-5 w-5 text-gray-400">
@@ -557,7 +590,7 @@ export default function EmployerDashboard({
 
                         {/* Search Suggestions */}
                         {suggestions.length > 0 && (
-                            <div className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-sm overflow-auto focus:outline-none border border-gray-300">
+                            <div className="absolute z-[100] mt-1 w-full bg-white shadow-xl max-h-60 rounded-md py-1 text-sm overflow-auto focus:outline-none border border-gray-300" style={{ position: 'absolute' }}>
                                 {suggestions.map((suggestion, index) => (
                                     <button
                                         key={index}
@@ -575,9 +608,9 @@ export default function EmployerDashboard({
                     </div>
 
                     {/* Filter Dropdown */}
-                    <div className="relative filter-dropdown">
+                    <div className="relative filter-dropdown z-10" style={{ position: 'relative' }}>
                         <button
-                            onClick={() => setIsFilterOpen(!isFilterOpen)}
+                            onClick={toggleFilter}
                             className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
                         >
                             <FunnelIcon className="h-5 w-5 mr-2" />
@@ -586,14 +619,14 @@ export default function EmployerDashboard({
                         </button>
 
                         {isFilterOpen && (
-                            <div className="absolute right-0 z-10 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                            <div className="absolute right-0 z-[100] mt-2 w-56 rounded-md shadow-xl bg-white ring-1 ring-black ring-opacity-5" style={{ position: 'absolute' }}>
                                 <div className="py-1">
                                     {filterOptions.map((option) => (
                                         <button
                                             key={option.value}
                                             onClick={() => {
                                                 onFilter(option.value);
-                                                setIsFilterOpen(false);
+                                                closeAllDropdowns();
                                             }}
                                             className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                                         >
@@ -607,9 +640,9 @@ export default function EmployerDashboard({
                     </div>
 
                     {/* Export Dropdown */}
-                    <div className="relative export-dropdown">
+                    <div className="relative export-dropdown z-10" style={{ position: 'relative' }}>
                         <button
-                            onClick={() => setIsExportOpen(!isExportOpen)}
+                            onClick={toggleExport}
                             disabled={isExporting}
                             className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
@@ -628,7 +661,7 @@ export default function EmployerDashboard({
                         </button>
 
                         {isExportOpen && (
-                            <div className="absolute right-0 z-10 mt-2 w-64 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                            <div className="absolute right-0 z-[100] mt-2 w-64 rounded-md shadow-xl bg-white ring-1 ring-black ring-opacity-5" style={{ position: 'absolute' }}>
                                 <div className="py-1">
                                     <div className="px-4 py-2 text-xs font-medium text-gray-500 uppercase tracking-wide">
                                         Export Data
@@ -638,7 +671,7 @@ export default function EmployerDashboard({
                                             <button
                                                 onClick={() => {
                                                     handleExport(option.value, 'csv');
-                                                    setIsExportOpen(false);
+                                                    closeAllDropdowns();
                                                 }}
                                                 className="flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded"
                                             >
@@ -655,7 +688,7 @@ export default function EmployerDashboard({
                                         <button
                                             onClick={() => {
                                                 handleExport('all', 'json');
-                                                setIsExportOpen(false);
+                                                closeAllDropdowns();
                                             }}
                                             className="flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded"
                                         >
@@ -665,7 +698,7 @@ export default function EmployerDashboard({
                                         <button
                                             onClick={() => {
                                                 handleExport('analytics', 'pdf');
-                                                setIsExportOpen(false);
+                                                closeAllDropdowns();
                                             }}
                                             className="flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded"
                                         >
@@ -718,9 +751,13 @@ export default function EmployerDashboard({
             }
         >
             <Head title="Employer Dashboard" />
+            <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet" />
 
-            <div className="py-12">
-                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <div className="relative py-12 bg-white overflow-visible">
+                {/* Animated Background Shapes */}
+                <div className="absolute top-0 left-0 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
+                <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-700/20 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
+                <div className="relative z-20 mx-auto max-w-7xl sm:px-6 lg:px-8 overflow-visible">
                     {/* Search and Filter Bar */}
                     <SearchAndFilterBar
                         onSearch={(term) => console.log('Search:', term)}
@@ -730,9 +767,9 @@ export default function EmployerDashboard({
                     />
 
                     {/* Enhanced Stats Overview */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6 mb-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 lg:gap-4 mb-8 auto-rows-fr" data-observer-target>
                         <EnhancedStatCard
-                            title="Total Jobs"
+                            title="Total Jobs Posted"
                             value={stats.totalJobs}
                             subtitle="All time"
                             icon={BriefcaseIcon}
@@ -741,48 +778,48 @@ export default function EmployerDashboard({
                             trendValue={`${analytics?.trends?.growth_rate?.jobs || 0}%`}
                         />
                         <EnhancedStatCard
-                            title="Active Jobs"
+                            title="Active Job Postings"
                             value={stats.activeJobs}
                             subtitle="Currently open"
                             icon={ClockIcon}
                             color="green"
                         />
                         <EnhancedStatCard
-                            title="Success Rate"
+                            title="Job Success Rate"
                             value={`${stats.successRate}%`}
                             subtitle="Jobs to contracts"
                             icon={CheckCircleIcon}
                             color="teal"
                         />
                         <EnhancedStatCard
-                            title="Avg Response"
+                            title="Average Response Time"
                             value={`${stats.avgResponseTime}h`}
                             subtitle="Time to respond"
                             icon={ArrowTrendingUpIcon}
                             color="purple"
                         />
                         <EnhancedStatCard
-                            title="Completion Rate"
+                            title="Project Completion Rate"
                             value={`${stats.completionRate}%`}
                             subtitle="Projects finished"
                             icon={DocumentCheckIcon}
                             color="indigo"
                         />
                         <EnhancedStatCard
-                            title="Monthly Spend"
+                            title="Monthly Spending"
                             value={`₱${formatAmount(stats.monthlySpent)}`}
-                            subtitle="This month"
+                            subtitle="Current month"
                             icon={CurrencyDollarIcon}
                             color="yellow"
                             trend={analytics?.spending_analysis?.cost_trend}
-                            trendValue="vs last month"
+                            trendValue="vs previous month"
                         />
                     </div>
 
                     {/* Performance Metrics */}
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8" data-observer-target>
                         {/* Proposals Quality */}
-                        <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                        <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-lg border border-gray-200">
                             <div className="p-6">
                                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Proposal Quality</h3>
                                 <div className="space-y-3">
@@ -803,7 +840,7 @@ export default function EmployerDashboard({
                         </div>
 
                         {/* Contract Performance */}
-                        <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                        <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-lg border border-gray-200">
                             <div className="p-6">
                                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Contract Performance</h3>
                                 <div className="space-y-3">
@@ -824,7 +861,7 @@ export default function EmployerDashboard({
                         </div>
 
                         {/* Spending Analysis */}
-                        <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                        <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-lg border border-gray-200">
                             <div className="p-6">
                                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Spending Analysis</h3>
                                 <div className="space-y-3">
@@ -846,10 +883,10 @@ export default function EmployerDashboard({
                     </div>
 
                     {/* Main Content Grid */}
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8" data-observer-target>
                         {/* Left Column - Jobs Summary */}
                         <div className="lg:col-span-1">
-                            <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                            <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-lg border border-gray-200">
                                 <div className="p-6">
                                     <div className="flex justify-between items-center mb-4">
                                         <h3 className="text-lg font-semibold text-gray-900">Posted Jobs</h3>
@@ -875,7 +912,7 @@ export default function EmployerDashboard({
 
                         {/* Middle Column - Proposals */}
                         <div className="lg:col-span-1">
-                            <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                            <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-lg border border-gray-200">
                                 <div className="p-6">
                                     <div className="flex justify-between items-center mb-4">
                                         <h3 className="text-lg font-semibold text-gray-900">Recent Proposals</h3>
@@ -901,7 +938,7 @@ export default function EmployerDashboard({
 
                         {/* Right Column - Notifications */}
                         <div className="lg:col-span-1">
-                            <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                            <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-lg border border-gray-200">
                                 <div className="p-6">
                                     <div className="flex justify-between items-center mb-4">
                                         <h3 className="text-lg font-semibold text-gray-900">Notifications</h3>
@@ -934,7 +971,7 @@ export default function EmployerDashboard({
                     {/* Escrow Alerts */}
                     {notifications?.escrow?.length > 0 && (
                         <div className="mt-8">
-                            <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                            <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-lg border border-gray-200">
                                 <div className="p-6">
                                     <h3 className="text-lg font-semibold text-gray-900 mb-4">Escrow Alerts</h3>
                                     <div className="space-y-3">
@@ -950,7 +987,7 @@ export default function EmployerDashboard({
                     {/* Upcoming Deadlines */}
                     {notifications?.deadlines?.length > 0 && (
                         <div className="mt-8">
-                            <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                            <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-lg border border-gray-200">
                                 <div className="p-6">
                                     <div className="flex justify-between items-center mb-4">
                                         <h3 className="text-lg font-semibold text-gray-900">Upcoming Deadlines</h3>
@@ -973,7 +1010,7 @@ export default function EmployerDashboard({
 
                     {/* Recent Activity Feed */}
                     <div className="mt-8">
-                        <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                        <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-lg border border-gray-200">
                             <div className="p-6">
                                 <div className="flex justify-between items-center mb-4">
                                     <h3 className="text-lg font-semibold text-gray-900">Recent Activity</h3>
@@ -1003,7 +1040,7 @@ export default function EmployerDashboard({
 
                     {/* Active Contracts */}
                     <div className="mt-8">
-                        <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                        <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-lg border border-gray-200">
                             <div className="p-6">
                                 <div className="flex justify-between items-center mb-4">
                                     <h3 className="text-lg font-semibold text-gray-900">Active Contracts</h3>
@@ -1029,7 +1066,7 @@ export default function EmployerDashboard({
 
                     {/* Quick Actions */}
                     <div className="mt-8">
-                        <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                        <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-lg border border-gray-200">
                             <div className="p-6">
                                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -1071,6 +1108,24 @@ export default function EmployerDashboard({
                     </div>
                 </div>
             </div>
+
+            <style>{`
+                body {
+                    background: white;
+                    color: #333;
+                    font-family: 'Inter', sans-serif;
+                }
+
+                [data-observer-target] {
+                    opacity: 0;
+                    transform: translateY(20px);
+                    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+                }
+                [data-observer-target].is-visible {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            `}</style>
         </AuthenticatedLayout>
     );
 }

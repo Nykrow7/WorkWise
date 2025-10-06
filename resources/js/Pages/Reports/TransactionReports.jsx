@@ -106,14 +106,14 @@ export default function TransactionReports({ auth, filters, user, transactions, 
                     <div className="flex space-x-2">
                         <button
                             onClick={() => handleExport('pdf')}
-                            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded text-sm flex items-center"
+                            className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold py-2 px-4 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 text-sm flex items-center"
                         >
                             <Download className="w-4 h-4 mr-2" />
                             Export PDF
                         </button>
                         <button
                             onClick={() => handleExport('excel')}
-                            className="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-bold py-2 px-4 rounded text-sm flex items-center"
+                            className="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-semibold py-2 px-4 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 text-sm flex items-center"
                         >
                             <FileText className="w-4 h-4 mr-2" />
                             Export Excel
@@ -123,14 +123,19 @@ export default function TransactionReports({ auth, filters, user, transactions, 
             }
         >
             <Head title="Transaction Reports" />
+            <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet" />
 
-            <div className="py-1">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+            <div className="relative py-12 bg-white overflow-hidden">
+                {/* Animated Background Shapes */}
+                <div className="absolute top-0 left-0 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
+                <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-700/20 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
+
+                <div className="relative z-20 max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
                     {/* Summary Cards */}
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                        <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                            <div className="p-1">
+                        <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-xl border border-gray-200">
+                            <div className="p-6">
                                 <div className="flex items-center">
                                     <div className="flex-shrink-0">
                                         <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
@@ -147,8 +152,8 @@ export default function TransactionReports({ auth, filters, user, transactions, 
                             </div>
                         </div>
 
-                        <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                            <div className="p-1">
+                        <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-xl border border-gray-200">
+                            <div className="p-6">
                                 <div className="flex items-center">
                                     <div className="flex-shrink-0">
                                         <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
@@ -165,8 +170,8 @@ export default function TransactionReports({ auth, filters, user, transactions, 
                             </div>
                         </div>
 
-                        <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                            <div className="p-1">
+                        <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-xl border border-gray-200">
+                            <div className="p-6">
                                 <div className="flex items-center">
                                     <div className="flex-shrink-0">
                                         <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
@@ -183,8 +188,8 @@ export default function TransactionReports({ auth, filters, user, transactions, 
                             </div>
                         </div>
 
-                        <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                            <div className="p-1">
+                        <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-xl border border-gray-200">
+                            <div className="p-6">
                                 <div className="flex items-center">
                                     <div className="flex-shrink-0">
                                         <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
@@ -236,8 +241,8 @@ export default function TransactionReports({ auth, filters, user, transactions, 
                     </div> */}
 
                     {/* Filters */}
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div className="p-1">
+                    <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-xl border border-gray-200">
+                        <div className="p-8">
                             <div className="flex items-center mb-4">
                                 <Filter className="w-5 h-5 text-gray-500 mr-2" />
                                 <h3 className="text-lg font-medium text-gray-900">Filters</h3>
@@ -251,7 +256,7 @@ export default function TransactionReports({ auth, filters, user, transactions, 
                                         type="date"
                                         value={dateFrom}
                                         onChange={(e) => setDateFrom(e.target.value)}
-                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                        className="mt-1 block w-full rounded-xl border-gray-300 shadow-lg focus:border-blue-500 focus:ring-blue-500"
                                     />
                                 </div>
 
@@ -262,7 +267,7 @@ export default function TransactionReports({ auth, filters, user, transactions, 
                                         type="date"
                                         value={dateTo}
                                         onChange={(e) => setDateTo(e.target.value)}
-                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                        className="mt-1 block w-full rounded-xl border-gray-300 shadow-lg focus:border-blue-500 focus:ring-blue-500"
                                     />
                                 </div>
 
@@ -272,7 +277,7 @@ export default function TransactionReports({ auth, filters, user, transactions, 
                                         id="type"
                                         value={type}
                                         onChange={(e) => setType(e.target.value)}
-                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                        className="mt-1 block w-full rounded-xl border-gray-300 shadow-lg focus:border-blue-500 focus:ring-blue-500"
                                     >
                                         <option value="">All Types</option>
                                         <option value="deposit">Deposit</option>
@@ -288,7 +293,7 @@ export default function TransactionReports({ auth, filters, user, transactions, 
                                         id="status"
                                         value={status}
                                         onChange={(e) => setStatus(e.target.value)}
-                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                        className="mt-1 block w-full rounded-xl border-gray-300 shadow-lg focus:border-blue-500 focus:ring-blue-500"
                                     >
                                         <option value="">All Statuses</option>
                                         <option value="completed">Completed</option>
@@ -302,14 +307,14 @@ export default function TransactionReports({ auth, filters, user, transactions, 
                             <div className="flex justify-end space-x-2 mt-4">
                             <button
                                         onClick={() => handleExport('pdf')}
-                                        className="bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-150 ease-in-out flex items-center space-x-2"
+                                        className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center space-x-2"
                                     >
                                         <Download className="w-5 h-5" />
                                         <span>Download PDF</span>
                                     </button>
                                 <button
                                     onClick={handleFilter}
-                                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-sm flex items-center"
+                                    className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-2 px-4 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 text-sm flex items-center"
                                 >
                                     <Filter className="w-4 h-4 mr-2" />
                                     Apply Filters
@@ -319,9 +324,9 @@ export default function TransactionReports({ auth, filters, user, transactions, 
                     </div>
 
                     {/* Transactions Table */}
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div className="p-0">
-                            <h3 className="text-lg font-medium text-gray-900 mb-0">Transaction History</h3>
+                    <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-xl border border-gray-200">
+                        <div className="p-8">
+                            <h3 className="text-lg font-medium text-gray-900 mb-6">Transaction History</h3>
 
                             {transactions.data.length > 0 ? (
                                 <div className="overflow-x-auto">
@@ -378,7 +383,7 @@ export default function TransactionReports({ auth, filters, user, transactions, 
                                                         {formatCurrency(transaction.net_amount || transaction.amount)}
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap">
-                                                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusBadge(transaction.status)}`}>
+                                                        <span className={`inline-flex items-center px-3 py-1 rounded-xl text-sm font-semibold shadow-md ${getStatusBadge(transaction.status)}`}>
                                                             {transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}
                                                         </span>
                                                     </td>
@@ -425,6 +430,14 @@ export default function TransactionReports({ auth, filters, user, transactions, 
                     </div>
                 </div>
             </div>
+
+            <style>{`
+                body {
+                    background: white;
+                    color: #333;
+                    font-family: 'Inter', sans-serif;
+                }
+            `}</style>
         </AuthenticatedLayout>
     );
 }

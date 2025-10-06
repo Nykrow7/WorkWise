@@ -326,18 +326,23 @@ export default function JobShow({ job, canBid }) {
             }
         >
             <Head title={job.title} />
+            <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet" />
 
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div className="relative py-12 bg-white overflow-hidden">
+                {/* Animated Background Shapes */}
+                <div className="absolute top-0 left-0 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
+                <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-700/20 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
+
+                <div className="relative z-20 max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         {/* Main Content */}
                         <div className="lg:col-span-2 space-y-6">
                             {/* Job Description */}
-                            <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                                <div className="p-6">
-                                    <h3 className="text-lg font-semibold mb-4">Job Description</h3>
+                            <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-xl border border-gray-200">
+                                <div className="p-8">
+                                    <h3 className="text-2xl font-bold text-gray-900 mb-6">Job Description</h3>
                                     <div className="prose max-w-none">
-                                        <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">
+                                        <p className="text-gray-700 whitespace-pre-wrap leading-relaxed text-lg">
                                             {job.description}
                                         </p>
                                     </div>
@@ -345,12 +350,12 @@ export default function JobShow({ job, canBid }) {
                             </div>
 
                             {/* Required Skills */}
-                            <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                                <div className="p-6">
-                                    <h3 className="text-lg font-semibold mb-4">Required Skills</h3>
-                                    <div className="flex flex-wrap gap-2">
+                            <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-xl border border-gray-200">
+                                <div className="p-8">
+                                    <h3 className="text-2xl font-bold text-gray-900 mb-6">Required Skills</h3>
+                                    <div className="flex flex-wrap gap-3">
                                         {parseSkills(job?.required_skills || []).map((skill, index) => (
-                                            <span key={index} className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                                            <span key={index} className="inline-flex items-center px-4 py-2 rounded-xl text-sm font-semibold bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 shadow-md hover:shadow-lg transition-all duration-300">
                                                 {skill}
                                             </span>
                                         ))}
@@ -360,14 +365,14 @@ export default function JobShow({ job, canBid }) {
 
                             {/* Proposals Section */}
                             {job.bids && Array.isArray(job.bids) && job.bids.length > 0 && (isJobOwner || !isEmployer) && (
-                                <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                                    <div className="p-6">
-                                        <h3 className="text-lg font-semibold mb-4">
+                                <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-xl border border-gray-200">
+                                    <div className="p-8">
+                                        <h3 className="text-2xl font-bold text-gray-900 mb-6">
                                             Proposals ({job.bids.length})
                                         </h3>
-                                        <div className="space-y-4">
+                                        <div className="space-y-6">
                                             {job.bids.map((bid) => (
-                                                <div key={bid.id} className="border border-gray-200 rounded-lg p-4">
+                                                <div key={bid.id} className="bg-gradient-to-br from-blue-50 to-white border border-blue-200 rounded-xl p-6 hover:shadow-lg transition-all duration-300">
                                                     <div className="flex items-start justify-between mb-3">
                                                         <div className="flex items-center space-x-3">
                                                             {getUserAvatar(bid.gig_worker)}
@@ -450,98 +455,128 @@ export default function JobShow({ job, canBid }) {
 
                             {/* Submit Proposal Form */}
                             {canBid && !isEmployer && (
-                                <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                                    <div className="p-6">
+                                <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-xl border border-gray-200 transform transition-all duration-500 ease-in-out">
+                                    <div className="p-8">
                                         {!showBidForm ? (
-                                            <div className="text-center">
-                                                <h3 className="text-lg font-semibold mb-2">Interested in this job?</h3>
-                                                <p className="text-gray-600 mb-4">
-                                                    Submit a proposal to get started
-                                                </p>
+                                            <div className="text-center transform transition-all duration-300 ease-in-out">
+                                                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-200 mb-6">
+                                                    <div className="text-4xl mb-4">💼</div>
+                                                    <h3 className="text-xl font-bold text-gray-900 mb-3">Interested in this job?</h3>
+                                                    <p className="text-gray-600 mb-6 text-lg">
+                                                        Submit a proposal to get started and showcase your skills
+                                                    </p>
+                                                </div>
                                                 <button
                                                     onClick={() => setShowBidForm(true)}
-                                                    className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                                    className="inline-flex items-center px-8 py-4 border border-transparent text-lg font-semibold rounded-xl shadow-lg text-white bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transform hover:scale-105 transition-all duration-300 ease-in-out hover:shadow-xl"
                                                 >
+                                                    <span className="mr-2"></span>
                                                     Submit a Proposal
                                                 </button>
                                             </div>
                                         ) : (
-                                            <div>
-                                                <h3 className="text-lg font-semibold mb-4">Submit Your Proposal</h3>
-                                                <form onSubmit={handleSubmitBid} className="space-y-4">
-                                                    <div className="grid grid-cols-2 gap-4">
-                                                        <div>
-                                                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                            <div className="transform transition-all duration-500 ease-in-out animate-in slide-in-from-right">
+                                                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-200 mb-6">
+                                                    <div className="flex items-center gap-3 mb-2">
+                                                        <span className="text-2xl">📝</span>
+                                                        <h3 className="text-xl font-bold text-gray-900">Submit Your Proposal</h3>
+                                                    </div>
+                                                    <p className="text-gray-600">
+                                                        Provide your best offer and explain why you're the perfect fit for this project
+                                                    </p>
+                                                </div>
+                                                <form onSubmit={handleSubmitBid} className="space-y-6">
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                        <div className="transform transition-all duration-300 ease-in-out hover:scale-[1.02]">
+                                                            <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                                                                <span className="text-green-500"></span>
                                                                 Your Bid Amount *
                                                             </label>
                                                             <div className="relative">
-                                                                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">₱</span>
+                                                                <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium">₱</span>
                                                                 <input
                                                                     type="number"
                                                                     value={data.bid_amount}
                                                                     onChange={(e) => setData('bid_amount', e.target.value)}
-                                                                    className="w-full pl-8 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                                                    className="w-full pl-10 pr-4 py-3 border-gray-300 rounded-xl shadow-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 ease-in-out hover:shadow-xl"
                                                                     placeholder="0.00"
                                                                     min="0"
                                                                     step="0.01"
                                                                     required
                                                                 />
                                                             </div>
-                                                            {errors.bid_amount && <p className="mt-1 text-sm text-red-600">{errors.bid_amount}</p>}
+                                                            {errors.bid_amount && <p className="mt-2 text-sm text-red-600 animate-pulse">{errors.bid_amount}</p>}
                                                         </div>
-                                                        <div>
-                                                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                        <div className="transform transition-all duration-300 ease-in-out hover:scale-[1.02]">
+                                                            <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                                                                <span className="text-blue-500"></span>
                                                                 Delivery Time (Days) *
                                                             </label>
                                                             <input
                                                                 type="number"
                                                                 value={data.estimated_days}
                                                                 onChange={(e) => setData('estimated_days', e.target.value)}
-                                                                className="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                                                className="w-full px-4 py-3 border-gray-300 rounded-xl shadow-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 ease-in-out hover:shadow-xl"
                                                                 placeholder="e.g., 7"
                                                                 min="1"
                                                                 required
                                                             />
-                                                            {errors.estimated_days && <p className="mt-1 text-sm text-red-600">{errors.estimated_days}</p>}
+                                                            {errors.estimated_days && <p className="mt-2 text-sm text-red-600 animate-pulse">{errors.estimated_days}</p>}
                                                         </div>
                                                     </div>
-                                                    <div>
-                                                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                    <div className="transform transition-all duration-300 ease-in-out hover:scale-[1.01]">
+                                                        <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                                                            <span className="text-purple-500"></span>
                                                             Cover Letter *
                                                         </label>
-                                                        <textarea
-                                                            value={data.proposal_message}
-                                                            onChange={(e) => setData('proposal_message', e.target.value)}
-                                                            rows={6}
-                                                            className="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                                                            placeholder="Explain why you're the best fit for this job. Include relevant experience, your approach, and any questions you have..."
-                                                            required
-                                                        />
-                                                        <p className="mt-1 text-sm text-gray-500">
-                                                            Minimum 50 characters. Be specific about your experience and approach.
-                                                        </p>
-                                                        {errors.proposal_message && <p className="mt-1 text-sm text-red-600">{errors.proposal_message}</p>}
+                                                        <div className="relative">
+                                                            <textarea
+                                                                value={data.proposal_message}
+                                                                onChange={(e) => setData('proposal_message', e.target.value)}
+                                                                rows={6}
+                                                                className="w-full px-4 py-3 border-gray-300 rounded-xl shadow-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 ease-in-out hover:shadow-xl resize-none"
+                                                                placeholder="Explain why you're the best fit for this job. Include relevant experience, your approach, and any questions you have..."
+                                                                required
+                                                            />
+                                                            <div className="absolute bottom-3 right-3 text-xs text-gray-400 bg-white px-2 py-1 rounded-md shadow-sm">
+                                                                {data.proposal_message?.length || 0} characters
+                                                            </div>
+                                                        </div>
+                                                        <div className="mt-2 flex items-center gap-2">
+                                                            <span className="text-xs text-gray-500 bg-blue-50 px-3 py-1 rounded-full">
+                                                                💡 Tip: Minimum 50 characters. Be specific about your experience and approach.
+                                                            </span>
+                                                        </div>
+                                                        {errors.proposal_message && <p className="mt-2 text-sm text-red-600 animate-pulse">{errors.proposal_message}</p>}
                                                     </div>
-                                                    <div className="flex items-center justify-between pt-4">
+                                                    <div className="flex items-center justify-between pt-6 border-t border-gray-200">
                                                         <button
                                                             type="button"
                                                             onClick={() => setShowBidForm(false)}
-                                                            className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                                            className="inline-flex items-center px-6 py-3 border border-gray-300 shadow-lg text-sm font-semibold rounded-xl text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transform hover:scale-105 transition-all duration-300 ease-in-out hover:shadow-xl"
                                                         >
+                                                            <span className="mr-2">❌</span>
                                                             Cancel
                                                         </button>
                                                         <button
                                                             type="submit"
                                                             disabled={processing}
-                                                            className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                                                            className={`inline-flex items-center px-8 py-4 border border-transparent text-lg font-bold rounded-xl shadow-lg text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transform transition-all duration-300 ease-in-out ${
+                                                                processing
+                                                                    ? 'bg-gradient-to-r from-gray-400 to-gray-500 cursor-not-allowed scale-95'
+                                                                    : 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 hover:scale-105 hover:shadow-xl'
+                                                            }`}
                                                         >
                                                             {processing ? (
                                                                 <div className="flex items-center">
-                                                                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                                                                    Submitting...
+                                                                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
+                                                                    <span className="animate-pulse">Submitting...</span>
                                                                 </div>
                                                             ) : (
-                                                                'Submit Proposal'
+                                                                <>
+                                                                    <span className="mr-2">🚀</span>
+                                                                    Submit Proposal
+                                                                </>
                                                             )}
                                                         </button>
                                                     </div>
@@ -554,35 +589,35 @@ export default function JobShow({ job, canBid }) {
                         </div>
 
                         {/* Sidebar */}
-                        <div className="space-y-6">
+                        <div className="space-y-8">
                             {/* Job Details */}
-                            <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                                <div className="p-6">
-                                    <h3 className="text-lg font-semibold mb-4">Job Details</h3>
-                                    <div className="space-y-4">
-                                        <div>
-                                            <dt className="text-sm font-medium text-gray-500">Budget</dt>
-                                            <dd className="mt-1 text-lg font-semibold text-green-600">
+                            <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-xl border border-gray-200">
+                                <div className="p-8">
+                                    <h3 className="text-2xl font-bold text-gray-900 mb-6">Job Details</h3>
+                                    <div className="space-y-6">
+                                        <div className="bg-gradient-to-br from-blue-50 to-white p-4 rounded-xl border border-blue-100">
+                                            <dt className="text-sm font-medium text-blue-600 mb-2">Budget</dt>
+                                            <dd className="text-xl font-bold text-green-600">
                                                 {getBudgetDisplay()}
                                             </dd>
                                         </div>
-                                        <div>
-                                            <dt className="text-sm font-medium text-gray-500">Project Duration</dt>
-                                            <dd className="mt-1 text-sm text-gray-900">
+                                        <div className="bg-gradient-to-br from-blue-50 to-white p-4 rounded-xl border border-blue-100">
+                                            <dt className="text-sm font-medium text-blue-600 mb-2">Project Duration</dt>
+                                            <dd className="text-lg font-semibold text-gray-900">
                                                 {job.estimated_duration_days} days
                                             </dd>
                                         </div>
-                                        <div>
-                                            <dt className="text-sm font-medium text-gray-500">Experience Level</dt>
+                                        <div className="bg-gradient-to-br from-blue-50 to-white p-4 rounded-xl border border-blue-100">
+                                            <dt className="text-sm font-medium text-blue-600 mb-2">Experience Level</dt>
                                             <dd className="mt-1">
-                                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getExperienceBadge(job.experience_level)}`}>
+                                                <span className={`inline-flex items-center px-3 py-1 rounded-xl text-sm font-semibold shadow-md ${getExperienceBadge(job.experience_level)}`}>
                                                     {job.experience_level}
                                                 </span>
                                             </dd>
                                         </div>
-                                        <div>
-                                            <dt className="text-sm font-medium text-gray-500">Location</dt>
-                                            <dd className="mt-1 text-sm text-gray-900">
+                                        <div className="bg-gradient-to-br from-blue-50 to-white p-4 rounded-xl border border-blue-100">
+                                            <dt className="text-sm font-medium text-blue-600 mb-2">Location</dt>
+                                            <dd className="text-lg font-semibold text-gray-900">
                                                 {job.is_remote ? '🌐 Remote Work' : `📍 ${job.location || 'Lapu-Lapu City'}`}
                                             </dd>
                                         </div>
@@ -697,6 +732,14 @@ export default function JobShow({ job, canBid }) {
                 onClose={() => setShowMessagesModal(false)}
                 initialUserId={selectedUserId}
             />
+
+            <style>{`
+                body {
+                    background: white;
+                    color: #333;
+                    font-family: 'Inter', sans-serif;
+                }
+            `}</style>
         </AuthenticatedLayout>
     );
 }

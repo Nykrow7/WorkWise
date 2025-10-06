@@ -13,15 +13,15 @@ const ConfirmationModal = ({ isOpen, onClose, onConfirm, title, message, confirm
             <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
                 {/* Background overlay */}
                 <div
-                    className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+                    className="fixed inset-0 bg-blue-900/20 backdrop-blur-sm transition-opacity"
                     onClick={onClose}
                 ></div>
 
                 {/* Modal panel */}
-                <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-                    <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div className="inline-block align-bottom bg-white/95 backdrop-blur-sm rounded-xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-gray-200">
+                    <div className="bg-gradient-to-br from-white to-blue-50 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                         <div className="sm:flex sm:items-start">
-                            <div className={`mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full ${confirmColor === 'green' ? 'bg-green-100' : confirmColor === 'gray' ? 'bg-gray-100' : 'bg-red-100'} sm:mx-0 sm:h-10 sm:w-10`}>
+                            <div className={`mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-xl shadow-lg ${confirmColor === 'green' ? 'bg-gradient-to-br from-green-100 to-green-200' : confirmColor === 'gray' ? 'bg-gradient-to-br from-gray-100 to-gray-200' : 'bg-gradient-to-br from-red-100 to-red-200'} sm:mx-0 sm:h-10 sm:w-10`}>
                                 {confirmColor === 'green' ? (
                                     <svg className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
@@ -48,17 +48,17 @@ const ConfirmationModal = ({ isOpen, onClose, onConfirm, title, message, confirm
                             </div>
                         </div>
                     </div>
-                    <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <div className="bg-gradient-to-r from-gray-50 to-blue-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                         <button
                             type="button"
                             onClick={onConfirm}
                             disabled={isLoading}
-                            className={`w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 text-base font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed ${
+                            className={`w-full inline-flex justify-center rounded-xl border border-transparent shadow-lg px-6 py-3 text-base font-semibold text-white focus:outline-none focus:ring-2 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:shadow-xl transform hover:scale-105 disabled:transform-none ${
                                 confirmColor === 'green'
-                                    ? 'bg-green-600 hover:bg-green-700 focus:ring-green-500'
+                                    ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 focus:ring-green-500'
                                     : confirmColor === 'gray'
-                                    ? 'bg-gray-600 hover:bg-gray-700 focus:ring-gray-500'
-                                    : 'bg-red-600 hover:bg-red-700 focus:ring-red-500'
+                                    ? 'bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 focus:ring-gray-500'
+                                    : 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 focus:ring-red-500'
                             }`}
                         >
                             {isLoading ? (
@@ -75,7 +75,7 @@ const ConfirmationModal = ({ isOpen, onClose, onConfirm, title, message, confirm
                             type="button"
                             onClick={onClose}
                             disabled={isLoading}
-                            className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="mt-3 w-full inline-flex justify-center rounded-xl border border-gray-300 shadow-lg px-6 py-3 bg-white/70 backdrop-blur-sm text-base font-semibold text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:shadow-xl transform hover:scale-105 disabled:transform-none"
                         >
                             Cancel
                         </button>
@@ -269,13 +269,18 @@ export default function BidsIndex({ bids }) {
             }
         >
             <Head title={isGigWorker ? 'My Bids' : 'Bids on My Jobs'} />
+            <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet" />
 
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div className="relative py-12 bg-white overflow-hidden">
+                {/* Animated Background Shapes */}
+                <div className="absolute top-0 left-0 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
+                <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-700/20 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
+
+                <div className="relative z-20 max-w-7xl mx-auto sm:px-6 lg:px-8">
                     {bids.data.length > 0 ? (
                         <div className="space-y-6">
                             {bids.data.map((bid) => (
-                                <div key={bid.id} className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                                <div key={bid.id} className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-xl border border-gray-200">
                                     <div className="p-6">
                                         <div className="flex justify-between items-start mb-4">
                                             <div className="flex-1">
@@ -296,48 +301,66 @@ export default function BidsIndex({ bids }) {
                                                     <p>Submitted: {formatDate(bid.submitted_at)}</p>
                                                 </div>
                                             </div>
-                                            <span className={`px-3 py-1 text-sm rounded-full ${getStatusColor(bid.status)}`}>
+                                            <span className={`px-4 py-2 text-sm font-medium rounded-full shadow-md transition-all duration-300 ${getStatusColor(bid.status)}`}>
                                                 {bid.status.charAt(0).toUpperCase() + bid.status.slice(1)}
                                             </span>
                                         </div>
 
-                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                                            <div>
-                                                <span className="text-sm text-gray-500">Bid Amount:</span>
-                                                <p className="font-medium">₱{formatAmount(bid.bid_amount)}</p>
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                                            <div className="bg-gradient-to-br from-blue-50 to-white p-4 rounded-xl border border-blue-100">
+                                                <span className="text-sm font-medium text-blue-600">Bid Amount:</span>
+                                                <p className="text-lg font-bold text-gray-900 mt-1">₱{formatAmount(bid.bid_amount)}</p>
                                             </div>
-                                            <div>
-                                                <span className="text-sm text-gray-500">Estimated Days:</span>
-                                                <p className="font-medium">{bid.estimated_days} days</p>
+                                            <div className="bg-gradient-to-br from-blue-50 to-white p-4 rounded-xl border border-blue-100">
+                                                <span className="text-sm font-medium text-blue-600">Estimated Days:</span>
+                                                <p className="text-lg font-bold text-gray-900 mt-1">{bid.estimated_days} days</p>
                                             </div>
-                                            <div>
-                                                <span className="text-sm text-gray-500">Job Budget:</span>
-                                                <p className="font-medium">{bid.job.budget_display}</p>
+                                            <div className="bg-gradient-to-br from-blue-50 to-white p-4 rounded-xl border border-blue-100">
+                                                <span className="text-sm font-medium text-blue-600">Job Budget:</span>
+                                                <p className="text-lg font-bold text-gray-900 mt-1">{bid.job.budget_display}</p>
                                             </div>
                                         </div>
 
-                                        <div className="mb-4">
-                                            <span className="text-sm text-gray-500">Proposal:</span>
-                                            <p className="text-gray-700 mt-1">{bid.proposal_message}</p>
+                                        <div className="mb-6">
+                                            <span className="text-sm font-medium text-blue-600 mb-2 block">Proposal:</span>
+                                            <div className="bg-gradient-to-r from-gray-50 to-blue-50 p-4 rounded-xl border border-gray-200">
+                                                <p className="text-gray-700 leading-relaxed">{bid.proposal_message}</p>
+                                            </div>
                                         </div>
 
                                         {!isGigWorker && bid.status === 'pending' && (
-                                            <div className="flex space-x-3">
+                                            <div className="flex space-x-4">
                                                 <button
                                                     type="button"
                                                     onClick={() => handleBidAction(bid.id, 'accept')}
                                                     disabled={processing}
-                                                    className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                                                    className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                                                 >
-                                                    {processing ? 'Processing...' : 'Accept Bid'}
+                                                    {processing ? (
+                                                        <span className="flex items-center">
+                                                            <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                            </svg>
+                                                            Processing...
+                                                        </span>
+                                                    ) : 'Accept Bid'}
                                                 </button>
                                                 <button
                                                     type="button"
                                                     onClick={() => handleBidAction(bid.id, 'reject')}
                                                     disabled={processing}
-                                                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                                                    className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                                                 >
-                                                    {processing ? 'Processing...' : 'Reject Bid'}
+                                                    {processing ? (
+                                                        <span className="flex items-center">
+                                                            <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                            </svg>
+                                                            Processing...
+                                                        </span>
+                                                    ) : 'Reject Bid'}
                                                 </button>
                                             </div>
                                         )}
@@ -347,9 +370,17 @@ export default function BidsIndex({ bids }) {
                                                 type="button"
                                                 onClick={() => handleBidAction(bid.id, 'withdraw')}
                                                 disabled={processing}
-                                                className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                                                className="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                                             >
-                                                {processing ? 'Processing...' : 'Withdraw Bid'}
+                                                {processing ? (
+                                                    <span className="flex items-center">
+                                                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                        </svg>
+                                                        Processing...
+                                                    </span>
+                                                ) : 'Withdraw Bid'}
                                             </button>
                                         )}
                                     </div>
@@ -357,19 +388,30 @@ export default function BidsIndex({ bids }) {
                             ))}
                         </div>
                     ) : (
-                        <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                            <div className="p-6 text-center">
-                                <p className="text-gray-500 text-lg mb-4">
+                        <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-xl border border-gray-200">
+                            <div className="p-12 text-center">
+                                <div className="w-24 h-24 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center mx-auto mb-6">
+                                    <svg className="w-12 h-12 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    </svg>
+                                </div>
+                                <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                                    {isGigWorker ? "No Bids Yet" : "No Bids Received"}
+                                </h3>
+                                <p className="text-gray-600 text-lg mb-8 max-w-md mx-auto leading-relaxed">
                                     {isGigWorker
-                                        ? "You haven't submitted any bids yet."
-                                        : "No bids have been submitted on your jobs yet."
+                                        ? "You haven't submitted any bids yet. Start exploring opportunities and submit your first proposal!"
+                                        : "No bids have been submitted on your jobs yet. Your posted jobs will receive proposals here."
                                     }
                                 </p>
                                 {isGigWorker && (
                                     <Link
                                         href={route('jobs.index')}
-                                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                                        className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-4 px-8 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 inline-flex items-center"
                                     >
+                                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                        </svg>
                                         Browse Jobs
                                     </Link>
                                 )}
@@ -379,24 +421,24 @@ export default function BidsIndex({ bids }) {
 
                     {/* Pagination */}
                     {bids.links && (
-                        <div className="mt-6 flex justify-center">
-                            <div className="flex space-x-1">
+                        <div className="mt-8 flex justify-center">
+                            <div className="flex space-x-2">
                                 {bids.links.map((link, index) => (
                                     link.url ? (
                                     <Link
                                         key={index}
                                         href={link.url}
-                                        className={`px-3 py-2 text-sm rounded ${
+                                        className={`px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 ${
                                             link.active
-                                                ? 'bg-blue-500 text-white'
-                                                : 'bg-white text-gray-700 hover:bg-gray-50'
+                                                ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg transform scale-105'
+                                                : 'bg-white/70 backdrop-blur-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 border border-gray-200 hover:border-blue-300 hover:shadow-md'
                                             }`}
                                             dangerouslySetInnerHTML={{ __html: link.label }}
                                         />
                                     ) : (
                                         <span
                                             key={index}
-                                            className="px-3 py-2 text-sm rounded bg-gray-100 text-gray-400 cursor-not-allowed"
+                                            className="px-4 py-3 text-sm font-medium rounded-xl bg-gray-100/70 backdrop-blur-sm text-gray-400 cursor-not-allowed border border-gray-200"
                                         dangerouslySetInnerHTML={{ __html: link.label }}
                                     />
                                     )
@@ -406,6 +448,14 @@ export default function BidsIndex({ bids }) {
                     )}
                 </div>
             </div>
+
+            <style>{`
+                body {
+                    background: white;
+                    color: #333;
+                    font-family: 'Inter', sans-serif;
+                }
+            `}</style>
 
             {/* Confirmation Modal */}
             <ConfirmationModal

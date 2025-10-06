@@ -30,8 +30,8 @@ export default function FreelancerDashboard({ overview, monthly_earnings, recent
         };
 
         return (
-            <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div className="p-6">
+            <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-xl border border-gray-200">
+                <div className="p-8">
                     <div className="flex items-center">
                         <div className="flex-shrink-0">
                             <div className={`w-8 h-8 ${colorClasses[color]} rounded-full flex items-center justify-center`}>
@@ -68,13 +68,13 @@ export default function FreelancerDashboard({ overview, monthly_earnings, recent
                     <div className="flex space-x-2">
                         <Link
                             href="/analytics/earnings"
-                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-sm"
+                            className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-2 px-4 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 text-sm"
                         >
                             Detailed Reports
                         </Link>
                         <a
                             href="/analytics/export?type=earnings&period=12months&format=pdf"
-                            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded text-sm"
+                            className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-2 px-4 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 text-sm"
                             download
                         >
                             Export PDF
@@ -84,9 +84,14 @@ export default function FreelancerDashboard({ overview, monthly_earnings, recent
             }
         >
             <Head title="Analytics Dashboard" />
+            <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet" />
 
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+            <div className="relative py-12 bg-white overflow-hidden">
+                {/* Animated Background Shapes */}
+                <div className="absolute top-0 left-0 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
+                <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-700/20 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
+
+                <div className="relative z-20 max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
                     
                     {/* Overview Stats */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
@@ -123,8 +128,8 @@ export default function FreelancerDashboard({ overview, monthly_earnings, recent
                     </div>
 
                     {/* Earnings Chart */}
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div className="p-6">
+                    <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-xl border border-gray-200">
+                        <div className="p-8">
                             <h3 className="text-lg font-medium text-gray-900 mb-4">Monthly Earnings</h3>
                             <div className="h-80">
                                 <ResponsiveContainer width="100%" height="100%">
@@ -150,8 +155,8 @@ export default function FreelancerDashboard({ overview, monthly_earnings, recent
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         {/* Skills Performance */}
-                        <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                            <div className="p-6">
+                        <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-xl border border-gray-200">
+                            <div className="p-8">
                                 <h3 className="text-lg font-medium text-gray-900 mb-4">Top Earning Skills</h3>
                                 <div className="h-80">
                                     <ResponsiveContainer width="100%" height="100%">
@@ -170,13 +175,13 @@ export default function FreelancerDashboard({ overview, monthly_earnings, recent
                         </div>
 
                         {/* Recent Projects */}
-                        <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                            <div className="p-6">
+                        <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-xl border border-gray-200">
+                            <div className="p-8">
                                 <div className="flex justify-between items-center mb-4">
                                     <h3 className="text-lg font-medium text-gray-900">Recent Projects</h3>
                                     <Link
                                         href="/analytics/projects"
-                                        className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                                        className="text-blue-600 hover:text-blue-800 text-sm font-semibold hover:scale-105 transition-all duration-300"
                                     >
                                         View All
                                     </Link>
@@ -184,7 +189,7 @@ export default function FreelancerDashboard({ overview, monthly_earnings, recent
                                 <div className="space-y-4">
                                     {recent_projects.length > 0 ? (
                                         recent_projects.map((project) => (
-                                            <div key={project.id} className="border-l-4 border-blue-500 pl-4">
+                                            <div key={project.id} className="border-l-4 border-blue-500 pl-6 bg-gradient-to-r from-blue-50/50 to-transparent rounded-r-lg py-3">
                                                 <div className="flex justify-between items-start">
                                                     <div>
                                                         <h4 className="font-medium text-gray-900">
@@ -217,13 +222,13 @@ export default function FreelancerDashboard({ overview, monthly_earnings, recent
                     </div>
 
                     {/* Quick Actions */}
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div className="p-6">
+                    <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-xl border border-gray-200">
+                        <div className="p-8">
                             <h3 className="text-lg font-medium text-gray-900 mb-4">Quick Actions</h3>
                             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                                 <Link
                                     href="/analytics/earnings"
-                                    className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                                    className="flex items-center p-6 border border-gray-200 rounded-xl hover:bg-gray-50 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
                                 >
                                     <CurrencyDollarIcon className="w-8 h-8 text-green-500 mr-3" />
                                     <div>
@@ -234,7 +239,7 @@ export default function FreelancerDashboard({ overview, monthly_earnings, recent
                                 
                                 <Link
                                     href="/analytics/projects"
-                                    className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                                    className="flex items-center p-6 border border-gray-200 rounded-xl hover:bg-gray-50 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
                                 >
                                     <ClipboardDocumentListIcon className="w-8 h-8 text-blue-500 mr-3" />
                                     <div>
@@ -245,7 +250,7 @@ export default function FreelancerDashboard({ overview, monthly_earnings, recent
                                 
                                 <Link
                                     href="/analytics/performance"
-                                    className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                                    className="flex items-center p-6 border border-gray-200 rounded-xl hover:bg-gray-50 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
                                 >
                                     <ChartBarIcon className="w-8 h-8 text-purple-500 mr-3" />
                                     <div>
@@ -256,7 +261,7 @@ export default function FreelancerDashboard({ overview, monthly_earnings, recent
                                 
                                 <a
                                     href="/analytics/export?type=projects&period=12months&format=pdf"
-                                    className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                                    className="flex items-center p-6 border border-gray-200 rounded-xl hover:bg-gray-50 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
                                     download
                                 >
                                     <ArrowTrendingUpIcon className="w-8 h-8 text-indigo-500 mr-3" />
@@ -270,6 +275,14 @@ export default function FreelancerDashboard({ overview, monthly_earnings, recent
                     </div>
                 </div>
             </div>
+
+            <style>{`
+                body {
+                    background: white;
+                    color: #333;
+                    font-family: 'Inter', sans-serif;
+                }
+            `}</style>
         </AuthenticatedLayout>
     );
 }

@@ -62,11 +62,16 @@ export default function ReportsIndex({ reports = { data: [] } }) {
             }
         >
             <Head title="My Reports" />
+            <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet" />
 
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div className="relative py-12 bg-white overflow-hidden">
+                {/* Animated Background Shapes */}
+                <div className="absolute top-0 left-0 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
+                <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-700/20 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
+
+                <div className="relative z-20 max-w-7xl mx-auto sm:px-6 lg:px-8">
                     {/* Safety Information */}
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
+                    <div className="bg-gradient-to-br from-blue-50 to-white border border-blue-200 rounded-xl p-8 mb-8 shadow-lg">
                         <div className="flex">
                             <div className="flex-shrink-0">
                                 <span className="text-blue-400 text-xl">🛡️</span>
@@ -83,8 +88,8 @@ export default function ReportsIndex({ reports = { data: [] } }) {
                     </div>
 
                     {/* Transaction Reports Section */}
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-8">
-                        <div className="p-6">
+                    <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-xl border border-gray-200 mb-8">
+                        <div className="p-8">
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center space-x-3">
                                     <div className="text-2xl">💰</div>
@@ -99,7 +104,7 @@ export default function ReportsIndex({ reports = { data: [] } }) {
                                 </div>
                                 <Link
                                     href="/reports/transactions"
-                                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                    className="inline-flex items-center px-6 py-3 border border-transparent text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                                 >
                                     View Transactions
                                 </Link>
@@ -108,8 +113,8 @@ export default function ReportsIndex({ reports = { data: [] } }) {
                     </div>
 
                     {!reports?.data?.length ? (
-                        <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                            <div className="p-12 text-center">
+                        <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-xl border border-gray-200">
+                            <div className="p-16 text-center">
                                 <div className="text-6xl mb-4">🛡️</div>
                                 <h3 className="text-lg font-medium text-gray-900 mb-2">
                                     No reports submitted
@@ -118,7 +123,7 @@ export default function ReportsIndex({ reports = { data: [] } }) {
                                     If you encounter any suspicious behavior or violations, don't hesitate to report them.
                                 </p>
                                 <div className="space-y-4">
-                                    <div className="bg-gray-50 rounded-lg p-4">
+                                    <div className="bg-gradient-to-br from-blue-50 to-white rounded-xl p-6 border border-blue-100 shadow-md">
                                         <h4 className="font-medium text-gray-900 mb-2">When to report:</h4>
                                         <ul className="text-sm text-gray-600 space-y-1">
                                             <li>• Fraudulent or scam activities</li>
@@ -134,8 +139,8 @@ export default function ReportsIndex({ reports = { data: [] } }) {
                     ) : (
                         <div className="space-y-6">
                             {reports.data.map((report) => (
-                                <div key={report.id} className="bg-white overflow-hidden shadow-sm sm:rounded-lg hover:shadow-md transition-shadow">
-                                    <div className="p-6">
+                                <div key={report.id} className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-xl border border-gray-200">
+                                    <div className="p-8">
                                         <div className="flex items-start justify-between">
                                             <div className="flex-1">
                                                 <div className="flex items-center space-x-3 mb-3">
@@ -164,7 +169,7 @@ export default function ReportsIndex({ reports = { data: [] } }) {
                                                 </div>
 
                                                 {report.project && (
-                                                    <div className="mb-4 bg-gray-50 p-3 rounded-lg">
+                                                    <div className="mb-4 bg-gradient-to-br from-blue-50 to-white p-4 rounded-xl border border-blue-100">
                                                         <div className="text-sm text-gray-600">Related Project:</div>
                                                         <div className="font-medium text-gray-900">
                                                             {report.project.job.title}
@@ -188,7 +193,7 @@ export default function ReportsIndex({ reports = { data: [] } }) {
 
                                                 <div className="flex items-center justify-between">
                                                     <div className="flex items-center space-x-3">
-                                                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusBadge(report.status)}`}>
+                                                        <span className={`inline-flex items-center px-3 py-1 rounded-xl text-sm font-semibold shadow-md ${getStatusBadge(report.status)}`}>
                                                             {getStatusIcon(report.status)} {report.status.charAt(0).toUpperCase() + report.status.slice(1)}
                                                         </span>
                                                         {report.resolved_at && (
@@ -200,7 +205,7 @@ export default function ReportsIndex({ reports = { data: [] } }) {
                                                     <div className="flex items-center space-x-2">
                                                         <Link
                                                             href={`/reports/${report.id}`}
-                                                            className="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                                            className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-lg text-sm font-semibold rounded-xl text-gray-700 bg-white hover:bg-gray-50 hover:shadow-xl transform hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                                                         >
                                                             View Details
                                                         </Link>
@@ -273,8 +278,8 @@ export default function ReportsIndex({ reports = { data: [] } }) {
                     )}
 
                     {/* Report Guidelines */}
-                    <div className="mt-8 bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div className="p-6">
+                    <div className="mt-8 bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-xl border border-gray-200">
+                        <div className="p-8">
                             <h3 className="text-lg font-semibold mb-4">📋 Reporting Guidelines</h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
@@ -324,6 +329,14 @@ export default function ReportsIndex({ reports = { data: [] } }) {
                     </div>
                 </div>
             </div>
+
+            <style>{`
+                body {
+                    background: white;
+                    color: #333;
+                    font-family: 'Inter', sans-serif;
+                }
+            `}</style>
         </AuthenticatedLayout>
     );
 }
