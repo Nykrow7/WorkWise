@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Head, useForm, usePage } from '@inertiajs/react';
+import { Head, useForm, usePage, Link } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { formatDistanceToNow } from 'date-fns';
+
 import axios from 'axios';
 
 // Enhanced Loading Components
@@ -233,44 +233,9 @@ export default function Conversation({ user, messages, currentUser }) {
         }
     };
 
-    const getUserAvatar = (messageUser) => {
-        if (messageUser.profile_photo) {
-            return (
-                <img
-                    src={`/storage/${messageUser.profile_photo}`}
-                    alt={`${messageUser.first_name} ${messageUser.last_name}`}
-                    className="h-8 w-8 rounded-full object-cover"
-                />
-            );
-        }
-        
-        const initials = `${messageUser.first_name[0]}${messageUser.last_name[0]}`.toUpperCase();
-        const colors = [
-            'bg-red-500', 'bg-blue-500', 'bg-green-500', 'bg-yellow-500', 
-            'bg-purple-500', 'bg-pink-500', 'bg-indigo-500'
-        ];
-        const colorIndex = messageUser.id % colors.length;
-        
-        return (
-            <div className={`h-8 w-8 rounded-full ${colors[colorIndex]} flex items-center justify-center text-white text-xs font-semibold`}>
-                {initials}
-            </div>
-        );
-    };
 
-    const formatMessageTime = (timestamp) => {
-        const date = new Date(timestamp);
-        const now = new Date();
-        const diffInHours = (now - date) / (1000 * 60 * 60);
-        
-        if (diffInHours < 24) {
-            return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        } else if (diffInHours < 168) { // 7 days
-            return date.toLocaleDateString([], { weekday: 'short', hour: '2-digit', minute: '2-digit' });
-        } else {
-            return date.toLocaleDateString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-        }
-    };
+
+
 
     const formatMessageTime = (timestamp) => {
         const date = new Date(timestamp);
@@ -326,7 +291,6 @@ export default function Conversation({ user, messages, currentUser }) {
                                         </a>
                                     </div>
                                 </div>
-                            </div>
                         ) : (
                             <div className="whitespace-pre-wrap leading-relaxed">{message.message}</div>
                         )}

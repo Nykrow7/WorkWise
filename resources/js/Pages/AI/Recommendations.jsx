@@ -1,9 +1,35 @@
-import React from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
 export default function Recommendations({ recommendations, userType, hasError }) {
     const isGigWorker = userType === 'gig_worker';
+
+    // --- FILTER LOGIC & STATE ---
+    // Budget Filter state
+    const [minBudget, setMinBudget] = useState('');
+    const [maxBudget, setMaxBudget] = useState('');
+    // Experience / Level Filter state
+    const [level, setLevel] = useState('');
+    // Skills Filter state
+    const [selectedSkills, setSelectedSkills] = useState([]);
+    const [skillsDropdownOpen, setSkillsDropdownOpen] = useState(false);
+    // Skills fetched from backend
+    const [allSkills, setAllSkills] = useState([]);
+    const [skillsLoading, setSkillsLoading] = useState(false);
+    const [skillsError, setSkillsError] = useState(null);
+    useEffect(() => {
+        setSkillsLoading(true);
+        setSkillsError(null);
+        fetch('/api/ai-recommendation/skills')
+            .then(r => {
+                if (!r.ok) throw new Error('Failed to fetch skills');
+                return r.json();
+            })
+            .then(data => setAllSkills(data || []))
+            .catch(e => setSkillsError(e.message || 'Failed to load skills'))
+            .finally(() => setSkillsLoading(false));
+    }, []);
 
     const getMatchScoreColor = (score) => {
         if (score >= 80) return 'text-green-600';
@@ -277,6 +303,72 @@ export default function Recommendations({ recommendations, userType, hasError })
                 </div>
             ))}
         </div>
+    );
+
+    // --- Sidebar Filter UI (update Skill dropdown to use allSkills) ---
+    const FilterSidebar = () => (
+        <aside className="bg-white/80 backdrop-blur-xl border border-gray-200 rounded-2xl shadow-lg w-full max-w-xs mx-auto lg:mx-0 lg:w-80 px-6 py-8 sticky top-8 mb-8 lg:mb-0">
+            <h3 className="text-xl font-bold mb-6 text-gray-800">Filters</h3>
+            <div className="mb-5">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Experience Level</label>
+                <select
+                    className="block w-full mt-1 rounded-xl border-gray-300 shadow-sm focus:ring focus:ring-blue-200 text-gray-700"
+                    value={level} onChange={e => setLevel(e.target.value)}
+                >
+                    <option value="">Any</option>
+                    <option value="entry">Entry</option>
+                    <option value="junior">Junior</option>
+                    <option value="mid">Mid</option>
+                    <option value="senior">Senior</option>
+                </select>
+            </div>
+            <div className="mb-5">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Budget</label>
+                <div className="flex items-center gap-3">
+                    <input type="number" className="w-1/2 rounded-xl border-gray-300 shadow-sm" placeholder="Min"
+                        value={minBudget} onChange={e => setMinBudget(e.target.value)} />
+                    <span className="text-gray-400">-</span>
+                    <input type="number" className="w-1/2 rounded-xl border-gray-300 shadow-sm" placeholder="Max"
+                        value={maxBudget} onChange={e => setMaxBudget(e.target.value)} />
+                </div>
+            </div>
+            <div className="mb-5 relative">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Required Skills</label>
+                <button onClick={() => setSkillsDropdownOpen(v => !v)} type="button"
+                  className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2 shadow-sm flex justify-between items-center">
+                    <span className="truncate text-left">
+                        {selectedSkills.length ? `${selectedSkills.length} selected` : 'All Skills'}
+                    </span>
+                    <svg className={`w-5 h-5 ml-2 transition-transform ${skillsDropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" /></svg>
+                </button>
+                {skillsDropdownOpen && (
+                    <div className="absolute z-20 w-full mt-2 bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto animate-fadeIn">
+                        {skillsLoading ? (
+                            <span className="block p-3 text-blue-500">Loading...</span>
+                        ) : skillsError ? (
+                            <span className="block p-3 text-red-500">{skillsError}</span>
+                        ) : allSkills.length ? allSkills.map((skill, idx) => (
+                            <label key={skill+idx} className="block px-4 py-2 hover:bg-blue-50">
+                                <input
+                                    type="checkbox"
+                                    className="mr-2 align-middle"
+                                    checked={selectedSkills.includes(skill)}
+                                    onChange={e => {
+                                        if (e.target.checked) setSelectedSkills(arr => [...arr, skill])
+                                        else setSelectedSkills(arr => arr.filter(s => s !== skill));
+                                    }}
+                                />
+                                <span className="align-middle">{skill}</span>
+                            </label>
+                        )) : <span className="block p-3 text-gray-400">No skills found.</span>}
+                    </div>
+                )}
+            </div>
+            <button
+                onClick={() => { setLevel(''); setMinBudget(''); setMaxBudget(''); setSelectedSkills([]); }}
+                className="w-full mt-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold px-4 py-2 rounded-xl shadow transition"
+            >Reset Filters</button>
+        </aside>
     );
 
     return (

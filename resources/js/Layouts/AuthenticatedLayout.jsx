@@ -1,7 +1,7 @@
 "use client";
 import Dropdown from '@/Components/Dropdown';
 import MiniChatModal from '@/Components/MiniChatModal';
-import { Link, usePage } from '@inertiajs/react';
+import { Link, usePage, router } from '@inertiajs/react';
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 
@@ -69,6 +69,8 @@ export default function AuthenticatedLayout({ header, children }) {
         useState(false);
     const [showingNotificationsDropdown, setShowingNotificationsDropdown] =
         useState(false);
+    const [showingMessagesDropdown, setShowingMessagesDropdown] =
+        useState(false);
     const [notifications, setNotifications] = useState([]);
     const [unreadCount, setUnreadCount] = useState(0);
     const [loading, setLoading] = useState(false);
@@ -81,6 +83,8 @@ export default function AuthenticatedLayout({ header, children }) {
 
     // Messages modal removed; use MiniChatModal for all messaging
     const [messagesUnreadCount, setMessagesUnreadCount] = useState(0);
+    const [conversations, setConversations] = useState([]);
+    const [messagesLoading, setMessagesLoading] = useState(false);
 
     // Mini chat ref for controlling it from notifications
     const miniChatRef = useRef(null);
@@ -184,29 +188,38 @@ export default function AuthenticatedLayout({ header, children }) {
             markAsRead(notification.id);
         }
         
-        // Handle message-related notifications with MiniChat
+        // Handle message-related notifications by navigating to messages page
         if (notification.type === 'bid_accepted_messaging') {
             const targetUserId = notification.data?.message_target_user_id;
-            const userName = notification.data?.target_user_name;
-            const userAvatar = notification.data?.target_user_avatar;
-            
-            if (targetUserId && miniChatRef.current) {
-                miniChatRef.current.openConversation(targetUserId, userName, userAvatar);
-                miniChatRef.current.expandChat();
+            console.log('Bid accepted messaging notification - targetUserId:', targetUserId);
+
+            if (targetUserId) {
+                // Navigate to messages index with user parameter to open specific conversation
+                console.log('Navigating to messages with user:', targetUserId);
+                router.visit(`/messages?user=${targetUserId}`);
+            } else {
+                // Navigate to messages index if no specific user
+                console.log('No targetUserId found, navigating to messages index');
+                router.visit('/messages');
             }
         } else if (notification.type === 'new_message' || notification.type === 'message_received') {
-            // Handle regular message notifications - open MiniChat instead of redirecting
+            // Handle regular message notifications - navigate to conversation
             const senderId = notification.data?.sender_id;
-            const senderName = notification.data?.sender_name || 'User';
-            const senderAvatar = notification.data?.sender_avatar;
-            
-            if (senderId && miniChatRef.current) {
-                miniChatRef.current.openConversation(senderId, senderName, senderAvatar);
-                miniChatRef.current.expandChat();
+            console.log('Message notification - senderId:', senderId, 'notification data:', notification.data);
+
+            if (senderId) {
+                // Navigate to messages index with user parameter to open specific conversation
+                console.log('Navigating to messages with user:', senderId);
+                router.visit(`/messages?user=${senderId}`);
+            } else {
+                // Navigate to messages index if no specific sender
+                console.log('No senderId found, navigating to messages index');
+                router.visit('/messages');
             }
         } else if (notification.action_url) {
             // For other notification types, use the action URL
-            window.location.href = notification.action_url;
+            console.log('Using action URL:', notification.action_url);
+            router.visit(notification.action_url);
         }
         
         setShowingNotificationsDropdown(false);
@@ -221,15 +234,28 @@ export default function AuthenticatedLayout({ header, children }) {
             markAsRead(notification.id);
         }
 
-        // Get the target user info from notification data
-        const targetUserId = notification.data?.message_target_user_id;
-        const userName = notification.data?.target_user_name;
-        const userAvatar = notification.data?.target_user_avatar;
-        
-        if (targetUserId && miniChatRef.current) {
-            // Open mini chat modal with the conversation
-            miniChatRef.current.openConversation(targetUserId, userName, userAvatar);
-            miniChatRef.current.expandChat();
+        // Get the target user info from notification data based on notification type
+        let targetUserId;
+
+        if (notification.type === 'bid_accepted_messaging') {
+            targetUserId = notification.data?.message_target_user_id;
+        } else if (notification.type === 'new_message' || notification.type === 'message_received') {
+            targetUserId = notification.data?.sender_id;
+        } else {
+            // Fallback to message_target_user_id for other types
+            targetUserId = notification.data?.message_target_user_id;
+        }
+
+        console.log('Message button clicked - notification type:', notification.type, 'targetUserId:', targetUserId);
+
+        if (targetUserId) {
+            // Navigate to messages index with user parameter to open specific conversation
+            console.log('Navigating to messages with user:', targetUserId);
+            router.visit(`/messages?user=${targetUserId}`);
+        } else {
+            // Navigate to messages index if no specific user
+            console.log('No targetUserId found, navigating to messages index');
+            router.visit('/messages');
         }
 
         setShowingNotificationsDropdown(false);
@@ -265,14 +291,94 @@ export default function AuthenticatedLayout({ header, children }) {
         }
     };
 
-    // Handle messages button click - expand MiniChat
+    // Fetch conversations for messages dropdown
+    const fetchConversations = async () => {
+        try {
+            setMessagesLoading(true);
+            const response = await axios.get('/messages/recent/conversations');
+            setConversations(response.data.conversations || []);
+        } catch (error) {
+            console.error('Error fetching conversations:', error);
+        } finally {
+            setMessagesLoading(false);
+        }
+    };
+
+    // Handle messages button click - show dropdown and mark as read
     const handleMessagesButtonClick = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        console.log('Messages button clicked, expanding MiniChat');
-        if (miniChatRef.current) {
-            miniChatRef.current.expandChat();
+        setShowingMessagesDropdown(!showingMessagesDropdown);
+
+        if (!showingMessagesDropdown) {
+            fetchConversations();
+            // Mark all messages as read when opening the dropdown
+            if (messagesUnreadCount > 0) {
+                markAllMessagesAsRead();
+            }
         }
+    };
+
+    // Mark all messages as read
+    const markAllMessagesAsRead = async () => {
+        try {
+            // Mark all conversations as read by calling the backend for each conversation
+            const markPromises = conversations.map(async (conversation) => {
+                if (conversation.unread_count > 0) {
+                    try {
+                        await axios.patch(`/messages/conversation/${conversation.user.id}/read`);
+                    } catch (error) {
+                        console.error(`Error marking conversation ${conversation.user.id} as read:`, error);
+                    }
+                }
+            });
+
+            await Promise.all(markPromises);
+
+            // Update the unread count to 0
+            setMessagesUnreadCount(0);
+
+            // Update conversations to reflect read status
+            setConversations(prev =>
+                prev.map(conv => ({
+                    ...conv,
+                    unread_count: 0
+                }))
+            );
+        } catch (error) {
+            console.error('Error marking messages as read:', error);
+        }
+    };
+
+    // Handle conversation click
+    const handleConversationClick = async (conversation) => {
+        console.log('Conversation clicked:', conversation);
+
+        // Mark this conversation as read if it has unread messages
+        if (conversation.unread_count > 0) {
+            try {
+                await axios.patch(`/messages/conversation/${conversation.user.id}/read`);
+
+                // Update the unread count
+                const newUnreadCount = Math.max(0, messagesUnreadCount - conversation.unread_count);
+                setMessagesUnreadCount(newUnreadCount);
+
+                // Update this conversation's unread count
+                setConversations(prev =>
+                    prev.map(conv =>
+                        conv.user.id === conversation.user.id
+                            ? { ...conv, unread_count: 0 }
+                            : conv
+                    )
+                );
+            } catch (error) {
+                console.error('Error marking conversation as read:', error);
+            }
+        }
+
+        // Navigate to messages index with user parameter to open specific conversation
+        router.visit(`/messages?user=${conversation.user.id}`);
+        setShowingMessagesDropdown(false);
     };
 
     // Close dropdown when clicking outside
@@ -281,11 +387,14 @@ export default function AuthenticatedLayout({ header, children }) {
             if (showingNotificationsDropdown && !event.target.closest('.notifications-dropdown')) {
                 setShowingNotificationsDropdown(false);
             }
+            if (showingMessagesDropdown && !event.target.closest('.messages-dropdown')) {
+                setShowingMessagesDropdown(false);
+            }
         };
 
         document.addEventListener('click', handleClickOutside);
         return () => document.removeEventListener('click', handleClickOutside);
-    }, [showingNotificationsDropdown]);
+    }, [showingNotificationsDropdown, showingMessagesDropdown]);
 
 
     // Real-time polling for notifications
@@ -612,22 +721,167 @@ export default function AuthenticatedLayout({ header, children }) {
                                 )}
                             </div>
 
-                            {/* Messages Button */}
-                            {/* <div className="relative">
+                            {/* Enhanced Messages Dropdown */}
+                            <div className="relative">
                                 <button
                                     onClick={handleMessagesButtonClick}
-                                    className="p-2 text-gray-400 hover:text-gray-600 transition-colors relative"
+                                    className="relative p-2 text-gray-400 hover:text-gray-600 transition-all duration-200 hover:bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
                                 >
-                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                                     </svg>
                                     {messagesUnreadCount > 0 && (
-                                        <span className="notification-badge">
+                                        <span className="absolute -top-1 -right-1 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-500 rounded-full min-w-[1.25rem] h-5 animate-pulse">
                                             {messagesUnreadCount > 99 ? '99+' : messagesUnreadCount}
                                         </span>
                                     )}
                                 </button>
-                            </div> */}
+
+                                {/* Enhanced Messages Dropdown */}
+                                {showingMessagesDropdown && (
+                                    <div className="messages-dropdown absolute right-0 mt-3 w-96 bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden backdrop-blur-sm z-50">
+                                        {/* Header */}
+                                        <div className="px-6 py-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-100">
+                                            <div className="flex items-center justify-between">
+                                                <div className="flex items-center space-x-2">
+                                                    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                                                        <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                                                            <path fillRule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clipRule="evenodd" />
+                                                        </svg>
+                                                    </div>
+                                                    <div>
+                                                        <h3 className="text-base font-semibold text-gray-900">Messages</h3>
+                                                        {conversations.length > 0 && (
+                                                            <p className="text-xs text-gray-600">{conversations.length} conversations</p>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                                <Link
+                                                    href="/messages"
+                                                    onClick={(e) => {
+                                                        setShowingMessagesDropdown(false);
+                                                    }}
+                                                    className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-100 hover:bg-blue-200 rounded-lg transition-all duration-200 hover:scale-105"
+                                                >
+                                                    <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path fillRule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clipRule="evenodd" />
+                                                    </svg>
+                                                    Open Messages
+                                                </Link>
+                                            </div>
+                                        </div>
+
+                                        {/* Conversations List */}
+                                        <div className="max-h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+                                            {messagesLoading ? (
+                                                <div className="space-y-0">
+                                                    <LoadingSpinner />
+                                                    {/* Show skeleton loaders while loading */}
+                                                    <div className="space-y-0">
+                                                        {[...Array(3)].map((_, i) => (
+                                                            <NotificationSkeleton key={i} />
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            ) : conversations.length === 0 ? (
+                                                <div className="p-8 text-center">
+                                                    <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                                                        <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                                        </svg>
+                                                    </div>
+                                                    <h4 className="text-sm font-medium text-gray-900 mb-1">No conversations</h4>
+                                                    <p className="text-xs text-gray-500">Start a conversation to see it here!</p>
+                                                </div>
+                                            ) : (
+                                                <div className="divide-y divide-gray-100">
+                                                    {conversations.map((conversation) => (
+                                                        <div
+                                                            key={conversation.user.id}
+                                                            onClick={() => handleConversationClick(conversation)}
+                                                            className={`notification-item group relative p-4 cursor-pointer transition-all duration-300 hover:bg-gray-50 ${
+                                                                conversation.unread_count > 0 ? 'bg-blue-50/50 border-l-4 border-blue-500' : 'hover:bg-gray-25'
+                                                            }`}
+                                                        >
+                                                            <div className="flex items-start space-x-4">
+                                                                {/* User Avatar */}
+                                                                <div className="flex-shrink-0 relative">
+                                                                    <div className="w-10 h-10 rounded-full overflow-hidden shadow-sm transition-all duration-200 group-hover:scale-105">
+                                                                        {conversation.user.profile_photo ? (
+                                                                            <img
+                                                                                src={`/storage/${conversation.user.profile_photo}`}
+                                                                                alt={`${conversation.user.first_name} ${conversation.user.last_name}`}
+                                                                                className="w-full h-full object-cover"
+                                                                            />
+                                                                        ) : (
+                                                                            <div className="w-full h-full bg-blue-600 flex items-center justify-center text-white text-sm font-medium">
+                                                                                {conversation.user.first_name ? conversation.user.first_name.charAt(0).toUpperCase() : conversation.user.name.charAt(0).toUpperCase()}
+                                                                            </div>
+                                                                        )}
+                                                                    </div>
+                                                                    {conversation.unread_count > 0 && (
+                                                                        <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white animate-pulse"></div>
+                                                                    )}
+                                                                </div>
+
+                                                                {/* Content */}
+                                                                <div className="flex-1 min-w-0">
+                                                                    <div className="flex items-start justify-between">
+                                                                        <div className="flex-1 min-w-0">
+                                                                            <p className="text-sm font-semibold leading-5 text-gray-900 group-hover:text-gray-900 transition-colors">
+                                                                                {conversation.user.first_name && conversation.user.last_name
+                                                                                    ? `${conversation.user.first_name} ${conversation.user.last_name}`
+                                                                                    : conversation.user.name}
+                                                                            </p>
+                                                                            <p className="text-sm mt-1 leading-5 text-gray-600 group-hover:text-gray-700 transition-colors line-clamp-2">
+                                                                                {conversation.latest_message.type === 'file'
+                                                                                    ? `📎 ${conversation.latest_message.attachment_name || 'File attachment'}`
+                                                                                    : conversation.latest_message.message}
+                                                                            </p>
+                                                                            <div className="flex items-center mt-2 space-x-2">
+                                                                                <p className="text-xs text-gray-500 font-medium">
+                                                                                    {new Date(conversation.last_activity).toLocaleDateString('en-US', {
+                                                                                        month: 'short',
+                                                                                        day: 'numeric',
+                                                                                        hour: '2-digit',
+                                                                                        minute: '2-digit'
+                                                                                    })}
+                                                                                </p>
+                                                                                {conversation.unread_count > 0 && (
+                                                                                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                                                                        {conversation.unread_count} new
+                                                                                    </span>
+                                                                                )}
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            {/* Hover indicator */}
+                                                            <div className="absolute inset-y-0 right-0 w-1 bg-blue-500 transform scale-y-0 group-hover:scale-y-100 transition-transform duration-200 origin-center"></div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {/* Footer */}
+                                        <div className="px-6 py-4 bg-gray-50 border-t border-gray-100">
+                                            <Link
+                                                href="/messages"
+                                                className="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-blue-700 bg-blue-100 hover:bg-blue-200 rounded-lg transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+                                                onClick={() => setShowingMessagesDropdown(false)}
+                                            >
+                                                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                                </svg>
+                                                View all messages
+                                            </Link>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
 
                             {/* User Dropdown */}
                             <div className="relative">
@@ -651,6 +905,9 @@ export default function AuthenticatedLayout({ header, children }) {
                                         </div>
                                         <Dropdown.Link href="/profile">
                                             Profile Settings
+                                        </Dropdown.Link>
+                                        <Dropdown.Link href="/messages">
+                                            Messages
                                         </Dropdown.Link>
                                         <Dropdown.Link href={isEmployer ? '/employer/wallet' : '/gig-worker/wallet'}>
                                               {isEmployer ? 'Wallet' : 'Earnings'}
@@ -795,6 +1052,12 @@ export default function AuthenticatedLayout({ header, children }) {
                                 Profile Settings
                             </Link>
                             <Link
+                                href="/messages"
+                                className="block px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md transition-colors"
+                            >
+                                Messages
+                            </Link>
+                            <Link
                                 href={route('logout')}
                                 method="post"
                                 as="button"
@@ -809,14 +1072,8 @@ export default function AuthenticatedLayout({ header, children }) {
 
             <main className="flex-1">{children}</main>
 
-            {/* Messages Page Modal removed; MiniChatModal handles messaging */}
-
-            {/* Mini Chat Modal - always present */}
-            <MiniChatModal
-                ref={miniChatRef}
-                isOpen={true}
-                unreadCount={messagesUnreadCount}
-            />
+            {/* Messages Page Modal removed; MiniChatModal widget removed from UI */}
+            {/* MiniChatModal component preserved for potential use elsewhere but not rendered in main layout */}
         </div>
     );
 }

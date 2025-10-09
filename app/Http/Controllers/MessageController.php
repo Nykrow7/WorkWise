@@ -51,7 +51,9 @@ class MessageController extends Controller
                     'attachment_name' => $latestMessage->attachment_name,
                 ],
                 'unread_count' => $unreadCount,
-                'last_activity' => $latestMessage->created_at
+                'last_activity' => $latestMessage->created_at,
+                'last_message' => $latestMessage->message,
+                'status' => 'new_lead' // Default status, can be enhanced later with a conversations table
             ];
         })
         ->sortByDesc('last_activity')
@@ -323,5 +325,68 @@ class MessageController extends Controller
         ->get();
 
         return response()->json(['messages' => $messages]);
+    }
+
+    /**
+     * Mark all messages in a conversation as read
+     */
+    public function markConversationAsRead($userId)
+    {
+        $currentUserId = auth()->id();
+
+        // Mark all messages from the other user to current user as read
+        $updatedCount = Message::where('sender_id', $userId)
+            ->where('receiver_id', $currentUserId)
+            ->where('is_read', false)
+            ->update([
+                'is_read' => true,
+                'read_at' => now()
+            ]);
+
+        return response()->json([
+            'success' => true,
+            'marked_read_count' => $updatedCount
+        ]);
+    }
+
+    /**
+     * Update conversation status
+     */
+    public function updateConversationStatus(Request $request, $conversationId)
+    {
+        $request->validate([
+            'status' => 'required|in:new_lead,active_project,completed,archived'
+        ]);
+
+        // For now, we'll just return success since we don't have a conversations table
+        // In a real implementation, you would update a conversations table
+        // or add a status field to the messages table
+
+        return response()->json([
+            'success' => true,
+            'status' => $request->status
+        ]);
+    }
+
+    /**
+     * Get new messages for polling
+     */
+    public function getNewMessages(User $user, Request $request)
+    {
+        $currentUserId = auth()->id();
+        $lastMessageId = $request->query('last_id', 0);
+
+        $newMessages = Message::where(function($query) use ($currentUserId, $user) {
+            $query->where('sender_id', $user->id)
+                  ->where('receiver_id', $currentUserId);
+        })
+        ->where('id', '>', $lastMessageId)
+        ->with(['sender', 'receiver'])
+        ->orderBy('created_at', 'asc')
+        ->get();
+
+        return response()->json([
+            'messages' => $newMessages
+        ]);
     }
 }
