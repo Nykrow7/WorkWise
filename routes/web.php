@@ -260,6 +260,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/messages/recent/conversations', [MessageController::class, 'getRecentConversations'])->name('messages.recent');
     Route::get('/messages/unread/count', [MessageController::class, 'getUnreadCount'])->name('messages.unread.count');
     Route::get('/messages/conversation/{userId}', [MessageController::class, 'getConversation'])->name('messages.getConversation');
+    Route::patch('/messages/conversation/{userId}/read', [MessageController::class, 'markConversationAsRead'])->name('messages.conversation.read');
+    Route::patch('/messages/conversation/{conversationId}/status', [MessageController::class, 'updateConversationStatus'])->name('messages.conversation.status');
+    Route::get('/messages/{user}/new', [MessageController::class, 'getNewMessages'])->name('messages.new');
 
     Route::get('/reports', function () {
         return Inertia::render('Reports/Index');
@@ -379,6 +382,9 @@ Route::middleware('auth')->group(function () {
 // AI Test Connection
 Route::match(['GET', 'POST'], '/api/ai/test-connection', [AIRecommendationController::class, 'testConnection'])
     ->withoutMiddleware(['web', 'csrf']);
+
+// System-wide unique skills endpoint for filters
+Route::middleware(['auth'])->get('/api/ai-recommendation/skills', [AIRecommendationController::class, 'allSkills'])->name('ai.skills');
 
 // Admin routes
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {

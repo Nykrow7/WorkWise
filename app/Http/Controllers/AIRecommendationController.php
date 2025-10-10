@@ -115,4 +115,20 @@ class AIRecommendationController extends Controller
             ]);
         }
     }
+
+    /**
+     * Retrieve all unique required skills from all jobs in the system.
+     * Returns a flat, sorted array of skills as JSON.
+     */
+    public function allSkills() {
+        // Fetch all required_skills arrays from GigJob
+        $allSkills = \App\Models\GigJob::pluck('required_skills')
+            ->flatten(1)
+            ->filter()
+            ->unique()
+            ->sort()
+            ->values()
+            ->toArray();
+        return response()->json($allSkills);
+    }
 } 
