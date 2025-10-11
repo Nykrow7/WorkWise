@@ -65,10 +65,39 @@ class GigJobController extends Controller
             return $job;
         });
 
+        // Get all unique skills from all jobs dynamically
+        $availableSkills = $this->getAvailableSkills();
+
         return Inertia::render('Jobs/Index', [
             'jobs' => $jobs,
             'filters' => $request->only(['search', 'skills', 'min_budget', 'max_budget']),
+            'availableSkills' => $availableSkills,
         ]);
+    }
+
+    /**
+     * Get all unique skills from all jobs
+     */
+    private function getAvailableSkills(): array
+    {
+        // Get all jobs with required_skills
+        $allSkills = GigJob::where('status', 'open')
+            ->whereNotNull('required_skills')
+            ->get()
+            ->pluck('required_skills')
+            ->flatten()
+            ->map(function ($skill) {
+                return trim($skill);
+            })
+            ->filter(function ($skill) {
+                return !empty($skill);
+            })
+            ->unique()
+            ->sort()
+            ->values()
+            ->toArray();
+
+        return $allSkills;
     }
 
     /**

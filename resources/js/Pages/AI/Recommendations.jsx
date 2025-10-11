@@ -962,7 +962,7 @@ export default function Recommendations({
                     </div>
 
                     <div className="grid gap-6 lg:grid-cols-[320px_1fr]">
-                        <aside className="bg-white/80 backdrop-blur-sm border border-gray-200 rounded-xl shadow-sm p-6 lg:sticky lg:top-24 h-max">
+                        <aside className="bg-white/90 backdrop-blur-md border-2 border-blue-200 rounded-xl shadow-2xl p-6 lg:sticky lg:top-24 h-max ring-1 ring-blue-100">
                             <div className="flex items-center justify-between mb-6">
                                 <h3 className="text-lg font-semibold text-gray-900">
                                     Filter Recommendations
@@ -1054,9 +1054,16 @@ export default function Recommendations({
                                 </div>
 
                                 <div className="relative">
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        Required Skills
-                                    </label>
+                                    <div className="flex items-center justify-between mb-2">
+                                        <label className="block text-sm font-medium text-gray-700">
+                                            Required Skills
+                                        </label>
+                                        {availableSkills.length > 0 && (
+                                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                {availableSkills.length} available
+                                            </span>
+                                        )}
+                                    </div>
 
                                     <button
                                         type="button"
@@ -1065,7 +1072,7 @@ export default function Recommendations({
                                                 (open) => !open,
                                             )
                                         }
-                                        className="flex w-full items-center justify-between rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:border-blue-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="flex w-full items-center justify-between rounded-lg border-2 border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:border-blue-400 hover:shadow-md focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
                                     >
                                         <span>
                                             {filters.skills.length
@@ -1074,54 +1081,78 @@ export default function Recommendations({
                                         </span>
 
                                         <span className="text-xs text-gray-500">
-                                            {isSkillDropdownOpen ? "^" : "v"}
+                                            {isSkillDropdownOpen ? "▲" : "▼"}
                                         </span>
                                     </button>
 
                                     {isSkillDropdownOpen && (
-                                        <div className="absolute left-0 right-0 z-20 mt-2 max-h-60 overflow-y-auto rounded-xl border border-gray-200 bg-white p-3 shadow-lg">
+                                        <div className="absolute left-0 right-0 z-20 mt-2 max-h-60 overflow-y-auto rounded-xl border-2 border-blue-200 bg-white p-3 shadow-2xl ring-1 ring-blue-100">
                                             {availableSkills.length > 0 ? (
-                                                availableSkills.map((skill) => {
-                                                    const isSelected =
-                                                        filters.skills.some(
-                                                            (selectedSkill) =>
-                                                                selectedSkill.toLowerCase() ===
-                                                                skill.toLowerCase(),
+                                                <>
+                                                    <div className="mb-2 pb-2 border-b border-gray-200">
+                                                        <p className="text-xs text-gray-500 flex items-center gap-1">
+                                                            <svg className="w-3 h-3 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                                            </svg>
+                                                            Skills from AI recommendations
+                                                        </p>
+                                                    </div>
+                                                    {availableSkills.map((skill) => {
+                                                        const isSelected =
+                                                            filters.skills.some(
+                                                                (selectedSkill) =>
+                                                                    selectedSkill.toLowerCase() ===
+                                                                    skill.toLowerCase(),
+                                                            );
+
+                                                        return (
+                                                            <label
+                                                                key={skill}
+                                                                className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-gray-700 hover:bg-blue-50 cursor-pointer transition-colors duration-150"
+                                                            >
+                                                                <input
+                                                                    type="checkbox"
+                                                                    className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                                                                    checked={
+                                                                        isSelected
+                                                                    }
+                                                                    onChange={() =>
+                                                                        toggleSkillSelection(
+                                                                            skill,
+                                                                        )
+                                                                    }
+                                                                />
+                                                                <span className="flex-1">{skill}</span>
+                                                                {isSelected && (
+                                                                    <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                                                                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                                                    </svg>
+                                                                )}
+                                                            </label>
                                                         );
-
-                                                    return (
-                                                        <label
-                                                            key={skill}
-                                                            className="flex items-center gap-2 rounded-lg px-2 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                                        >
-                                                            <input
-                                                                type="checkbox"
-                                                                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                                                                checked={
-                                                                    isSelected
-                                                                }
-                                                                onChange={() =>
-                                                                    toggleSkillSelection(
-                                                                        skill,
-                                                                    )
-                                                                }
-                                                            />
-
-                                                            <span>{skill}</span>
-                                                        </label>
-                                                    );
-                                                })
+                                                    })}
+                                                </>
                                             ) : (
-                                                <p className="text-sm text-gray-500">
-                                                    No skills available yet.
-                                                </p>
+                                                <div className="text-center py-4">
+                                                    <svg className="mx-auto h-8 w-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                                                    </svg>
+                                                    <p className="mt-2 text-sm text-gray-500">
+                                                        No skills available yet
+                                                    </p>
+                                                    <p className="mt-1 text-xs text-gray-400">
+                                                        Skills will appear from AI recommendations
+                                                    </p>
+                                                </div>
                                             )}
                                         </div>
                                     )}
 
-                                    <p className="mt-2 text-xs text-gray-500">
-                                        Choose the skills that must be present
-                                        in the AI matches.
+                                    <p className="mt-2 text-xs text-gray-500 flex items-center gap-1">
+                                        <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                                        </svg>
+                                        Filter AI matches by required skills
                                     </p>
 
                                     {filters.skills.length > 0 && (
