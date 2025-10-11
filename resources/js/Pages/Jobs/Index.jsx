@@ -2,6 +2,8 @@ import React, { useState, useMemo } from 'react';
 import { Head, Link, usePage } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { formatDistanceToNow } from 'date-fns';
+import Pagination from '@/Components/Pagination';
+import usePagination from '@/Hooks/usePagination';
 
 export default function JobsIndex({ jobs, availableSkills = [] }) {
     const { auth } = usePage().props;
@@ -197,6 +199,17 @@ export default function JobsIndex({ jobs, availableSkills = [] }) {
             return true;
         });
     }, [jobs.data, search, filters, normalizedSelectedSkills, budgetFilter]);
+
+    // Pagination for filtered jobs (5 items per page)
+    const {
+        currentPage,
+        totalPages,
+        currentItems: paginatedJobs,
+        goToPage,
+        shouldShowPagination,
+        totalItems,
+        itemsPerPage,
+    } = usePagination(filteredJobs, 5);
 
     const formatAmount = (value) => {
         const number = Number(value ?? 0);
@@ -543,7 +556,7 @@ export default function JobsIndex({ jobs, availableSkills = [] }) {
                                     </div>
                                 ) : (
                                     <div className="space-y-8">
-                                        {filteredJobs.map((job) => (
+                                        {paginatedJobs.map((job) => (
                                             <div key={job.id} className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-xl border border-gray-200">
                                                 <div className="p-8">
                                                     <div className="flex items-start justify-between">
@@ -646,13 +659,16 @@ export default function JobsIndex({ jobs, availableSkills = [] }) {
                                             </div>
                                         ))}
 
-                                        {/* Results Count */}
-                                        <div className="bg-white/70 backdrop-blur-sm px-6 py-4 border border-gray-200 rounded-xl shadow-lg">
-                                            <p className="text-sm text-gray-700 text-center">
-                                                Showing <span className="font-medium">{filteredJobs.length}</span> of{' '}
-                                                <span className="font-medium">{jobs.data?.length || 0}</span> jobs
-                                            </p>
-                                        </div>
+                                        {/* Pagination */}
+                                        {shouldShowPagination && (
+                                            <Pagination
+                                                currentPage={currentPage}
+                                                totalPages={totalPages}
+                                                onPageChange={goToPage}
+                                                itemsPerPage={itemsPerPage}
+                                                totalItems={totalItems}
+                                            />
+                                        )}
                                     </div>
                                 )}
                             </div>

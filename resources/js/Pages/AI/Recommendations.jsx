@@ -3,6 +3,8 @@ import React, { useMemo, useState } from "react";
 import { Head, Link } from "@inertiajs/react";
 
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import Pagination from "@/Components/Pagination";
+import usePagination from "@/Hooks/usePagination";
 
 export default function Recommendations({
     recommendations,
@@ -371,6 +373,34 @@ export default function Recommendations({
     const filtersAppliedForEmployer =
         hasActiveFilters && employerHasInitialMatches;
 
+    // Pagination for gig worker recommendations (5 items per page)
+    const {
+        currentPage: gigWorkerPage,
+        totalPages: gigWorkerTotalPages,
+        currentItems: paginatedGigWorkerRecs,
+        goToPage: goToGigWorkerPage,
+        shouldShowPagination: shouldShowGigWorkerPagination,
+        totalItems: gigWorkerTotalItems,
+        itemsPerPage: gigWorkerItemsPerPage,
+    } = usePagination(filteredFreelancerRecommendations, 5);
+
+    // Pagination for employer recommendations (5 jobs per page)
+    const employerRecsArray = useMemo(() => {
+        return Object.entries(filteredEmployerRecommendations || {}).filter(
+            ([, jobData]) => jobData && Array.isArray(jobData.matches) && jobData.matches.length > 0
+        );
+    }, [filteredEmployerRecommendations]);
+
+    const {
+        currentPage: employerPage,
+        totalPages: employerTotalPages,
+        currentItems: paginatedEmployerRecs,
+        goToPage: goToEmployerPage,
+        shouldShowPagination: shouldShowEmployerPagination,
+        totalItems: employerTotalItems,
+        itemsPerPage: employerItemsPerPage,
+    } = usePagination(employerRecsArray, 5);
+
     const getMatchScoreColor = (score) => {
         if (score >= 80) return "text-green-600";
 
@@ -405,12 +435,13 @@ export default function Recommendations({
         }
 
         return (
-            <div className="space-y-6">
-                {items.map((match, index) => (
-                    <div
-                        key={index}
-                        className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-xl border-l-4 border-blue-500 border border-gray-200"
-                    >
+            <>
+                <div className="space-y-6">
+                    {items.map((match, index) => (
+                        <div
+                            key={index}
+                            className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-xl border-l-4 border-blue-500 border border-gray-200"
+                        >
                         <div className="p-8">
                             <div className="flex justify-between items-start mb-4">
                                 <div className="flex-1">
@@ -527,7 +558,19 @@ export default function Recommendations({
                         </div>
                     </div>
                 ))}
-            </div>
+                </div>
+
+                {/* Pagination for Gig Worker Recommendations */}
+                {shouldShowGigWorkerPagination && (
+                    <Pagination
+                        currentPage={gigWorkerPage}
+                        totalPages={gigWorkerTotalPages}
+                        onPageChange={goToGigWorkerPage}
+                        itemsPerPage={gigWorkerItemsPerPage}
+                        totalItems={gigWorkerTotalItems}
+                    />
+                )}
+            </>
         );
     };
 
@@ -565,8 +608,9 @@ export default function Recommendations({
         }
 
         return (
-            <div className="space-y-8">
-                {entries.map(([jobId, jobData]) => {
+            <>
+                <div className="space-y-8">
+                    {entries.map(([jobId, jobData]) => {
                     const matches = (jobData.matches || []).filter(
                         (match) => match && match.gig_worker,
                     );
@@ -894,7 +938,19 @@ export default function Recommendations({
                         </div>
                     );
                 })}
-            </div>
+                </div>
+
+                {/* Pagination for Employer Recommendations */}
+                {shouldShowEmployerPagination && (
+                    <Pagination
+                        currentPage={employerPage}
+                        totalPages={employerTotalPages}
+                        onPageChange={goToEmployerPage}
+                        itemsPerPage={employerItemsPerPage}
+                        totalItems={employerTotalItems}
+                    />
+                )}
+            </>
         );
     };
 
@@ -1211,13 +1267,13 @@ export default function Recommendations({
                                 </div>
                             ) : isGigWorker ? (
                                 renderFreelancerRecommendations(
-                                    filteredFreelancerRecommendations,
+                                    paginatedGigWorkerRecs,
 
                                     filtersAppliedForFreelancer,
                                 )
                             ) : (
                                 renderEmployerRecommendations(
-                                    filteredEmployerRecommendations,
+                                    Object.fromEntries(paginatedEmployerRecs),
 
                                     filtersAppliedForEmployer,
                                 )
