@@ -38,6 +38,7 @@ window.route = function(name, params = {}) {
         'contracts.sign': (id) => `/contracts/${id}/sign`,
         'contracts.processSignature': (id) => `/contracts/${id}/signature`,
         'contracts.downloadPdf': (id) => `/contracts/${id}/pdf`,
+        'browse.freelancers': '/browse-freelancers',
         'login': '/login',
         'logout': '/logout',
         'register': '/register',

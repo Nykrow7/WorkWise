@@ -28,6 +28,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\EmployerDashboardController;
 use App\Http\Controllers\GigWorkerDashboardController;
+use App\Http\Controllers\Api\GigWorkerController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -105,6 +106,26 @@ Route::get('/dashboard', function () {
 Route::get('/gig-worker/dashboard', [GigWorkerDashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('gig-worker.dashboard');
+
+// Job Invitations Route
+Route::get('/gig-worker/invitations', function () {
+    return Inertia::render('JobInvitations', [
+        'auth' => [
+            'user' => Auth::user()
+        ],
+        'jobInvitations' => []
+    ]);
+})->middleware(['auth', 'verified'])->name('gig-worker.invitations');
+
+// Browse Freelancers Route
+Route::get('/freelancers', function () {
+    return Inertia::render('BrowseFreelancers', [
+        'auth' => [
+            'user' => Auth::user()
+        ],
+        'freelancers' => []
+    ]);
+})->middleware(['auth', 'verified'])->name('browse.freelancers');
 
 // Employer Dashboard Route
 Route::get('/employer/dashboard', [EmployerDashboardController::class, 'index'])
@@ -496,6 +517,14 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         // Fraud analytics and reporting
         Route::get('/analytics', [AdminFraudController::class, 'analytics'])->name('analytics');
     });
+});
+
+// Temporary API routes via web (for debugging)
+Route::prefix('api/gig-workers')->group(function () {
+    Route::get('/', [GigWorkerController::class, 'index']);
+    Route::get('/skills/available', [GigWorkerController::class, 'getAvailableSkills']);
+    Route::get('/stats/overview', [GigWorkerController::class, 'getStats']);
+    Route::get('/{id}', [GigWorkerController::class, 'show']);
 });
 
 require __DIR__.'/auth.php';

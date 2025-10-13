@@ -7,6 +7,7 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\WebhookController;
 use App\Http\Controllers\AIRecommendationController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\GigWorkerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,17 +20,29 @@ use App\Http\Controllers\Api\UserController;
 |
 */
 
+// Test route to verify API is working
+Route::get('/test', function () {
+    return response()->json(['message' => 'API is working']);
+});
+
+// Authenticated API Routes
 Route::middleware('auth:sanctum')->group(function () {
-    // Project Payment Routes
-    Route::post('/projects/{project}/payment/intent', [PaymentController::class, 'createPaymentIntent']);
-    Route::post('/projects/{project}/payment/release', [PaymentController::class, 'releasePayment']);
-    Route::post('/projects/{project}/payment/refund', [PaymentController::class, 'refundPayment']);
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
     
-    // Project Status Routes
     Route::post('/projects/{project}/complete', [ProjectController::class, 'complete']);
     
     // User Routes
     Route::get('/users/{id}', [UserController::class, 'show']);
+});
+
+// Public API Routes (no authentication required)
+Route::prefix('gig-workers')->group(function () {
+    Route::get('/', [GigWorkerController::class, 'index']);
+    Route::get('/skills/available', [GigWorkerController::class, 'getAvailableSkills']);
+    Route::get('/stats/overview', [GigWorkerController::class, 'getStats']);
+    Route::get('/{id}', [GigWorkerController::class, 'show']);
 });
 
 // Stripe webhook

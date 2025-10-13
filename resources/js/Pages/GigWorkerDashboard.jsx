@@ -220,7 +220,7 @@ export default function GigWorkerDashboard({ auth, stats, activeContracts, jobIn
                         )}
                     </h3>
                     <Link 
-                        href="/invitations" 
+                        href="/gig-worker/invitations" 
                         className="text-sm text-purple-600 hover:text-purple-800 font-medium flex items-center"
                     >
                         View All
