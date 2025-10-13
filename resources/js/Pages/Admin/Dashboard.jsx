@@ -176,6 +176,35 @@ export default function Dashboard({ auth, stats, recentUsers, recentReports, rec
         <AdminLayout>
             <Head title="Admin Dashboard" />
 
+            {/* Welcome Banner */}
+            <div className="mb-8 rounded-xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-6 text-white shadow-lg">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                        <div className="h-16 w-16 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
+                            <span className="material-symbols-outlined text-2xl">admin_panel_settings</span>
+                        </div>
+                        <div>
+                            <h2 className="text-2xl font-bold">Welcome back, {auth?.user?.name || 'Administrator'}!</h2>
+                            <p className="text-white/90">Here's what's happening on your platform today</p>
+                        </div>
+                    </div>
+                    <div className="hidden md:flex items-center space-x-6 text-center">
+                        <div className="bg-white/10 rounded-lg p-3 backdrop-blur-sm">
+                            <p className="text-2xl font-bold">{stats.total_users || '0'}</p>
+                            <p className="text-sm text-white/80">Total Users</p>
+                        </div>
+                        <div className="bg-white/10 rounded-lg p-3 backdrop-blur-sm">
+                            <p className="text-2xl font-bold">{stats.total_projects || '0'}</p>
+                            <p className="text-sm text-white/80">Projects</p>
+                        </div>
+                        <div className="bg-white/10 rounded-lg p-3 backdrop-blur-sm">
+                            <p className="text-2xl font-bold">{stats.pending_reports || '0'}</p>
+                            <p className="text-sm text-white/80">Pending Reports</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             {/* Stats Grid */}
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
                 <div className="transform rounded-xl border border-slate-200 bg-white p-6 shadow-lg transition-transform duration-300 hover:-translate-y-2 dark:border-slate-700 dark:bg-slate-800">

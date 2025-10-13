@@ -22,6 +22,7 @@ class User extends Authenticatable
     protected $fillable = [
         'first_name',
         'last_name',
+        'name',
         'email',
         'password',
         'barangay',
@@ -48,6 +49,8 @@ class User extends Authenticatable
         'stripe_onboarded_at',
         'escrow_balance',
         'is_admin',
+        'google_id',
+        'avatar',
     ];
 
     /**

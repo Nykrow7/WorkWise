@@ -27,14 +27,17 @@ use App\Http\Controllers\AdminFraudController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\EmployerDashboardController;
+use App\Http\Controllers\GigWorkerDashboardController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 Route::get('/', function () {
     // Check if user is authenticated
-    if (auth()->check()) {
-        $user = auth()->user();
+    if (Auth::check()) {
+        $user = Auth::user();
 
         // Redirect admin users to admin dashboard
         if ($user->isAdmin()) {
@@ -64,10 +67,10 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    $user = auth()->user();
+    $user = Auth::user();
 
     if (!$user) {
-        \Log::error('Dashboard route accessed - User is null');
+        Log::error('Dashboard route accessed - User is null');
         return redirect('/login');
     }
 
@@ -81,22 +84,27 @@ Route::get('/dashboard', function () {
         return redirect()->route('employer.dashboard');
     }
 
-    // Redirect gig workers to jobs page
+    // Redirect gig workers to their dashboard
     if ($user->user_type === 'gig_worker') {
-        return redirect()->route('jobs.index');
+        return redirect()->route('gig-worker.dashboard');
     }
 
-    \Log::info('Dashboard route accessed', ['user' => $user->toArray()]);
+    Log::info('Dashboard route accessed', ['user' => $user->toArray()]);
 
     return Inertia::render('Dashboard', [
         'user' => $user,
         'debug' => [
-            'authenticated' => auth()->check(),
+            'authenticated' => Auth::check(),
             'user_id' => $user->id,
             'user_type' => $user->user_type,
         ]
     ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+// Gig Worker Dashboard Route
+Route::get('/gig-worker/dashboard', [GigWorkerDashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('gig-worker.dashboard');
 
 // Employer Dashboard Route
 Route::get('/employer/dashboard', [EmployerDashboardController::class, 'index'])
@@ -119,11 +127,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 // Test route to debug - old dashboard
 Route::get('/test-dashboard', function () {
-    $user = auth()->user();
+    $user = Auth::user();
     return Inertia::render('Dashboard', [
         'user' => $user,
         'debug' => [
-            'authenticated' => auth()->check(),
+            'authenticated' => Auth::check(),
             'user_id' => $user ? $user->id : null,
             'user_type' => $user ? $user->user_type : null,
         ]
@@ -176,7 +184,7 @@ Route::get('/admin-quick', function () {
     $adminUser = \App\Models\User::where('email', 'admin@workwise.com')->first();
 
     if ($adminUser) {
-        auth()->login($adminUser);
+        Auth::login($adminUser);
         return redirect()->route('admin.dashboard');
     }
 
@@ -195,9 +203,9 @@ Route::get('/login-direct', function () {
 
 // Debug user status
 Route::get('/debug-user', function () {
-    $user = auth()->user();
+    $user = Auth::user();
     return response()->json([
-        'authenticated' => auth()->check(),
+        'authenticated' => Auth::check(),
         'user' => $user ? [
             'id' => $user->id,
             'name' => $user->first_name . ' ' . $user->last_name,
@@ -365,7 +373,7 @@ Route::middleware('auth')->group(function () {
 
     // Legacy deposits route - redirect to appropriate wallet based on role
     Route::get('/deposits', function () {
-        $user = auth()->user();
+        $user = Auth::user();
         if ($user->user_type === 'employer') {
             return redirect()->route('employer.wallet.index');
         } else {

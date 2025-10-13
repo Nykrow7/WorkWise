@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Auth\EmailVerificationPromptController;
+use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
@@ -43,6 +44,15 @@ Route::middleware('guest')->group(function () {
 
     Route::post('reset-password', [NewPasswordController::class, 'store'])
         ->name('password.store');
+
+    // Google OAuth routes (with security middleware)
+    Route::get('auth/google', [GoogleAuthController::class, 'redirectToGoogle'])
+        ->middleware('google.oauth.security')
+        ->name('auth.google');
+    
+    Route::get('auth/google/callback', [GoogleAuthController::class, 'handleGoogleCallback'])
+        ->middleware('google.oauth.security')
+        ->name('auth.google.callback');
 });
 
 Route::middleware('auth')->group(function () {
@@ -66,6 +76,10 @@ Route::middleware('auth')->group(function () {
 
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');
+
+    // Google account management routes
+    Route::post('auth/google/unlink', [GoogleAuthController::class, 'unlinkGoogle'])
+        ->name('auth.google.unlink');
 });
 
 // Redirect authenticated users who try to access login (avoid shadowing GET /login)

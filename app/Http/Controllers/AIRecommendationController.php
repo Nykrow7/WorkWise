@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Services\MatchService;
 use App\Models\GigJob;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Support\Facades\Http;
+use App\Services\AIJobMatchingService;
 
 class AIRecommendationController extends Controller
 {
@@ -195,5 +196,38 @@ class AIRecommendationController extends Controller
             ->all();
 
         return response()->json($skills);
+    }
+
+    public function recommendSkills(Request $request)
+    {
+        $validated = $request->validate([
+            'title' => 'nullable|string',
+            'description' => 'nullable|string',
+            'exclude' => 'array',
+            'exclude.*' => 'string',
+        ]);
+
+        $title = $validated['title'] ?? '';
+        $description = $validated['description'] ?? '';
+        $exclude = $validated['exclude'] ?? [];
+
+        $service = app(AIJobMatchingService::class);
+        $result = $service->recommend($title, $description, $exclude);
+
+        return response()->json($result);
+    }
+
+    public function acceptSuggestion(Request $request)
+    {
+        $validated = $request->validate([
+            'type' => 'required|string|in:skill,role',
+            'value' => 'required|string',
+            'context' => 'nullable|array',
+        ]);
+
+        $service = app(AIJobMatchingService::class);
+        $service->recordAcceptance($validated['type'], $validated['value'], $validated['context'] ?? []);
+
+        return response()->json(['status' => 'ok']);
     }
 }

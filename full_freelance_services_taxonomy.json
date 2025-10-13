@@ -1,0 +1,1007 @@
+{
+  "services": [
+    {
+      "id": 1,
+      "name": "Creative & Design Services",
+      "description": "Creative & Design Services related services.",
+      "categories": [
+        {
+          "id": 100,
+          "name": "Graphic Design",
+          "description": "Graphic Design specialization under Creative & Design Services.",
+          "skills": [
+            "Adobe Photoshop",
+            "Illustrator",
+            "Canva",
+            "InDesign",
+            "Typography",
+            "Branding"
+          ]
+        },
+        {
+          "id": 101,
+          "name": "Logo Design & Branding",
+          "description": "Logo Design & Branding specialization under Creative & Design Services.",
+          "skills": [
+            "Logo Creation",
+            "Vector Design",
+            "Brand Guidelines",
+            "Color Theory"
+          ]
+        },
+        {
+          "id": 102,
+          "name": "UI/UX Design",
+          "description": "UI/UX Design specialization under Creative & Design Services.",
+          "skills": [
+            "Figma",
+            "Adobe XD",
+            "Wireframing",
+            "Prototyping",
+            "User Research",
+            "Usability Testing"
+          ]
+        },
+        {
+          "id": 103,
+          "name": "Web Design",
+          "description": "Web Design specialization under Creative & Design Services.",
+          "skills": [
+            "HTML",
+            "CSS",
+            "Responsive Design",
+            "Bootstrap",
+            "Tailwind",
+            "Adobe XD"
+          ]
+        },
+        {
+          "id": 104,
+          "name": "Illustration",
+          "description": "Illustration specialization under Creative & Design Services.",
+          "skills": [
+            "Procreate",
+            "Clip Studio Paint",
+            "Digital Art",
+            "Concept Art",
+            "Drawing"
+          ]
+        },
+        {
+          "id": 105,
+          "name": "Animation",
+          "description": "Animation specialization under Creative & Design Services.",
+          "skills": [
+            "After Effects",
+            "Blender",
+            "2D Animation",
+            "3D Animation",
+            "Character Rigging"
+          ]
+        },
+        {
+          "id": 106,
+          "name": "Video Editing",
+          "description": "Video Editing specialization under Creative & Design Services.",
+          "skills": [
+            "Adobe Premiere Pro",
+            "DaVinci Resolve",
+            "Final Cut Pro",
+            "Motion Graphics"
+          ]
+        },
+        {
+          "id": 107,
+          "name": "3D Modeling",
+          "description": "3D Modeling specialization under Creative & Design Services.",
+          "skills": [
+            "Blender",
+            "Maya",
+            "3ds Max",
+            "ZBrush",
+            "Substance Painter"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Programming & Tech",
+      "description": "Programming & Tech related services.",
+      "categories": [
+        {
+          "id": 108,
+          "name": "Web Development",
+          "description": "Web Development specialization under Programming & Tech.",
+          "skills": [
+            "HTML",
+            "CSS",
+            "JavaScript",
+            "React",
+            "Vue.js",
+            "Next.js",
+            "PHP",
+            "Laravel",
+            "Node.js",
+            "Express"
+          ]
+        },
+        {
+          "id": 109,
+          "name": "Mobile App Development",
+          "description": "Mobile App Development specialization under Programming & Tech.",
+          "skills": [
+            "React Native",
+            "Flutter",
+            "Kotlin",
+            "Swift",
+            "Firebase"
+          ]
+        },
+        {
+          "id": 110,
+          "name": "Game Development",
+          "description": "Game Development specialization under Programming & Tech.",
+          "skills": [
+            "Unity",
+            "Unreal Engine",
+            "C#",
+            "C++",
+            "2D/3D Game Design"
+          ]
+        },
+        {
+          "id": 111,
+          "name": "Software Development",
+          "description": "Software Development specialization under Programming & Tech.",
+          "skills": [
+            "Java",
+            "C#",
+            "C++",
+            "Python",
+            "OOP",
+            "Git"
+          ]
+        },
+        {
+          "id": 112,
+          "name": "E-commerce Development",
+          "description": "E-commerce Development specialization under Programming & Tech.",
+          "skills": [
+            "Shopify",
+            "WooCommerce",
+            "Magento",
+            "Stripe API",
+            "PayPal Integration"
+          ]
+        },
+        {
+          "id": 113,
+          "name": "API Integration & Automation",
+          "description": "API Integration & Automation specialization under Programming & Tech.",
+          "skills": [
+            "REST API",
+            "GraphQL",
+            "Zapier",
+            "Postman",
+            "Webhook"
+          ]
+        },
+        {
+          "id": 114,
+          "name": "Database Management",
+          "description": "Database Management specialization under Programming & Tech.",
+          "skills": [
+            "MySQL",
+            "PostgreSQL",
+            "MongoDB",
+            "SQLite",
+            "Firebase"
+          ]
+        },
+        {
+          "id": 115,
+          "name": "Cybersecurity",
+          "description": "Cybersecurity specialization under Programming & Tech.",
+          "skills": [
+            "Ethical Hacking",
+            "Penetration Testing",
+            "Network Security",
+            "OWASP"
+          ]
+        },
+        {
+          "id": 116,
+          "name": "AI & Machine Learning",
+          "description": "AI & Machine Learning specialization under Programming & Tech.",
+          "skills": [
+            "Python",
+            "TensorFlow",
+            "Scikit-learn",
+            "Pandas",
+            "OpenAI API"
+          ]
+        },
+        {
+          "id": 117,
+          "name": "Blockchain Development",
+          "description": "Blockchain Development specialization under Programming & Tech.",
+          "skills": [
+            "Solidity",
+            "Ethereum",
+            "Web3.js",
+            "Smart Contracts"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Digital Marketing",
+      "description": "Digital Marketing related services.",
+      "categories": [
+        {
+          "id": 118,
+          "name": "SEO",
+          "description": "SEO specialization under Digital Marketing.",
+          "skills": [
+            "Keyword Research",
+            "On-page SEO",
+            "Backlinks",
+            "Ahrefs",
+            "Google Search Console"
+          ]
+        },
+        {
+          "id": 119,
+          "name": "Social Media Marketing",
+          "description": "Social Media Marketing specialization under Digital Marketing.",
+          "skills": [
+            "Facebook Ads",
+            "Instagram Strategy",
+            "Content Calendar",
+            "Hashtag Research"
+          ]
+        },
+        {
+          "id": 120,
+          "name": "Content Marketing",
+          "description": "Content Marketing specialization under Digital Marketing.",
+          "skills": [
+            "Copywriting",
+            "Blog Strategy",
+            "Content Planning",
+            "Storytelling"
+          ]
+        },
+        {
+          "id": 121,
+          "name": "Email Marketing",
+          "description": "Email Marketing specialization under Digital Marketing.",
+          "skills": [
+            "Mailchimp",
+            "Automation",
+            "A/B Testing",
+            "Newsletter Design"
+          ]
+        },
+        {
+          "id": 122,
+          "name": "Affiliate Marketing",
+          "description": "Affiliate Marketing specialization under Digital Marketing.",
+          "skills": [
+            "Affiliate Links",
+            "Performance Tracking",
+            "Partnership Building"
+          ]
+        },
+        {
+          "id": 123,
+          "name": "Paid Advertising",
+          "description": "Paid Advertising specialization under Digital Marketing.",
+          "skills": [
+            "Google Ads",
+            "Meta Ads",
+            "Conversion Tracking",
+            "Analytics"
+          ]
+        },
+        {
+          "id": 124,
+          "name": "Marketing Analytics",
+          "description": "Marketing Analytics specialization under Digital Marketing.",
+          "skills": [
+            "Google Analytics",
+            "Data Studio",
+            "Funnel Analysis",
+            "KPI Tracking"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Writing & Translation",
+      "description": "Writing & Translation related services.",
+      "categories": [
+        {
+          "id": 125,
+          "name": "Article & Blog Writing",
+          "description": "Article & Blog Writing specialization under Writing & Translation.",
+          "skills": [
+            "SEO Writing",
+            "Keyword Research",
+            "Grammar",
+            "Research Skills"
+          ]
+        },
+        {
+          "id": 126,
+          "name": "Copywriting",
+          "description": "Copywriting specialization under Writing & Translation.",
+          "skills": [
+            "Ad Copy",
+            "Brand Voice",
+            "Persuasive Writing",
+            "Call to Action"
+          ]
+        },
+        {
+          "id": 127,
+          "name": "Technical Writing",
+          "description": "Technical Writing specialization under Writing & Translation.",
+          "skills": [
+            "API Documentation",
+            "User Manuals",
+            "Markdown",
+            "Clarity"
+          ]
+        },
+        {
+          "id": 128,
+          "name": "Ghostwriting",
+          "description": "Ghostwriting specialization under Writing & Translation.",
+          "skills": [
+            "Book Writing",
+            "eBook Formatting",
+            "Narrative Writing"
+          ]
+        },
+        {
+          "id": 129,
+          "name": "Proofreading & Editing",
+          "description": "Proofreading & Editing specialization under Writing & Translation.",
+          "skills": [
+            "Grammar",
+            "Spelling",
+            "Punctuation",
+            "Style Consistency"
+          ]
+        },
+        {
+          "id": 130,
+          "name": "Translation",
+          "description": "Translation specialization under Writing & Translation.",
+          "skills": [
+            "Bilingual Proficiency",
+            "Localization",
+            "Cultural Adaptation"
+          ]
+        },
+        {
+          "id": 131,
+          "name": "Transcription",
+          "description": "Transcription specialization under Writing & Translation.",
+          "skills": [
+            "Audio Typing",
+            "Listening Accuracy",
+            "Subtitling"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Music & Audio",
+      "description": "Music & Audio related services.",
+      "categories": [
+        {
+          "id": 132,
+          "name": "Music Production",
+          "description": "Music Production specialization under Music & Audio.",
+          "skills": [
+            "FL Studio",
+            "Ableton Live",
+            "Logic Pro",
+            "Mixing",
+            "Mastering"
+          ]
+        },
+        {
+          "id": 133,
+          "name": "Voice Over",
+          "description": "Voice Over specialization under Music & Audio.",
+          "skills": [
+            "Microphone Technique",
+            "Narration",
+            "Audio Editing",
+            "Audacity"
+          ]
+        },
+        {
+          "id": 134,
+          "name": "Podcast Editing",
+          "description": "Podcast Editing specialization under Music & Audio.",
+          "skills": [
+            "Noise Reduction",
+            "EQ",
+            "Compression",
+            "Cutting & Stitching"
+          ]
+        },
+        {
+          "id": 135,
+          "name": "Sound Design",
+          "description": "Sound Design specialization under Music & Audio.",
+          "skills": [
+            "Foley",
+            "SFX",
+            "DAW",
+            "Audio Sampling"
+          ]
+        },
+        {
+          "id": 136,
+          "name": "Songwriting",
+          "description": "Songwriting specialization under Music & Audio.",
+          "skills": [
+            "Lyrics",
+            "Melody Composition",
+            "Chords",
+            "Arrangement"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Photography & Videography",
+      "description": "Photography & Videography related services.",
+      "categories": [
+        {
+          "id": 137,
+          "name": "Photography",
+          "description": "Photography specialization under Photography & Videography.",
+          "skills": [
+            "DSLR",
+            "Lighting",
+            "Composition",
+            "Photo Editing"
+          ]
+        },
+        {
+          "id": 138,
+          "name": "Photo Retouching",
+          "description": "Photo Retouching specialization under Photography & Videography.",
+          "skills": [
+            "Photoshop",
+            "Lightroom",
+            "Color Correction"
+          ]
+        },
+        {
+          "id": 139,
+          "name": "Videography",
+          "description": "Videography specialization under Photography & Videography.",
+          "skills": [
+            "Camera Operation",
+            "Storyboarding",
+            "Cinematography"
+          ]
+        },
+        {
+          "id": 140,
+          "name": "Drone Videography",
+          "description": "Drone Videography specialization under Photography & Videography.",
+          "skills": [
+            "Drone Operation",
+            "Aerial Photography",
+            "4K Editing"
+          ]
+        },
+        {
+          "id": 141,
+          "name": "Video Editing",
+          "description": "Video Editing specialization under Photography & Videography.",
+          "skills": [
+            "Premiere Pro",
+            "Transitions",
+            "Color Grading",
+            "Motion Graphics"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "name": "Business & Consulting",
+      "description": "Business & Consulting related services.",
+      "categories": [
+        {
+          "id": 142,
+          "name": "Business Plan Writing",
+          "description": "Business Plan Writing specialization under Business & Consulting.",
+          "skills": [
+            "Market Research",
+            "Financial Forecasting",
+            "Business Modeling"
+          ]
+        },
+        {
+          "id": 143,
+          "name": "Startup Consulting",
+          "description": "Startup Consulting specialization under Business & Consulting.",
+          "skills": [
+            "Lean Canvas",
+            "Pitch Deck",
+            "Funding Strategy"
+          ]
+        },
+        {
+          "id": 144,
+          "name": "Virtual Assistant",
+          "description": "Virtual Assistant specialization under Business & Consulting.",
+          "skills": [
+            "Scheduling",
+            "CRM",
+            "Email Management",
+            "Microsoft Office"
+          ]
+        },
+        {
+          "id": 145,
+          "name": "Project Management",
+          "description": "Project Management specialization under Business & Consulting.",
+          "skills": [
+            "Asana",
+            "Trello",
+            "Scrum",
+            "Agile",
+            "Gantt Charts"
+          ]
+        },
+        {
+          "id": 146,
+          "name": "Accounting & Bookkeeping",
+          "description": "Accounting & Bookkeeping specialization under Business & Consulting.",
+          "skills": [
+            "QuickBooks",
+            "Excel",
+            "Tax Filing",
+            "Ledger Management"
+          ]
+        },
+        {
+          "id": 147,
+          "name": "Legal Consulting",
+          "description": "Legal Consulting specialization under Business & Consulting.",
+          "skills": [
+            "Contracts",
+            "Compliance",
+            "Business Law Basics"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "name": "Data & Analytics",
+      "description": "Data & Analytics related services.",
+      "categories": [
+        {
+          "id": 148,
+          "name": "Data Entry",
+          "description": "Data Entry specialization under Data & Analytics.",
+          "skills": [
+            "Excel",
+            "Google Sheets",
+            "Accuracy",
+            "Data Cleaning"
+          ]
+        },
+        {
+          "id": 149,
+          "name": "Data Visualization",
+          "description": "Data Visualization specialization under Data & Analytics.",
+          "skills": [
+            "Tableau",
+            "Power BI",
+            "Looker Studio",
+            "Charts"
+          ]
+        },
+        {
+          "id": 150,
+          "name": "Data Analysis",
+          "description": "Data Analysis specialization under Data & Analytics.",
+          "skills": [
+            "Python",
+            "R",
+            "Pandas",
+            "Statistics"
+          ]
+        },
+        {
+          "id": 151,
+          "name": "Machine Learning",
+          "description": "Machine Learning specialization under Data & Analytics.",
+          "skills": [
+            "TensorFlow",
+            "Scikit-learn",
+            "Regression",
+            "Classification"
+          ]
+        },
+        {
+          "id": 152,
+          "name": "Web Scraping",
+          "description": "Web Scraping specialization under Data & Analytics.",
+          "skills": [
+            "BeautifulSoup",
+            "Selenium",
+            "Python Requests"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "name": "E-Commerce & Product Services",
+      "description": "E-Commerce & Product Services related services.",
+      "categories": [
+        {
+          "id": 153,
+          "name": "Store Setup",
+          "description": "Store Setup specialization under E-Commerce & Product Services.",
+          "skills": [
+            "Shopify",
+            "WooCommerce",
+            "Etsy",
+            "Store Design"
+          ]
+        },
+        {
+          "id": 154,
+          "name": "Product Research",
+          "description": "Product Research specialization under E-Commerce & Product Services.",
+          "skills": [
+            "Market Analysis",
+            "Competitor Research",
+            "Trend Forecasting"
+          ]
+        },
+        {
+          "id": 155,
+          "name": "Dropshipping",
+          "description": "Dropshipping specialization under E-Commerce & Product Services.",
+          "skills": [
+            "AliExpress",
+            "Oberlo",
+            "Inventory Syncing"
+          ]
+        },
+        {
+          "id": 156,
+          "name": "Amazon FBA",
+          "description": "Amazon FBA specialization under E-Commerce & Product Services.",
+          "skills": [
+            "Listing Optimization",
+            "PPC",
+            "Fulfillment Strategy"
+          ]
+        },
+        {
+          "id": 157,
+          "name": "Customer Support",
+          "description": "Customer Support specialization under E-Commerce & Product Services.",
+          "skills": [
+            "CRM",
+            "Ticket Systems",
+            "Live Chat",
+            "Problem Solving"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "name": "Engineering & Architecture",
+      "description": "Engineering & Architecture related services.",
+      "categories": [
+        {
+          "id": 158,
+          "name": "CAD Design",
+          "description": "CAD Design specialization under Engineering & Architecture.",
+          "skills": [
+            "AutoCAD",
+            "SolidWorks",
+            "3D Modeling"
+          ]
+        },
+        {
+          "id": 159,
+          "name": "Mechanical Engineering",
+          "description": "Mechanical Engineering specialization under Engineering & Architecture.",
+          "skills": [
+            "Thermodynamics",
+            "Materials Science",
+            "Simulation"
+          ]
+        },
+        {
+          "id": 160,
+          "name": "Electrical Engineering",
+          "description": "Electrical Engineering specialization under Engineering & Architecture.",
+          "skills": [
+            "Circuit Design",
+            "MATLAB",
+            "PCB Design"
+          ]
+        },
+        {
+          "id": 161,
+          "name": "Civil Engineering",
+          "description": "Civil Engineering specialization under Engineering & Architecture.",
+          "skills": [
+            "Structural Analysis",
+            "Revit",
+            "Blueprint Reading"
+          ]
+        },
+        {
+          "id": 162,
+          "name": "Architecture",
+          "description": "Architecture specialization under Engineering & Architecture.",
+          "skills": [
+            "SketchUp",
+            "Revit",
+            "Floor Planning",
+            "3D Rendering"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "name": "Education & Training",
+      "description": "Education & Training related services.",
+      "categories": [
+        {
+          "id": 163,
+          "name": "Online Tutoring",
+          "description": "Online Tutoring specialization under Education & Training.",
+          "skills": [
+            "Google Classroom",
+            "Zoom",
+            "Lesson Planning"
+          ]
+        },
+        {
+          "id": 164,
+          "name": "Language Lessons",
+          "description": "Language Lessons specialization under Education & Training.",
+          "skills": [
+            "Grammar",
+            "Pronunciation",
+            "Conversation Practice"
+          ]
+        },
+        {
+          "id": 165,
+          "name": "Exam Preparation",
+          "description": "Exam Preparation specialization under Education & Training.",
+          "skills": [
+            "IELTS",
+            "SAT",
+            "Study Guides",
+            "Test Strategy"
+          ]
+        },
+        {
+          "id": 166,
+          "name": "eLearning Course Creation",
+          "description": "eLearning Course Creation specialization under Education & Training.",
+          "skills": [
+            "Moodle",
+            "Teachable",
+            "Video Lectures"
+          ]
+        },
+        {
+          "id": 167,
+          "name": "Life Coaching",
+          "description": "Life Coaching specialization under Education & Training.",
+          "skills": [
+            "Goal Setting",
+            "Communication Skills",
+            "Motivation Techniques"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "name": "Admin & Virtual Assistance",
+      "description": "Admin & Virtual Assistance related services.",
+      "categories": [
+        {
+          "id": 168,
+          "name": "Data Entry",
+          "description": "Data Entry specialization under Admin & Virtual Assistance.",
+          "skills": [
+            "Microsoft Excel",
+            "Google Sheets",
+            "Typing Speed"
+          ]
+        },
+        {
+          "id": 169,
+          "name": "Email Management",
+          "description": "Email Management specialization under Admin & Virtual Assistance.",
+          "skills": [
+            "Gmail",
+            "Outlook",
+            "Communication"
+          ]
+        },
+        {
+          "id": 170,
+          "name": "Calendar Scheduling",
+          "description": "Calendar Scheduling specialization under Admin & Virtual Assistance.",
+          "skills": [
+            "Google Calendar",
+            "Time Management",
+            "Organization"
+          ]
+        },
+        {
+          "id": 171,
+          "name": "Research",
+          "description": "Research specialization under Admin & Virtual Assistance.",
+          "skills": [
+            "Google Search",
+            "Data Gathering",
+            "Summarization"
+          ]
+        },
+        {
+          "id": 172,
+          "name": "Lead Generation",
+          "description": "Lead Generation specialization under Admin & Virtual Assistance.",
+          "skills": [
+            "LinkedIn",
+            "CRM",
+            "Email Finder Tools"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "name": "Lifestyle & Personal Services",
+      "description": "Lifestyle & Personal Services related services.",
+      "categories": [
+        {
+          "id": 173,
+          "name": "Fitness Coaching",
+          "description": "Fitness Coaching specialization under Lifestyle & Personal Services.",
+          "skills": [
+            "Workout Planning",
+            "Nutrition",
+            "Motivation"
+          ]
+        },
+        {
+          "id": 174,
+          "name": "Diet Planning",
+          "description": "Diet Planning specialization under Lifestyle & Personal Services.",
+          "skills": [
+            "Meal Prep",
+            "Macros",
+            "Calorie Counting"
+          ]
+        },
+        {
+          "id": 175,
+          "name": "Relationship Coaching",
+          "description": "Relationship Coaching specialization under Lifestyle & Personal Services.",
+          "skills": [
+            "Active Listening",
+            "Empathy",
+            "Communication"
+          ]
+        },
+        {
+          "id": 176,
+          "name": "Astrology",
+          "description": "Astrology specialization under Lifestyle & Personal Services.",
+          "skills": [
+            "Zodiac",
+            "Birth Charts",
+            "Horoscope Reading"
+          ]
+        },
+        {
+          "id": 177,
+          "name": "Travel Planning",
+          "description": "Travel Planning specialization under Lifestyle & Personal Services.",
+          "skills": [
+            "Itinerary Creation",
+            "Budgeting",
+            "Booking Systems"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "name": "Emerging Services",
+      "description": "Emerging Services related services.",
+      "categories": [
+        {
+          "id": 178,
+          "name": "NFT Art Design",
+          "description": "NFT Art Design specialization under Emerging Services.",
+          "skills": [
+            "Blockchain",
+            "Minting",
+            "Illustration",
+            "3D Rendering"
+          ]
+        },
+        {
+          "id": 179,
+          "name": "Metaverse Development",
+          "description": "Metaverse Development specialization under Emerging Services.",
+          "skills": [
+            "Unity",
+            "VR",
+            "3D Modeling",
+            "Avatar Creation"
+          ]
+        },
+        {
+          "id": 180,
+          "name": "AI Prompt Engineering",
+          "description": "AI Prompt Engineering specialization under Emerging Services.",
+          "skills": [
+            "ChatGPT",
+            "Prompt Design",
+            "LLM Optimization"
+          ]
+        },
+        {
+          "id": 181,
+          "name": "AR/VR Content",
+          "description": "AR/VR Content specialization under Emerging Services.",
+          "skills": [
+            "ARKit",
+            "Unity",
+            "Blender",
+            "3D Mapping"
+          ]
+        },
+        {
+          "id": 182,
+          "name": "Sustainability Consulting",
+          "description": "Sustainability Consulting specialization under Emerging Services.",
+          "skills": [
+            "Carbon Footprint",
+            "ESG",
+            "Green Practices"
+          ]
+        }
+      ]
+    }
+  ]
+}

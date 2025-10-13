@@ -113,28 +113,91 @@ export default function AdminLayout({ children, header }) {
                 {/* Main Content */}
                 <main className="flex-1 bg-slate-50 dark:bg-slate-900 transition-all duration-300">
                     <div className="p-4 sm:p-8">
-                        {/* Header */}
-                        <header className="mb-8 flex items-center justify-between">
-                            <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">Dashboard</h1>
-                            <div className="flex items-center gap-4">
-                                <button className="relative rounded-full p-2 text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800">
-                                    <span className="material-symbols-outlined">notifications</span>
-                                    <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-pink-500"></span>
-                                </button>
-                                <img
-                                    alt="Admin Avatar"
-                                    className="h-10 w-10 rounded-full"
-                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBOCY6awUGXO9qpXCakLmiyJOG8u-9woIFjfbsQoMnrqqNIqnELGkwM4PuO0HlVw6dSi3VotgFv6aCSWbZkf6ow5_PYUHOtbzdgY-Mb8c7kuYUhieBguC2jV7wvoozmVKEzsK2MI9rcuajXuKadizjPd_kBpEpAi3zQm9tK9Yv-qMEU4JWVm--RD6dosM_ZvMM7WbjD08m2VtfMIeGYd733bbRt9FwzRjXM00W3QmUumhjELkFi6UZq0gWaQummEzGQTfELnEIIiNE"
-                                />
-                                <Link
-                                    href="/admin/admin/logout"
-                                    method="post"
-                                    as="button"
-                                    className="inline-flex items-center gap-1 rounded-md bg-slate-100 px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
-                                >
-                                    <span className="material-symbols-outlined text-base">logout</span>
-                                    Logout
-                                </Link>
+                        {/* Enhanced Header */}
+                        <header className="mb-8">
+                            {/* Top Header Bar */}
+                            <div className="flex items-center justify-between mb-6">
+                                <div className="flex items-center space-x-4">
+                                    <div className="flex items-center space-x-3">
+                                        <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg">
+                                            <span className="material-symbols-outlined text-white text-xl">admin_panel_settings</span>
+                                        </div>
+                                        <div>
+                                            <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Admin Dashboard</h1>
+                                            <p className="text-sm text-slate-600 dark:text-slate-400">Welcome back, {auth?.user?.name || 'Administrator'}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div className="flex items-center gap-3">
+                                    {/* Quick Actions */}
+                                    <div className="hidden md:flex items-center gap-2">
+                                        <Link
+                                            href="/admin/users"
+                                            className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors dark:text-slate-400 dark:hover:text-indigo-400 dark:hover:bg-indigo-900/20"
+                                        >
+                                            <span className="material-symbols-outlined text-base">group</span>
+                                            Users
+                                        </Link>
+                                        <Link
+                                            href="/admin/reports"
+                                            className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors dark:text-slate-400 dark:hover:text-indigo-400 dark:hover:bg-indigo-900/20"
+                                        >
+                                            <span className="material-symbols-outlined text-base">flag</span>
+                                            Reports
+                                        </Link>
+                                    </div>
+
+                                    {/* Notifications */}
+                                    <button className="relative rounded-full p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-700 transition-colors dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-300">
+                                        <span className="material-symbols-outlined">notifications</span>
+                                        <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-red-500 animate-pulse"></span>
+                                    </button>
+
+                                    {/* User Menu */}
+                                    <div className="flex items-center gap-3 pl-3 border-l border-slate-200 dark:border-slate-700">
+                                        <div className="hidden sm:block text-right">
+                                            <p className="text-sm font-medium text-slate-900 dark:text-slate-100">{auth?.user?.name || 'Administrator'}</p>
+                                            <p className="text-xs text-slate-500 dark:text-slate-400">System Administrator</p>
+                                        </div>
+                                        <img
+                                            alt="Admin Avatar"
+                                            className="h-10 w-10 rounded-full ring-2 ring-indigo-100 dark:ring-indigo-900/20"
+                                            src={auth?.user?.avatar || "https://ui-avatars.com/api/?name=" + encodeURIComponent(auth?.user?.name || 'Admin') + "&background=6366f1&color=fff"}
+                                        />
+                                        <Link
+                                            href="/admin/admin/logout"
+                                            method="post"
+                                            as="button"
+                                            className="inline-flex items-center gap-1 rounded-lg bg-slate-100 px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+                                        >
+                                            <span className="material-symbols-outlined text-base">logout</span>
+                                            <span className="hidden sm:inline">Logout</span>
+                                        </Link>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Breadcrumb and Page Actions */}
+                            <div className="flex items-center justify-between">
+                                <nav className="flex items-center space-x-2 text-sm">
+                                    <Link href="/admin" className="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300">
+                                        Admin
+                                    </Link>
+                                    <span className="text-slate-400 dark:text-slate-600">/</span>
+                                    <span className="text-slate-900 font-medium dark:text-slate-100">Dashboard</span>
+                                </nav>
+                                
+                                <div className="flex items-center gap-2">
+                                    <button className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-white rounded-lg border border-slate-200 transition-colors dark:text-slate-400 dark:hover:text-slate-100 dark:hover:bg-slate-800 dark:border-slate-700">
+                                        <span className="material-symbols-outlined text-base">refresh</span>
+                                        Refresh
+                                    </button>
+                                    <button className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors">
+                                        <span className="material-symbols-outlined text-base">download</span>
+                                        Export
+                                    </button>
+                                </div>
                             </div>
                         </header>
 

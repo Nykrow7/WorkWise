@@ -1,10 +1,273 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
+import taxonomy from '../../../../full_freelance_services_taxonomy.json';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
 export default function JobCreate() {
     const [skillInput, setSkillInput] = useState('');
-    
+    // AI-suggested skills state
+    const [suggestedSkills, setSuggestedSkills] = useState([]);
+    const [skillSuggestLoading, setSkillSuggestLoading] = useState(false);
+    // Emerging skills and innovative roles
+    const [emergingSkills, setEmergingSkills] = useState([]);
+    const [innovativeRoles, setInnovativeRoles] = useState([]);
+
+    // Flatten taxonomy into skills and category index (memoized for performance)
+    const { skills: ALL_SKILLS, categories: CATEGORY_INDEX } = useMemo(() => {
+        const skillsSet = new Set();
+        const categories = [];
+        (taxonomy.services || []).forEach(service => {
+            (service.categories || []).forEach(cat => {
+                categories.push({ name: cat.name, skills: cat.skills || [] });
+                (cat.skills || []).forEach(s => skillsSet.add(s));
+            });
+        });
+        return { skills: Array.from(skillsSet), categories };
+    }, []);
+
+    // Common synonym mappings to improve matching quality
+    const SYNONYMS = useMemo(() => ({
+        'react js': 'react',
+        'react.js': 'react',
+        'js': 'javascript',
+        'node': 'node.js',
+        'adobe premiere': 'adobe premiere pro',
+        'davinci': 'davinci resolve',
+        'ux': 'ui/ux',
+        'ui': 'ui/ux',
+        'ml': 'machine learning',
+        'ai': 'machine learning',
+        'ppc': 'ppc',
+        'google ads': 'google ads',
+        'facebook ads': 'facebook ads',
+        'unity3d': 'unity',
+        'c sharp': 'c#',
+        'c plus plus': 'c++',
+        'web dev': 'web development',
+        'frontend': 'web development',
+        'backend': 'web development',
+        'laravel php': 'laravel'
+    }), []);
+
+    // Additional category/title synonyms to map common job titles to taxonomy categories
+    const CATEGORY_SYNONYMS = useMemo(() => ({
+        // Design
+        'graphic designer': 'Graphic Design',
+        'graphics designer': 'Graphic Design',
+        'graphics design': 'Graphic Design',
+        'logo designer': 'Logo Design & Branding',
+        'branding expert': 'Logo Design & Branding',
+        'brand designer': 'Logo Design & Branding',
+        'ui designer': 'UI/UX Design',
+        'ux designer': 'UI/UX Design',
+        'ui/ux designer': 'UI/UX Design',
+        'web designer': 'Web Design',
+        'illustrator artist': 'Illustration',
+        '2d animator': 'Animation',
+        '3d animator': 'Animation',
+        'motion designer': 'Animation',
+        'video editor': 'Video Editing',
+        '3d modeler': '3D Modeling',
+        // Programming & Tech
+        'frontend developer': 'Web Development',
+        'front end developer': 'Web Development',
+        'backend developer': 'Web Development',
+        'back end developer': 'Web Development',
+        'fullstack developer': 'Web Development',
+        'full stack developer': 'Web Development',
+        'react developer': 'Web Development',
+        'vue developer': 'Web Development',
+        'nextjs developer': 'Web Development',
+        'wordpress developer': 'Web Development',
+        'php developer': 'Web Development',
+        'laravel developer': 'Web Development',
+        'mobile developer': 'Mobile App Development',
+        'react native developer': 'Mobile App Development',
+        'flutter developer': 'Mobile App Development',
+        'unity developer': 'Game Development',
+        'unreal developer': 'Game Development',
+        'software developer': 'Software Development',
+        'api developer': 'API Integration & Automation',
+        'integration engineer': 'API Integration & Automation',
+        'database administrator': 'Database Management',
+        'cybersecurity analyst': 'Cybersecurity',
+        'ml engineer': 'Machine Learning',
+        'ai engineer': 'AI & Machine Learning',
+        'blockchain developer': 'Blockchain Development',
+        // Marketing
+        'seo specialist': 'SEO',
+        'social media manager': 'Social Media Marketing',
+        'content marketer': 'Content Marketing',
+        'email marketer': 'Email Marketing',
+        'affiliate marketer': 'Affiliate Marketing',
+        'media buyer': 'Paid Advertising',
+        'marketing analyst': 'Marketing Analytics',
+        // Writing & Translation
+        'content writer': 'Article & Blog Writing',
+        'blog writer': 'Article & Blog Writing',
+        'copywriter': 'Copywriting',
+        'technical writer': 'Technical Writing',
+        'ghostwriter': 'Ghostwriting',
+        'proofreader': 'Proofreading & Editing',
+        'translator': 'Translation',
+        'transcriber': 'Transcription',
+        // Music & Audio
+        'voice over artist': 'Voice Over',
+        'podcast editor': 'Podcast Editing',
+        'sound designer': 'Sound Design',
+        'songwriter': 'Songwriting',
+        // Photo & Video
+        'photographer': 'Photography',
+        'photo editor': 'Photo Retouching',
+        'videographer': 'Videography',
+        'drone operator': 'Drone Videography',
+        // Business & Consulting
+        'business plan writer': 'Business Plan Writing',
+        'startup consultant': 'Startup Consulting',
+        'virtual assistant': 'Virtual Assistant',
+        'project manager': 'Project Management',
+        'accountant': 'Accounting & Bookkeeping',
+        'legal consultant': 'Legal Consulting',
+        // Data & Analytics
+        'data entry specialist': 'Data Entry',
+        'data visualization specialist': 'Data Visualization',
+        'data analyst': 'Data Analysis',
+        'data scientist': 'Machine Learning',
+        'web scraper': 'Web Scraping',
+        // E-Commerce & Product
+        'shopify developer': 'E-commerce Development',
+        'woocommerce developer': 'E-commerce Development',
+        'magento developer': 'E-commerce Development',
+        'product researcher': 'Product Research',
+        'dropshipping specialist': 'Dropshipping',
+        'amazon fba specialist': 'Amazon FBA',
+        'store setup specialist': 'Store Setup',
+        // Engineering & Architecture
+        'cad designer': 'CAD Design',
+        'mechanical engineer': 'Mechanical Engineering',
+        'electrical engineer': 'Electrical Engineering',
+        'civil engineer': 'Civil Engineering'
+    }), []);
+
+    const normalize = (str) => (str || '')
+        .toLowerCase()
+        .replace(/[^a-z0-9+.# ]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+
+    const tokenize = (str) => normalize(str).split(' ');
+
+    // Simple morphological root reducer to better match roles to categories (e.g., designer -> design)
+    const rootify = (word) => {
+        let w = word || '';
+        if (w.length <= 3) return w;
+        const rules = [
+            { end: 'ers', cut: 3 },
+            { end: 'er', cut: 2 },
+            { end: 'ors', cut: 3 },
+            { end: 'or', cut: 2 },
+            { end: 'ing', cut: 3 },
+            { end: 'ments', cut: 5 },
+            { end: 'ment', cut: 4 },
+            { end: 'ions', cut: 4 },
+            { end: 'ion', cut: 3 },
+            { end: 'ists', cut: 4 },
+            { end: 'ist', cut: 3 },
+            { end: 'als', cut: 3 },
+            { end: 'al', cut: 2 },
+            { end: 's', cut: 1 },
+        ];
+        for (const r of rules) {
+            if (w.endsWith(r.end) && w.length > r.cut) {
+                w = w.slice(0, -r.cut);
+                break;
+            }
+        }
+        return w;
+    };
+
+    const matchCategoriesFromText = (text) => {
+        const textNorm = normalize(text || '');
+        const tokens = tokenize(text || '');
+        const tokensRoot = tokens.map(rootify);
+        const matched = new Set();
+
+        // Direct category name inclusion or token overlap
+        CATEGORY_INDEX.forEach(cat => {
+            const catNorm = normalize(cat.name);
+            const catTokens = catNorm.split(' ');
+            const catTokensRoot = catTokens.map(rootify);
+            if (textNorm.includes(catNorm)) {
+                matched.add(cat.name);
+                return;
+            }
+            const overlap = catTokensRoot.filter(t => tokensRoot.includes(t)).length;
+            const threshold = Math.min(2, catTokensRoot.length);
+            if (overlap >= threshold) matched.add(cat.name);
+        });
+
+        // Category synonyms mapping (job titles -> categories)
+        Object.entries(CATEGORY_SYNONYMS).forEach(([alias, catName]) => {
+            if (textNorm.includes(normalize(alias))) matched.add(catName);
+        });
+
+        return Array.from(matched);
+    };
+
+    const scoreSkillMatch = (textNorm, tokens, skill) => {
+        const sNorm = normalize(skill);
+        let score = 0;
+        if (textNorm.includes(sNorm)) score += 3; // exact phrase match
+        const sTokens = sNorm.split(' ');
+        const tokenHits = sTokens.filter(t => tokens.includes(t)).length;
+        if (tokenHits >= Math.min(2, sTokens.length)) score += 2; // token overlap
+        // synonym mapping
+        Object.entries(SYNONYMS).forEach(([key, val]) => {
+            const k = normalize(key);
+            const v = normalize(val);
+            if (textNorm.includes(k) && (v === sNorm || sNorm.includes(v))) {
+                score += 2;
+            }
+        });
+        return score;
+    };
+
+    const suggestSkills = (text, exclude = []) => {
+        const textNorm = normalize(text || '');
+        const tokens = tokenize(text || '');
+        const excludeSet = new Set(exclude.map(normalize));
+        const scored = [];
+        // Enhanced category-based suggestions via direct names, token overlap, and synonyms
+        const matchedCategories = matchCategoriesFromText(text);
+        matchedCategories.forEach(catName => {
+            const cat = CATEGORY_INDEX.find(c => normalize(c.name) === normalize(catName) || c.name === catName);
+            if (!cat) return;
+            (cat.skills || []).forEach(s => {
+                if (!excludeSet.has(normalize(s))) {
+                    // High score to ensure category skills rank at the top
+                    scored.push({ skill: s, score: 5 });
+                }
+            });
+        });
+        // direct skill matching
+        ALL_SKILLS.forEach(s => {
+            if (excludeSet.has(normalize(s))) return;
+            const score = scoreSkillMatch(textNorm, tokens, s);
+            if (score > 0) scored.push({ skill: s, score });
+        });
+        // aggregate by highest score per skill
+        const bySkill = new Map();
+        scored.forEach(({ skill, score }) => {
+            const prev = bySkill.get(skill) || 0;
+            if (score > prev) bySkill.set(skill, score);
+        });
+        // sort and return top suggestions
+        return Array.from(bySkill.entries())
+            .sort((a, b) => b[1] - a[1])
+            .map(([skill]) => skill)
+            .slice(0, 12);
+    };
+
     const { data, setData, post, processing, errors, reset } = useForm({
         title: '',
         description: '',
@@ -18,6 +281,109 @@ export default function JobCreate() {
         location: 'Lapu-Lapu City',
         is_remote: false,
     });
+
+    // Debounced suggestion update when title/description change
+    useEffect(() => {
+        const t = setTimeout(() => {
+            const text = `${data.title ?? ''} ${data.description ?? ''}`;
+            const suggestions = suggestSkills(text, data.required_skills);
+            setSuggestedSkills(suggestions);
+            setSkillSuggestLoading(false);
+        }, 300);
+        setSkillSuggestLoading(true);
+        return () => {
+            clearTimeout(t);
+        };
+    }, [data.title, data.description, data.required_skills]);
+
+    // Server-backed recommendations: taxonomy, emerging skills, innovative roles
+    useEffect(() => {
+        const ctrl = new AbortController();
+        const run = async () => {
+            const payload = {
+                title: data.title,
+                description: data.description,
+                exclude: data.required_skills,
+            };
+            try {
+                const res = await fetch('/api/recommendations/skills', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload),
+                    signal: ctrl.signal,
+                });
+                if (!res.ok) return;
+                const json = await res.json();
+                // Merge: prefer server taxonomy suggestions when present
+                if (Array.isArray(json.taxonomy_skills) && json.taxonomy_skills.length) {
+                    setSuggestedSkills(json.taxonomy_skills);
+                }
+                setEmergingSkills(Array.isArray(json.emerging_skills) ? json.emerging_skills : []);
+                setInnovativeRoles(Array.isArray(json.innovative_roles) ? json.innovative_roles : []);
+            } catch (err) {
+                // silently ignore network errors
+            }
+        };
+        // Only call when there's some text
+        if ((data.title && data.title.length > 0) || (data.description && data.description.length > 0)) {
+            run();
+        }
+        return () => ctrl.abort();
+    }, [data.title, data.description, data.required_skills]);
+
+    const addSkillFromSuggestion = async (skill) => {
+        if (skill && !data.required_skills.includes(skill)) {
+            setData('required_skills', [...data.required_skills, skill]);
+            // log acceptance for learning
+            try {
+                await fetch('/api/recommendations/skills/accept', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type: 'skill', value: skill, context: { source: 'taxonomy' } }),
+                });
+            } catch {}
+        }
+    };
+
+    const addEmergingSkill = async (skill) => {
+        if (skill && !data.required_skills.includes(skill)) {
+            setData('required_skills', [...data.required_skills, skill]);
+            try {
+                await fetch('/api/recommendations/skills/accept', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type: 'skill', value: skill, context: { source: 'emerging' } }),
+                });
+            } catch {}
+        }
+    };
+
+    const applyInnovativeRole = async (role) => {
+        const nextTitle = data.title && data.title.length ? `${role} — ${data.title}` : role;
+        setData('title', nextTitle);
+        try {
+            await fetch('/api/recommendations/skills/accept', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ type: 'role', value: role, context: { page: 'jobs.create' } }),
+            });
+        } catch {}
+    };
+
+    const addAllSuggestedSkills = () => {
+        const toAdd = suggestedSkills.filter((s) => !data.required_skills.includes(s));
+        if (toAdd.length > 0) {
+            setData('required_skills', [...data.required_skills, ...toAdd]);
+        }
+    };
+
+    // Add all emerging skills helper
+    const addAllEmergingSkills = () => {
+        const toAdd = emergingSkills.filter((s) => !data.required_skills.includes(s));
+        if (toAdd.length > 0) {
+            setData('required_skills', [...data.required_skills, ...toAdd]);
+        }
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -176,7 +542,117 @@ export default function JobCreate() {
                                         Add skills that are essential for this job (e.g., React.js, PHP, Graphic Design)
                                     </p>
                                     {errors.required_skills && <p className="mt-2 text-sm text-red-600">{errors.required_skills}</p>}
+                                    
+                                    {/* AI-Suggested Skills */}
+                                    {(skillSuggestLoading || suggestedSkills.length > 0) && (
+                                        <div className="mt-4">
+                                            <div className="flex items-center mb-2">
+                                                <span className="text-sm font-semibold text-gray-700">AI-Suggested Skills</span>
+                                                {skillSuggestLoading && (
+                                                    <span className="ml-2 text-xs text-blue-600 flex items-center">
+                                                        <span className="animate-spin rounded-full h-3 w-3 border-b-2 border-blue-600 mr-1"></span>
+                                                        Analyzing...
+                                                    </span>
+                                                )}
+                                                {!skillSuggestLoading && suggestedSkills.length > 0 && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={addAllSuggestedSkills}
+                                                        disabled={suggestedSkills.every((s) => data.required_skills.includes(s))}
+                                                        className={`ml-auto inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium border transition ${suggestedSkills.every((s) => data.required_skills.includes(s)) ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed' : 'bg-indigo-50 text-blue-700 border-blue-200 hover:bg-indigo-100 hover:text-blue-800 hover:border-blue-300'}`}
+                                                        aria-disabled={suggestedSkills.every((s) => data.required_skills.includes(s))}
+                                                        title="Add all suggested skills"
+                                                    >
+                                                        Add all
+                                                    </button>
+                                                )}
+                                            </div>
+                                            <div className="flex flex-wrap gap-2">
+                                                {suggestedSkills.map((s) => {
+                                                    const isAdded = data.required_skills.includes(s);
+                                                    return (
+                                                        <button
+                                                            type="button"
+                                                            key={s}
+                                                            onClick={() => !isAdded && addSkillFromSuggestion(s)}
+                                                            disabled={isAdded}
+                                                            className={`group inline-flex items-center px-3 py-1 rounded-xl text-sm font-medium border shadow-sm transition ${isAdded ? 'bg-green-50 text-green-700 border-green-200 cursor-default' : 'bg-gradient-to-r from-indigo-50 to-blue-100 text-blue-700 border-blue-200 hover:from-blue-100 hover:to-blue-200 hover:text-blue-800 hover:border-blue-300'}`}
+                                                            aria-disabled={isAdded}
+                                                            title={isAdded ? 'Already added' : 'Add skill'}
+                                                        >
+                                                            <span className={`mr-2 ${isAdded ? 'text-green-600' : 'text-blue-600 group-hover:text-blue-800'}`}>{isAdded ? '✓' : '+'}</span>
+                                                            {s}
+                                                        </button>
+                                                    );
+                                                })}
+                                                {!skillSuggestLoading && suggestedSkills.length === 0 && (
+                                                    <span className="text-xs text-gray-500">No suggestions yet. Try adding more details to your title or description.</span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
+
+                                {/* Emerging Skills */}
+                                {emergingSkills.length > 0 && (
+                                    <div className="mt-4">
+                                        <div className="flex items-center mb-2">
+                                            <span className="text-sm font-semibold text-gray-700">Emerging Skills</span>
+                                            <button
+                                                type="button"
+                                                onClick={addAllEmergingSkills}
+                                                disabled={emergingSkills.every((s) => data.required_skills.includes(s))}
+                                                className={`ml-auto inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium border transition ${emergingSkills.every((s) => data.required_skills.includes(s)) ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed' : 'bg-indigo-50 text-blue-700 border-blue-200 hover:bg-indigo-100 hover:text-blue-800 hover:border-blue-300'}`}
+                                                aria-disabled={emergingSkills.every((s) => data.required_skills.includes(s))}
+                                                title="Add all emerging skills"
+                                            >
+                                                Add all
+                                            </button>
+                                        </div>
+                                        <div className="flex flex-wrap gap-2">
+                                            {emergingSkills.map((s) => {
+                                                const isAdded = data.required_skills.includes(s);
+                                                return (
+                                                    <button
+                                                        type="button"
+                                                        key={s}
+                                                        onClick={() => !isAdded && addEmergingSkill(s)}
+                                                        disabled={isAdded}
+                                                        className={`group inline-flex items-center px-3 py-1 rounded-xl text-sm font-medium border shadow-sm transition ${isAdded ? 'bg-green-50 text-green-700 border-green-200 cursor-default' : 'bg-gradient-to-r from-indigo-50 to-blue-100 text-blue-700 border-blue-200 hover:from-blue-100 hover:to-blue-200 hover:text-blue-800 hover:border-blue-300'}`}
+                                                        aria-disabled={isAdded}
+                                                        title={isAdded ? 'Already added' : 'Add emerging skill'}
+                                                    >
+                                                        <span className={`mr-2 ${isAdded ? 'text-green-600' : 'text-blue-600 group-hover:text-blue-800'}`}>{isAdded ? '✓' : '+'}</span>
+                                                        {s}
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Innovative Roles */}
+                                {innovativeRoles.length > 0 && (
+                                    <div className="mt-4">
+                                        <div className="flex items-center mb-2">
+                                            <span className="text-sm font-semibold text-gray-700">Innovative Roles</span>
+                                        </div>
+                                        <div className="flex flex-wrap gap-2">
+                                            {innovativeRoles.map((r) => (
+                                                <button
+                                                    type="button"
+                                                    key={r}
+                                                    onClick={() => applyInnovativeRole(r)}
+                                                    className="group inline-flex items-center px-3 py-1 rounded-xl text-sm font-medium border shadow-sm transition bg-gradient-to-r from-amber-50 to-orange-100 text-orange-700 border-orange-200 hover:from-orange-100 hover:to-orange-200 hover:text-orange-800 hover:border-orange-300"
+                                                    title="Apply role to title"
+                                                >
+                                                    <span className="mr-2 text-orange-600 group-hover:text-orange-800">↪</span>
+                                                    {r}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
 
                                 {/* Budget */}
                                 <div>

@@ -21,6 +21,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'auth.redirect' => \App\Http\Middleware\AuthMiddleware::class,
             'employer' => \App\Http\Middleware\ClientMiddleware::class,
             'gig_worker' => \App\Http\Middleware\GigWorkerMiddleware::class,
+            'google.oauth.security' => \App\Http\Middleware\GoogleOAuthSecurityMiddleware::class,
         ]);
 
         // Add essential web middleware for CSRF, sessions, etc.

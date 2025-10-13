@@ -37,4 +37,7 @@ Route::post('/stripe/webhook', [WebhookController::class, 'handleStripeWebhook']
 
 // AI Test Connection
 Route::match(['GET', 'POST'], '/ai/test-connection', [AIRecommendationController::class, 'testConnection'])
-    ->withoutMiddleware(['web', 'csrf']); 
+    ->withoutMiddleware(['web', 'csrf']);
+
+Route::post('/recommendations/skills', [AIRecommendationController::class, 'recommendSkills']);
+Route::post('/recommendations/skills/accept', [AIRecommendationController::class, 'acceptSuggestion']);

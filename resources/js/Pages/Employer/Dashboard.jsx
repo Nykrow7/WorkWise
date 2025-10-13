@@ -737,27 +737,78 @@ export default function EmployerDashboard({
         <AuthenticatedLayout
             header={
                 <div className="flex justify-between items-center">
-                    <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                        Employer Dashboard
-                    </h2>
-                    <Link
-                        href={route('jobs.create')}
-                        className="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-lg inline-flex items-center"
-                    >
-                        <PlusIcon className="w-4 h-4 mr-2" />
-                        Post a Job
-                    </Link>
+                    <div>
+                        <h2 className="text-xl font-semibold leading-tight text-gray-800">
+                            Employer Dashboard
+                        </h2>
+                        <p className="text-sm text-gray-600 mt-1">
+                            Manage your projects and find the best talent
+                        </p>
+                    </div>
+                    <div className="flex space-x-3">
+                        <Link
+                            href={route('jobs.create')}
+                            className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-2 px-4 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 inline-flex items-center"
+                        >
+                            <PlusIcon className="w-4 h-4 mr-2" />
+                            Post a Job
+                        </Link>
+                        <Link
+                            href="/analytics/employer"
+                            className="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-2 px-4 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 inline-flex items-center"
+                        >
+                            <ChartBarIcon className="w-4 h-4 mr-2" />
+                            Analytics
+                        </Link>
+                    </div>
                 </div>
             }
         >
             <Head title="Employer Dashboard" />
             <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet" />
 
-            <div className="relative py-12 bg-white overflow-visible">
+            <div className="relative py-8 bg-white overflow-hidden">
                 {/* Animated Background Shapes */}
                 <div className="absolute top-0 left-0 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
-                <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-700/20 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
-                <div className="relative z-20 mx-auto max-w-7xl sm:px-6 lg:px-8 overflow-visible">
+                <div className="absolute bottom-0 right-0 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
+                
+                <div className="relative z-20 mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-8">
+                    
+                    {/* Welcome Banner */}
+                    <div className="overflow-hidden bg-gradient-to-r from-blue-600 to-purple-700 shadow-lg sm:rounded-xl">
+                        <div className="p-8 text-white">
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <h3 className="text-2xl font-bold mb-2">
+                                        Welcome back, {user.first_name}!
+                                    </h3>
+                                    <p className="text-blue-100 text-lg">
+                                        You have {jobsSummary?.active_jobs || stats.activeJobs || 0} active jobs and {proposalsReceived?.length || 0} new proposals
+                                    </p>
+                                </div>
+                                <div className="hidden md:block">
+                                    <div className="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center">
+                                        <BriefcaseIcon className="w-12 h-12 text-white" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+                                <div className="bg-white/20 rounded-lg p-4">
+                                    <div className="text-2xl font-bold">{jobsSummary?.total_jobs || stats.totalJobs || 0}</div>
+                                    <div className="text-blue-100">Total Jobs Posted</div>
+                                </div>
+                                <div className="bg-white/20 rounded-lg p-4">
+                                    <div className="text-2xl font-bold">{activeContracts?.length || stats.activeContracts || 0}</div>
+                                    <div className="text-blue-100">Active Contracts</div>
+                                </div>
+                                <div className="bg-white/20 rounded-lg p-4">
+                                    <div className="text-2xl font-bold">₱{formatAmount(stats?.monthlySpent || 0)}</div>
+                                    <div className="text-blue-100">Monthly Spending</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     {/* Search and Filter Bar */}
                     <SearchAndFilterBar
                         onSearch={(term) => console.log('Search:', term)}

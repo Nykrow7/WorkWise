@@ -1,4 +1,5 @@
 import InputError from '@/Components/InputError';
+import GoogleAuthButton from '@/Components/GoogleAuthButton';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 
@@ -48,13 +49,27 @@ export default function Login({ status, canResetPassword }) {
                 <div className="absolute top-0 left-0 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
                 <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-700/20 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
 
-                {/* Header */}
+                {/* Enhanced Header */}
                 <header className="relative z-10 border-b border-gray-200">
                     <div className="mx-auto" style={{ paddingLeft: '0.45in', paddingRight: '0.45in' }}>
                         <div className="flex justify-between items-center h-16">
                             <Link href="/" className="flex items-center">
                                 <span className="text-2xl font-bold text-blue-600 hover:text-blue-700 transition-all duration-700">WorkWise</span>
                             </Link>
+                            
+                            {/* Enhanced Navigation
+                            <nav className="hidden md:flex items-center space-x-6">
+                                <Link href="/about" className="text-sm text-gray-600 hover:text-blue-600 transition-colors">
+                                    About
+                                </Link>
+                                <Link href="/jobs" className="text-sm text-gray-600 hover:text-blue-600 transition-colors">
+                                    Browse Jobs
+                                </Link>
+                                <Link href="/help" className="text-sm text-gray-600 hover:text-blue-600 transition-colors">
+                                    Help
+                                </Link>
+                            </nav> */}
+                            
                             <div className="flex items-center space-x-4">
                                 <span className="text-sm text-gray-600">Don't have an account?</span>
                                 <Link
@@ -164,6 +179,22 @@ export default function Login({ status, canResetPassword }) {
                             >
                                 {processing ? 'Logging in...' : 'Log in'}
                             </button>
+
+                            {/* Divider */}
+                            <div className="relative">
+                                <div className="absolute inset-0 flex items-center">
+                                    <div className="w-full border-t border-gray-300"></div>
+                                </div>
+                                <div className="relative flex justify-center text-sm">
+                                    <span className="px-2 bg-white text-gray-500">Or continue with</span>
+                                </div>
+                            </div>
+
+                            {/* Google Login Button */}
+                            <GoogleAuthButton 
+                                action="login" 
+                                disabled={processing}
+                            />
 
                             {/* Sign up Link */}
                             <div className="text-center">

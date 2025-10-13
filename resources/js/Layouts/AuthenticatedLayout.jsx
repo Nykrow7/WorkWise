@@ -64,6 +64,14 @@ export default function AuthenticatedLayout({ header, children }) {
     const user = usePage().props.auth.user;
     const isGigWorker = user.user_type === 'gig_worker';
     const isEmployer = user.user_type === 'employer';
+    // Role-aware dashboard URL and active state
+    const dashboardHref = isGigWorker
+        ? '/gig-worker/dashboard'
+        : (isEmployer
+            ? '/employer/dashboard'
+            : (user.user_type === 'admin' ? '/admin' : '/dashboard'));
+    const isDashboardActive = ['/dashboard','/gig-worker/dashboard','/employer/dashboard','/admin']
+        .some(prefix => window.location.pathname.startsWith(prefix));
 
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
@@ -479,9 +487,21 @@ export default function AuthenticatedLayout({ header, children }) {
                             </Link>
                         </div>
 
-                        {/* Navigation - Center */}
+                        {/* Enhanced Navigation - Center */}
                         <div className="flex-1 flex justify-center">
-                            <div className="hidden md:flex space-x-6">
+                            <div className="hidden md:flex space-x-8">
+                                {/* Dashboard */}
+                                <Link
+                                    href={dashboardHref}
+                                    className={`text-sm font-medium transition-colors ${
+                                        isDashboardActive
+                                            ? 'text-blue-600'
+                                            : 'text-gray-600 hover:text-gray-900'
+                                    }`}
+                                >
+                                    Dashboard
+                                </Link>
+
                                 {/* Jobs/Work - Role-specific labels */}
                                 <Link
                                     href="/jobs"
@@ -491,35 +511,69 @@ export default function AuthenticatedLayout({ header, children }) {
                                             : 'text-gray-600 hover:text-gray-900'
                                     }`}
                                 >
-                                    {isGigWorker ? 'Find Work' : 'My Jobs'}
+                                    {isGigWorker ? 'Browse Jobs' : 'My Jobs'}
                                 </Link>
 
                                 {/* Gig Worker-only navigation */}
                                 {isGigWorker && (
-                                    <Link
-                                        href="/bids"
-                                        className={`text-sm font-medium transition-colors ${
-                                            window.route.current('bids.*')
-                                                ? 'text-blue-600'
-                                                : 'text-gray-600 hover:text-gray-900'
-                                        }`}
-                                    >
-                                        My Proposals
-                                    </Link>
+                                    <>
+                                        <Link
+                                            href="/bids"
+                                            className={`text-sm font-medium transition-colors ${
+                                                window.route.current('bids.*')
+                                                    ? 'text-blue-600'
+                                                    : 'text-gray-600 hover:text-gray-900'
+                                            }`}
+                                        >
+                                            My Proposals
+                                        </Link>
+                                        <Link
+                                            href="/ai/recommendations"
+                                            className={`text-sm font-medium transition-colors ${
+                                                window.route.current('ai.*')
+                                                    ? 'text-blue-600'
+                                                    : 'text-gray-600 hover:text-gray-900'
+                                            }`}
+                                        >
+                                            AI Recommendations
+                                        </Link>
+                                    </>
                                 )}
 
                                 {/* Employer-only navigation */}
                                 {isEmployer && (
-                                    <Link
-                                        href="/jobs/create"
-                                        className={`text-sm font-medium rounded-md transition-colors ${
-                                            window.route.current('jobs.create')
-                                                ? 'text-blue-600'
-                                                : 'text-gray-600 hover:text-gray-900'
-                                        }`}
-                                    >
-                                        Post a Job
-                                    </Link>
+                                    <>
+                                        <Link
+                                            href="/jobs/create"
+                                            className={`text-sm font-medium rounded-md transition-colors ${
+                                                window.route.current('jobs.create')
+                                                    ? 'text-blue-600'
+                                                    : 'text-gray-600 hover:text-gray-900'
+                                            }`}
+                                        >
+                                            Post a Job
+                                        </Link>
+                                        <Link
+                                            href="/freelancers"
+                                            className={`text-sm font-medium transition-colors ${
+                                                window.route.current('freelancers.*')
+                                                    ? 'text-blue-600'
+                                                    : 'text-gray-600 hover:text-gray-900'
+                                            }`}
+                                        >
+                                            Browse Freelancers
+                                        </Link>
+                                        <Link
+                                            href="/ai/recommendations"
+                                            className={`text-sm font-medium transition-colors ${
+                                                window.route.current('ai.*')
+                                                    ? 'text-blue-600'
+                                                    : 'text-gray-600 hover:text-gray-900'
+                                            }`}
+                                        >
+                                            AI Talent Recommendations
+                                        </Link>
+                                    </>
                                 )}
 
                                 {/* Common navigation */}
@@ -532,6 +586,17 @@ export default function AuthenticatedLayout({ header, children }) {
                                     }`}
                                 >
                                     Projects
+                                </Link>
+
+                                <Link
+                                    href="/messages"
+                                    className={`text-sm font-medium transition-colors ${
+                                        window.route.current('messages.*')
+                                            ? 'text-blue-600'
+                                            : 'text-gray-600 hover:text-gray-900'
+                                    }`}
+                                >
+                                    Messages
                                 </Link>
                             </div>
                         </div>
@@ -981,6 +1046,17 @@ export default function AuthenticatedLayout({ header, children }) {
                 {/* Mobile Navigation */}
                 <div className={`${showingNavigationDropdown ? 'block' : 'hidden'} md:hidden border-t border-gray-200`}>
                     <div className="px-4 py-2 space-y-1">
+                        {/* Dashboard (role-aware) */}
+                        <Link
+                            href={dashboardHref}
+                            className={`block px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                                isDashboardActive
+                                    ? 'text-blue-600 bg-blue-50'
+                                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                            }`}
+                        >
+                            Dashboard
+                        </Link>
                         {/* Jobs/Work - Role-specific */}
                         <Link
                             href="/jobs"
@@ -991,7 +1067,8 @@ export default function AuthenticatedLayout({ header, children }) {
                             }`}
                         >
                             {isGigWorker ? 'Find Work' : 'My Jobs'}
-                        </Link>
+                        </Link
+                        >
 
                         {/* Gig Worker-only mobile navigation */}
                         {isGigWorker && (
