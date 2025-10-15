@@ -7,10 +7,10 @@ use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class FreelancerOnboardingController extends Controller
+class GigWorkerOnboardingController extends Controller
 {
     /**
-     * Show the freelancer onboarding page
+     * Show the gig worker onboarding page
      */
     public function show(): Response|RedirectResponse
     {
@@ -26,13 +26,13 @@ class FreelancerOnboardingController extends Controller
             return redirect()->route('jobs.index');
         }
 
-        return Inertia::render('Onboarding/FreelancerOnboarding', [
+        return Inertia::render('Onboarding/GigWorkerOnboarding', [
             'user' => $user
         ]);
     }
 
     /**
-     * Handle the freelancer onboarding form submission
+     * Handle the gig worker onboarding form submission
      */
     public function store(Request $request): RedirectResponse
     {
@@ -69,7 +69,7 @@ class FreelancerOnboardingController extends Controller
     }
 
     /**
-     * Skip onboarding (optional for freelancers)
+     * Skip onboarding (optional for gig workers)
      */
     public function skip(): RedirectResponse
     {

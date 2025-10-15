@@ -45,14 +45,6 @@ class Bid extends Model
     }
 
     /**
-     * The freelancer who made this bid (deprecated - use gigWorker)
-     */
-    public function freelancer(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'gig_worker_id');
-    }
-
-    /**
      * Check if bid is pending
      */
     public function isPending(): bool

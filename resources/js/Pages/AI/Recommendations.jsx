@@ -732,15 +732,12 @@ export default function Recommendations({
                                                                     </div>
 
                                                                     <div className="mt-4 flex justify-end">
-                                                                        <button
-                                                                            className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 border border-transparent rounded-xl font-semibold text-sm text-white uppercase tracking-widest shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 opacity-50 cursor-not-allowed"
-                                                                            disabled
+                                                                        <Link
+                                                                            href={`/gig-worker/${match.gig_worker_id}/profile`}
+                                                                            className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 border border-transparent rounded-xl font-semibold text-sm text-white uppercase tracking-widest shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
                                                                         >
-                                                                            View
-                                                                            Profile
-                                                                            (Coming
-                                                                            Soon)
-                                                                        </button>
+                                                                            View Profile
+                                                                        </Link>
                                                                     </div>
                                                                 </div>
                                                             );
@@ -915,15 +912,12 @@ export default function Recommendations({
                                                                     </div>
 
                                                                     <div className="mt-4 flex justify-end">
-                                                                        <button
-                                                                            className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 border border-transparent rounded-xl font-semibold text-sm text-white uppercase tracking-widest shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 opacity-50 cursor-not-allowed"
-                                                                            disabled
+                                                                        <Link
+                                                                            href={`/gig-worker/${match.gig_worker_id}/profile`}
+                                                                            className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 border border-transparent rounded-xl font-semibold text-sm text-white uppercase tracking-widest shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
                                                                         >
-                                                                            View
-                                                                            Profile
-                                                                            (Coming
-                                                                            Soon)
-                                                                        </button>
+                                                                            View Profile
+                                                                        </Link>
                                                                     </div>
                                                                 </div>
                                                             );

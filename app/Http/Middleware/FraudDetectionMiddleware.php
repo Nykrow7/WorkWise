@@ -233,7 +233,7 @@ class FraudDetectionMiddleware
         ];
 
         // Check for rapid project creation
-        $recentProjects = $user->clientProjects()
+        $recentProjects = $user->employerProjects()
             ->where('created_at', '>=', now()->subHours(2))
             ->count();
 

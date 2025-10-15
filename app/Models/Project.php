@@ -46,28 +46,18 @@ class Project extends Model
         'net_amount' => 'decimal:2',
     ];
 
+    /**
+     * Get the employer (client) of the project
+     */
     public function employer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'employer_id');
     }
 
     /**
-     * Get the client (deprecated - use employer)
+     * Get the gig worker (freelancer) of the project
      */
-    public function client(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'employer_id');
-    }
-
     public function gigWorker(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'gig_worker_id');
-    }
-
-    /**
-     * Get the freelancer (deprecated - use gigWorker)
-     */
-    public function freelancer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'gig_worker_id');
     }

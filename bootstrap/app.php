@@ -19,7 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
             'auth.redirect' => \App\Http\Middleware\AuthMiddleware::class,
-            'employer' => \App\Http\Middleware\ClientMiddleware::class,
+            'employer' => \App\Http\Middleware\EmployerMiddleware::class,
             'gig_worker' => \App\Http\Middleware\GigWorkerMiddleware::class,
             'google.oauth.security' => \App\Http\Middleware\GoogleOAuthSecurityMiddleware::class,
         ]);

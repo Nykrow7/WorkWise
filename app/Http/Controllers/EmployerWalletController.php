@@ -11,7 +11,7 @@ use Inertia\Response;
 use Stripe\Stripe;
 use Stripe\PaymentIntent;
 
-class ClientWalletController extends Controller
+class EmployerWalletController extends Controller
 {
     public function __construct()
     {
@@ -19,7 +19,7 @@ class ClientWalletController extends Controller
     }
 
     /**
-     * Show client wallet with escrow balance and deposit functionality
+     * Show employer wallet with escrow balance and deposit functionality
      */
     public function index(): Response
     {
@@ -33,12 +33,12 @@ class ClientWalletController extends Controller
             ->latest()
             ->paginate(10);
 
-        // Get projects where client made payments
-        $paidProjects = Project::where('client_id', $user->id)
+        // Get projects where employer made payments
+        $paidProjects = Project::where('employer_id', $user->id)
             ->whereHas('transactions', function($query) {
                 $query->where('type', 'escrow')->where('status', 'completed');
             })
-            ->with(['job', 'freelancer', 'transactions'])
+            ->with(['job', 'gig_worker', 'transactions'])
             ->latest()
             ->take(5)
             ->get();
@@ -57,7 +57,7 @@ class ClientWalletController extends Controller
             ->where('status', 'completed')
             ->sum('amount');
 
-        return Inertia::render('Client/Wallet', [
+        return Inertia::render('Employer/Wallet', [
             'deposits' => $deposits,
             'paidProjects' => $paidProjects,
             'transactions' => $transactions,

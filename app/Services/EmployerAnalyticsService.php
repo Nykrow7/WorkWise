@@ -159,7 +159,7 @@ class EmployerAnalyticsService
         return [
             'job_to_contract_rate' => $successRate,
             'avg_bids_to_contract' => $this->getAvgBidsToContract($employer),
-            'client_satisfaction' => $this->getClientSatisfactionScore($employer)
+            'employer_satisfaction' => $this->getEmployerSatisfactionScore($employer)
         ];
     }
 
@@ -266,9 +266,9 @@ class EmployerAnalyticsService
     }
 
     /**
-     * Get client satisfaction score
-     */
-    private function getClientSatisfactionScore(User $employer): float
+         * Get employer satisfaction score
+         */
+        private function getEmployerSatisfactionScore(User $employer): float
     {
         // This would typically come from review/rating data
         // For now, return a placeholder based on completion rate

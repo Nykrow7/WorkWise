@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class ClientMiddleware
+class EmployerMiddleware
 {
     /**
      * Handle an incoming request.
@@ -24,4 +24,4 @@ class ClientMiddleware
 
         return $next($request);
     }
-} 
+}

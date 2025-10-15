@@ -284,4 +284,66 @@ class GigWorkerController extends Controller
             'data' => $stats
         ]);
     }
+
+    /**
+     * Show gig worker profile page
+     */
+    public function showProfile(Request $request, $id)
+    {
+        $gigWorker = User::where('user_type', 'gig_worker')
+            ->where('id', $id)
+            ->where('profile_completed', true)
+            ->where('profile_status', 'approved')
+            ->with([
+                'receivedReviews.reviewer',
+                'gigWorkerProjects.job',
+                'gigWorkerProjects.employer'
+            ])
+            ->first();
+
+        if (!$gigWorker) {
+            abort(404, 'Gig worker not found or profile not available');
+        }
+
+        // Prepare profile data
+        $profileData = [
+            'id' => $gigWorker->id,
+            'name' => $gigWorker->full_name,
+            'first_name' => $gigWorker->first_name,
+            'last_name' => $gigWorker->last_name,
+            'professional_title' => $gigWorker->professional_title,
+            'bio' => $gigWorker->bio,
+            'location' => $gigWorker->location,
+            'hourly_rate' => $gigWorker->hourly_rate,
+            'experience_level' => $gigWorker->experience_level,
+            'skills' => $gigWorker->skills ?? [],
+            'languages' => $gigWorker->languages ?? [],
+            'portfolio_url' => $gigWorker->portfolio_url,
+            'profile_photo' => $gigWorker->profile_photo,
+            'avatar' => $gigWorker->avatar ?? $gigWorker->profile_photo,
+            'rating' => round($gigWorker->average_rating, 1),
+            'review_count' => $gigWorker->receivedReviews->count(),
+            'completed_projects' => $gigWorker->gigWorkerProjects()->where('status', 'completed')->count(),
+            'member_since' => $gigWorker->created_at,
+            'last_active' => $gigWorker->updated_at,
+            'completion_rate' => $gigWorker->completion_rate,
+            'total_earnings' => $gigWorker->total_earnings,
+            'reviews' => $gigWorker->receivedReviews->take(10)->map(function ($review) {
+                return [
+                    'id' => $review->id,
+                    'rating' => $review->rating,
+                    'comment' => $review->comment,
+                    'created_at' => $review->created_at,
+                    'reviewer' => [
+                        'name' => $review->reviewer->full_name,
+                        'avatar' => $review->reviewer->avatar ?? $review->reviewer->profile_photo,
+                    ]
+                ];
+            }),
+        ];
+
+        return inertia('GigWorker/Profile', [
+            'gigWorker' => $profileData
+        ]);
+    }
 }

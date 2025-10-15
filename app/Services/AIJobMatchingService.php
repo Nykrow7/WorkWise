@@ -19,20 +19,20 @@ class AIJobMatchingService
         $this->aiService = $aiService;
     }
     /**
-     * Find matching freelancers for a job using AI-like algorithm
-     */
-    public function findMatchingFreelancers(GigJob $job, int $limit = 10): Collection
+         * Find matching gig workers for a job using AI-like algorithm
+         */
+        public function findMatchingGigWorkers(GigJob $job, int $limit = 10): Collection
     {
-        $freelancers = User::where('user_type', 'freelancer')
+        $gigWorkers = User::where('user_type', 'gig_worker')
             ->where('profile_completed', true)
             ->get();
 
-        return $freelancers->map(function ($freelancer) use ($job) {
-            $score = $this->calculateMatchScore($job, $freelancer);
+        return $gigWorkers->map(function ($gigWorker) use ($job) {
+            $score = $this->calculateMatchScore($job, $gigWorker);
             return [
-                'freelancer' => $freelancer,
+                'gig_worker' => $gigWorker,
                 'match_score' => $score,
-                'match_reasons' => $this->getMatchReasons($job, $freelancer, $score)
+                'match_reasons' => $this->getMatchReasons($job, $gigWorker, $score)
             ];
         })
         ->filter(fn($match) => $match['match_score'] > 0.1) // Show more matches (10% threshold)
@@ -42,24 +42,24 @@ class AIJobMatchingService
     }
 
     /**
-     * Find matching jobs for a freelancer
+     * Find matching jobs for a gig worker
      */
-    public function findMatchingJobs(User $freelancer, int $limit = 20): Collection
+    public function findMatchingJobs(User $gigWorker, int $limit = 20): Collection
     {
         $jobs = GigJob::with(['employer']) // Load employer relationship
             ->where('status', 'open')
-            ->where('employer_id', '!=', $freelancer->id)
-            ->whereDoesntHave('bids', function($query) use ($freelancer) {
-                $query->where('freelancer_id', $freelancer->id);
+            ->where('employer_id', '!=', $gigWorker->id)
+            ->whereDoesntHave('bids', function($query) use ($gigWorker) {
+                $query->where('gig_worker_id', $gigWorker->id);
             })
             ->get();
 
-        return $jobs->map(function ($job) use ($freelancer) {
-            $score = $this->calculateMatchScore($job, $freelancer);
+        return $jobs->map(function ($job) use ($gigWorker) {
+            $score = $this->calculateMatchScore($job, $gigWorker);
             return [
                 'job' => $job,
                 'match_score' => $score,
-                'match_reasons' => $this->getMatchReasons($job, $freelancer, $score),
+                'match_reasons' => $this->getMatchReasons($job, $gigWorker, $score),
                 'competition_level' => $this->calculateCompetitionLevel($job)
             ];
         })
@@ -70,19 +70,19 @@ class AIJobMatchingService
     }
 
     /**
-     * Calculate match score between job and freelancer
+     * Calculate match score between job and gig worker
      */
-    private function calculateMatchScore(GigJob $job, User $freelancer): float
+    private function calculateMatchScore(GigJob $job, User $gigWorker): float
     {
         $score = 0.0;
         $maxScore = 1.0;
 
         // Skills matching (70% weight) - Primary factor
-        $skillsScore = $this->calculateSkillsMatch($job->required_skills, $freelancer->skills ?? []);
+        $skillsScore = $this->calculateSkillsMatch($job->required_skills, $gigWorker->skills ?? []);
         $score += $skillsScore * 0.7;
 
         // Experience level matching (30% weight) - Secondary factor
-        $experienceScore = $this->calculateExperienceMatch($job->experience_level, $freelancer);
+        $experienceScore = $this->calculateExperienceMatch($job->experience_level, $gigWorker);
         $score += $experienceScore * 0.3;
 
         // Remove all other factors (budget, location, reputation, availability)
@@ -94,9 +94,9 @@ class AIJobMatchingService
     /**
      * Calculate skills matching score
      */
-    private function calculateSkillsMatch(array $requiredSkills, array $freelancerSkills): float
+    private function calculateSkillsMatch(array $requiredSkills, array $gigWorkerSkills): float
     {
-        if (empty($requiredSkills) || empty($freelancerSkills)) {
+        if (empty($requiredSkills) || empty($gigWorkerSkills)) {
             return 0.0;
         }
 
@@ -105,20 +105,20 @@ class AIJobMatchingService
             return strtolower(trim($skill));
         }, $requiredSkills);
 
-        $freelancerSkills = array_map(function($skill) {
+        $gigWorkerSkills = array_map(function($skill) {
             return strtolower(trim($skill));
-        }, $freelancerSkills);
+        }, $gigWorkerSkills);
 
         // Direct matches
-        $directMatches = array_intersect($requiredSkills, $freelancerSkills);
+        $directMatches = array_intersect($requiredSkills, $gigWorkerSkills);
         $directMatchScore = count($directMatches) / count($requiredSkills);
 
         // Partial matches (for similar skills)
         $partialMatches = 0;
         foreach ($requiredSkills as $required) {
             if (!in_array($required, $directMatches)) {
-                foreach ($freelancerSkills as $freelancer) {
-                    if (str_contains($freelancer, $required) || str_contains($required, $freelancer)) {
+                foreach ($gigWorkerSkills as $gigWorker) {
+                    if (str_contains($gigWorker, $required) || str_contains($required, $gigWorker)) {
                         $partialMatches++;
                         break;
                     }
@@ -130,7 +130,7 @@ class AIJobMatchingService
         $totalMatchScore = $directMatchScore + $partialMatchScore;
 
         // Bonus for having more skills than required
-        $extraSkillsBonus = min(0.2, (count($freelancerSkills) - count($requiredSkills)) * 0.02);
+        $extraSkillsBonus = min(0.2, (count($gigWorkerSkills) - count($requiredSkills)) * 0.02);
 
         return min(1.0, $totalMatchScore + $extraSkillsBonus);
     }
@@ -138,29 +138,29 @@ class AIJobMatchingService
     /**
      * Calculate experience level match
      */
-    private function calculateExperienceMatch(string $requiredLevel, User $freelancer): float
+    private function calculateExperienceMatch(string $requiredLevel, User $gigWorker): float
     {
         $levelMap = ['beginner' => 1, 'intermediate' => 2, 'expert' => 3];
         $required = $levelMap[$requiredLevel] ?? 2;
 
-        // Use freelancer's set experience level if available, otherwise estimate
-        if ($freelancer->experience_level) {
-            $freelancerLevel = $levelMap[$freelancer->experience_level] ?? 2;
+        // Use gig worker's set experience level if available, otherwise estimate
+        if ($gigWorker->experience_level) {
+            $gigWorkerLevel = $levelMap[$gigWorker->experience_level] ?? 2;
         } else {
-            // Fallback: Estimate freelancer level based on completed projects and ratings
-            $completedProjects = $freelancer->freelancerProjects()->where('status', 'completed')->count();
-            $avgRating = $freelancer->receivedReviews()->avg('rating') ?? 3;
+            // Fallback: Estimate gig worker level based on completed projects and ratings
+            $completedProjects = $gigWorker->gigWorkerProjects()->where('status', 'completed')->count();
+            $avgRating = $gigWorker->receivedReviews()->avg('rating') ?? 3;
 
-            $freelancerLevel = 1; // Default beginner
+            $gigWorkerLevel = 1; // Default beginner
             if ($completedProjects >= 10 && $avgRating >= 4.5) {
-                $freelancerLevel = 3; // Expert
+                $gigWorkerLevel = 3; // Expert
             } elseif ($completedProjects >= 3 && $avgRating >= 4.0) {
-                $freelancerLevel = 2; // Intermediate
+                $gigWorkerLevel = 2; // Intermediate
             }
         }
 
         // Perfect match = 1.0, one level off = 0.7, two levels off = 0.3
-        $difference = abs($required - $freelancerLevel);
+        $difference = abs($required - $gigWorkerLevel);
         return match($difference) {
             0 => 1.0,
             1 => 0.7,

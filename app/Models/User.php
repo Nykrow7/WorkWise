@@ -109,25 +109,9 @@ class User extends Authenticatable
     }
 
     /**
-     * Check if user is a client (deprecated - use isEmployer)
-     */
-    public function isClient(): bool
-    {
-        return $this->user_type === 'client';
-    }
-
-    /**
      * Check if user is a gig worker
      */
     public function isGigWorker(): bool
-    {
-        return $this->user_type === 'gig_worker';
-    }
-
-    /**
-     * Check if user is a freelancer (deprecated - use isGigWorker)
-     */
-    public function isFreelancer(): bool
     {
         return $this->user_type === 'gig_worker';
     }
@@ -156,29 +140,18 @@ class User extends Authenticatable
         return $this->hasMany(Bid::class, 'gig_worker_id');
     }
 
-    // Project relationships
+    /**
+     * Get employer projects
+     */
     public function employerProjects(): HasMany
     {
         return $this->hasMany(Project::class, 'employer_id');
     }
 
+    /**
+     * Get gig worker projects
+     */
     public function gigWorkerProjects(): HasMany
-    {
-        return $this->hasMany(Project::class, 'gig_worker_id');
-    }
-
-    /**
-     * Get client projects (deprecated - use employerProjects)
-     */
-    public function clientProjects(): HasMany
-    {
-        return $this->hasMany(Project::class, 'employer_id');
-    }
-
-    /**
-     * Get freelancer projects (deprecated - use gigWorkerProjects)
-     */
-    public function freelancerProjects(): HasMany
     {
         return $this->hasMany(Project::class, 'gig_worker_id');
     }

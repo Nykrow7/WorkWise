@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\GigJob;
 use App\Services\AIJobMatchingService;
-use App\Services\MatchService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -13,7 +12,6 @@ class AIController extends Controller
 {
     public function __construct(
         private AIJobMatchingService $aiService,
-        private MatchService $matchService,
         private AIService $aiServiceDirect
     ) {}
 
@@ -25,7 +23,7 @@ class AIController extends Controller
         $user = auth()->user();
 
         if ($user->isFreelancer()) {
-            $recommendations = $this->matchService->getRecommendedJobs($user);
+            $recommendations = $this->aiService->findMatchingJobs($user)->toArray();
 
             return Inertia::render('AI/Recommendations', [
                 'recommendations' => $recommendations,
@@ -37,10 +35,10 @@ class AIController extends Controller
             $recommendations = [];
 
             foreach ($jobs as $job) {
-                $matches = $this->matchService->getJobMatches($job);
+                $matches = $this->aiService->findMatchingGigWorkers($job);
                 $recommendations[$job->id] = [
                     'job' => $job,
-                    'matches' => $matches
+                    'matches' => $matches->toArray()
                 ];
             }
 
@@ -77,7 +75,7 @@ class AIController extends Controller
             abort(403, 'Only freelancers can access job suggestions');
         }
 
-        $suggestions = $this->matchService->getRecommendedJobs($user, 15);
+        $suggestions = $this->aiService->findMatchingJobs($user, 15)->toArray();
 
         return response()->json([
             'suggestions' => $suggestions,

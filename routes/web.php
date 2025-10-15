@@ -9,12 +9,11 @@ use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\AIController;
 use App\Http\Controllers\GigWorkerOnboardingController;
-use App\Http\Controllers\FreelancerOnboardingController;
-use App\Http\Controllers\ClientOnboardingController;
+use App\Http\Controllers\EmployerOnboardingController;
 use App\Http\Controllers\WebhookController;
 use App\Http\Controllers\AIRecommendationController;
-use App\Http\Controllers\ClientWalletController;
-use App\Http\Controllers\FreelancerWalletController;
+use App\Http\Controllers\EmployerWalletController;
+use App\Http\Controllers\GigWorkerWalletController;
 use App\Http\Controllers\DepositController;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\AnalyticsController;
@@ -29,6 +28,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\EmployerDashboardController;
 use App\Http\Controllers\GigWorkerDashboardController;
 use App\Http\Controllers\Api\GigWorkerController;
+use App\Http\Controllers\JobInvitationController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -146,111 +146,39 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/api/export/preview', [EmployerDashboardController::class, 'getExportPreview'])->name('api.export.preview');
 });
 
-// Test route to debug - old dashboard
-Route::get('/test-dashboard', function () {
+// Main dashboard route
+Route::get('/dashboard', function () {
     $user = Auth::user();
-    return Inertia::render('Dashboard', [
-        'user' => $user,
-        'debug' => [
-            'authenticated' => Auth::check(),
-            'user_id' => $user ? $user->id : null,
-            'user_type' => $user ? $user->user_type : null,
-        ]
-    ]);
-})->middleware(['auth'])->name('test.dashboard');
-
-// Simple test route
-Route::get('/test-simple', function () {
-    return Inertia::render('TestDashboard');
-})->name('test.simple');
-
-// Test admin route (no auth required)
-Route::get('/test-admin', function () {
-    return Inertia::render('Admin/Dashboard', [
-        'stats' => [
-            'total_users' => 100,
-            'total_freelancers' => 50,
-            'total_clients' => 50,
-            'total_projects' => 25,
-            'active_projects' => 10,
-            'completed_projects' => 15,
-            'total_reports' => 5,
-            'pending_reports' => 2,
-            'total_transactions' => 200,
-            'platform_earnings' => 5000,
-        ],
-        'recentUsers' => [],
-        'recentReports' => [],
-        'recentProjects' => [],
-        'recentActivities' => [
-            [
-                'title' => 'Test activity 1',
-                'time' => '1 minute ago',
-                'icon' => 'add',
-                'color' => 'emerald'
-            ],
-            [
-                'title' => 'Test activity 2',
-                'time' => '5 minutes ago',
-                'icon' => 'task_alt',
-                'color' => 'pink'
-            ]
-        ]
-    ]);
-})->name('test.admin');
-
-// Quick admin access for testing (bypass auth)
-Route::get('/admin-quick', function () {
-    // Create a temporary admin user for testing
-    $adminUser = \App\Models\User::where('email', 'admin@workwise.com')->first();
-
-    if ($adminUser) {
-        Auth::login($adminUser);
-        return redirect()->route('admin.dashboard');
+    
+    if (!$user) {
+        return redirect('/login');
     }
-
-    return redirect('/login')->with('error', 'Admin user not found. Please run the AdminUserSeeder.');
-})->name('admin.quick');
-
-// Simple test route to check if basic routing works
-Route::get('/test-basic', function () {
-    return response()->json(['status' => 'ok', 'message' => 'Basic routing works!']);
-})->name('test.basic');
-
-// Direct login route to bypass any route name issues
-Route::get('/login-direct', function () {
-    return redirect('/login');
-})->name('login.direct');
-
-// Debug user status
-Route::get('/debug-user', function () {
-    $user = Auth::user();
-    return response()->json([
-        'authenticated' => Auth::check(),
-        'user' => $user ? [
-            'id' => $user->id,
-            'name' => $user->first_name . ' ' . $user->last_name,
-            'email' => $user->email,
-            'user_type' => $user->user_type,
-            'is_admin' => $user->is_admin,
-            'isAdmin()' => $user->isAdmin(),
-        ] : null,
-        'session' => session()->all(),
-    ]);
-})->middleware('auth');
+    
+    // Redirect based on user type
+    if ($user->user_type === 'admin') {
+        return redirect()->route('admin.dashboard');
+    } elseif ($user->user_type === 'gig_worker') {
+        return redirect()->route('gig-worker.dashboard');
+    } elseif ($user->user_type === 'employer') {
+        return redirect()->route('employer.dashboard');
+    }
+    
+    // Default fallback
+    return redirect('/jobs');
+})->middleware(['auth'])->name('dashboard');
 
 // Protected job listings - requires authentication
 Route::get('/jobs', [GigJobController::class, 'index'])->middleware(['auth.redirect'])->name('jobs.index');
 
 Route::middleware('auth')->group(function () {
     // Onboarding routes
-    Route::get('/onboarding/gig-worker', [FreelancerOnboardingController::class, 'show'])->name('gig-worker.onboarding');
-    Route::post('/onboarding/gig-worker', [FreelancerOnboardingController::class, 'store']);
-    Route::post('/onboarding/gig-worker/skip', [FreelancerOnboardingController::class, 'skip'])->name('gig-worker.onboarding.skip');
+    Route::get('/onboarding/gig-worker', [GigWorkerOnboardingController::class, 'show'])->name('gig-worker.onboarding');
+Route::post('/onboarding/gig-worker', [GigWorkerOnboardingController::class, 'store']);
+Route::post('/onboarding/gig-worker/skip', [GigWorkerOnboardingController::class, 'skip'])->name('gig-worker.onboarding.skip');
 
-    Route::get('/onboarding/employer', [ClientOnboardingController::class, 'show'])->name('employer.onboarding');
-    Route::post('/onboarding/employer', [ClientOnboardingController::class, 'store']);
-    Route::post('/onboarding/employer/skip', [ClientOnboardingController::class, 'skip'])->name('employer.onboarding.skip');
+    Route::get('/onboarding/employer', [EmployerOnboardingController::class, 'show'])->name('employer.onboarding');
+    Route::post('/onboarding/employer', [EmployerOnboardingController::class, 'store']);
+    Route::post('/onboarding/employer/skip', [EmployerOnboardingController::class, 'skip'])->name('employer.onboarding.skip');
 
     // Profile routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -315,11 +243,6 @@ Route::middleware('auth')->group(function () {
         Route::delete('/bids/{bid}', [BidController::class, 'destroy'])->name('bids.destroy');
     });
 
-    // DEBUG: Test route to check if routing works
-    Route::patch('/test-bid/{bid}', function($bid) {
-        return back()->with('success', 'TEST ROUTE WORKS! Bid ID: ' . $bid);
-    })->name('test.bid');
-
     // Project routes - mixed permissions
     Route::get('/projects', [ProjectController::class, 'index'])->name('projects.index');
     Route::get('/projects/{project}', [ProjectController::class, 'show'])->name('projects.show');
@@ -379,17 +302,22 @@ Route::middleware('auth')->group(function () {
     Route::get('/notifications/unread-count', [NotificationController::class, 'getUnreadCount'])->name('notifications.unreadCount');
     Route::delete('/notifications/{notification}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
 
+    // Job Invitation routes
+    Route::post('/job-invitations/send', [JobInvitationController::class, 'sendInvitation'])->name('job-invitations.send');
+    Route::get('/job-invitations', [JobInvitationController::class, 'getInvitations'])->name('job-invitations.index');
+    Route::patch('/job-invitations/{invitation}/respond', [JobInvitationController::class, 'respondToInvitation'])->name('job-invitations.respond');
+
     // Role-specific wallet routes with proper middleware
     // Employer wallet (deposits and escrow management)
     Route::middleware(['employer'])->prefix('employer/wallet')->name('employer.wallet.')->group(function () {
-        Route::get('/', [ClientWalletController::class, 'index'])->name('index');
-        Route::post('/create-intent', [ClientWalletController::class, 'createIntent'])->name('create-intent');
+        Route::get('/', [EmployerWalletController::class, 'index'])->name('index');
+        Route::post('/create-intent', [EmployerWalletController::class, 'createIntent'])->name('create-intent');
     });
 
     // Gig Worker wallet (earnings and withdrawals)
     Route::middleware(['gig_worker'])->prefix('gig-worker/wallet')->name('gig-worker.wallet.')->group(function () {
-        Route::get('/', [FreelancerWalletController::class, 'index'])->name('index');
-        Route::post('/withdraw', [FreelancerWalletController::class, 'requestWithdrawal'])->name('withdraw');
+        Route::get('/', [GigWorkerWalletController::class, 'index'])->name('index');
+        Route::post('/withdraw', [GigWorkerWalletController::class, 'requestWithdrawal'])->name('withdraw');
     });
 
     // Legacy deposits route - redirect to appropriate wallet based on role
@@ -518,6 +446,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         Route::get('/analytics', [AdminFraudController::class, 'analytics'])->name('analytics');
     });
 });
+
+// Gig Worker Profile Routes
+Route::get('/gig-worker/{id}/profile', [GigWorkerController::class, 'showProfile'])->name('gig-worker.profile');
 
 // Temporary API routes via web (for debugging)
 Route::prefix('api/gig-workers')->group(function () {

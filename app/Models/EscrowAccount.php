@@ -61,19 +61,11 @@ class EscrowAccount extends Model
     }
 
     /**
-     * Get the client user (deprecated - use employer)
+     * Get the gig worker user
      */
-    public function client(): BelongsTo
+    public function gigWorker(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'employer_id');
-    }
-
-    /**
-     * Get the freelancer user
-     */
-    public function freelancer(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'freelancer_id');
+        return $this->belongsTo(User::class, 'gig_worker_id');
     }
 
     /**

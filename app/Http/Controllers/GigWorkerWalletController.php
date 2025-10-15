@@ -8,10 +8,10 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class FreelancerWalletController extends Controller
+class GigWorkerWalletController extends Controller
 {
     /**
-     * Show freelancer wallet with earnings and withdrawal options
+     * Show gig worker wallet with earnings and withdrawal options
      */
     public function index(): Response
     {
@@ -54,7 +54,7 @@ class FreelancerWalletController extends Controller
         // Calculate available balance (for future withdrawal feature)
         $availableBalance = $totalEarnings; // In real implementation, subtract withdrawn amounts
 
-        return Inertia::render('Freelancer/Wallet', [
+        return Inertia::render('GigWorker/Wallet', [
             'totalEarnings' => $totalEarnings,
             'pendingEarnings' => $pendingEarnings,
             'availableBalance' => $availableBalance,

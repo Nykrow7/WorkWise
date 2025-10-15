@@ -3,20 +3,19 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Services\MatchService;
+use App\Services\AIJobMatchingService;
 use App\Models\GigJob;
 use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Support\Facades\Http;
-use App\Services\AIJobMatchingService;
 
 class AIRecommendationController extends Controller
 {
-    private MatchService $matchService;
+    private AIJobMatchingService $aiJobMatchingService;
 
-    public function __construct(MatchService $matchService)
+    public function __construct(AIJobMatchingService $aiJobMatchingService)
     {
-        $this->matchService = $matchService;
+        $this->aiJobMatchingService = $aiJobMatchingService;
     }
 
     /**
@@ -33,7 +32,7 @@ class AIRecommendationController extends Controller
             set_time_limit(25); // 25 seconds max
             
             if ($user->user_type === 'gig_worker') {
-                $recommendations = $this->matchService->getRecommendedJobs($user, 5);
+                $recommendations = $this->aiJobMatchingService->findMatchingJobs($user, 5)->toArray();
             } else {
                 // For employers, limit to first 3 active jobs to prevent timeout
                 $activeJobs = $user->postedJobs()
@@ -42,9 +41,10 @@ class AIRecommendationController extends Controller
                     ->get();
                     
                 foreach ($activeJobs as $job) {
+                    $matches = $this->aiJobMatchingService->findMatchingGigWorkers($job, 3);
                     $recommendations[$job->id] = [
                         'job' => $job,
-                        'matches' => $this->matchService->getJobMatches($job, 3) // Limit matches per job
+                        'matches' => $matches->toArray()
                     ];
                 }
             }

@@ -82,28 +82,18 @@ class Contract extends Model
         return $this->belongsTo(Project::class);
     }
 
+    /**
+     * Get the employer
+     */
     public function employer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'employer_id');
     }
 
     /**
-     * Get the client (deprecated - use employer)
+     * Get the gig worker
      */
-    public function client(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'employer_id');
-    }
-
     public function gigWorker(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'gig_worker_id');
-    }
-
-    /**
-     * Get the freelancer (deprecated - use gigWorker)
-     */
-    public function freelancer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'gig_worker_id');
     }
@@ -140,14 +130,6 @@ class Contract extends Model
     }
 
     public function isPendingEmployerSignature(): bool
-    {
-        return $this->status === 'pending_employer_signature';
-    }
-
-    /**
-     * Check if contract is pending client signature (deprecated - use isPendingEmployerSignature)
-     */
-    public function isPendingClientSignature(): bool
     {
         return $this->status === 'pending_employer_signature';
     }
@@ -283,26 +265,10 @@ class Contract extends Model
     }
 
     /**
-     * Check if client has signed the contract (deprecated - use hasEmployerSigned)
-     */
-    public function hasClientSigned(): bool
-    {
-        return $this->employer_signed_at !== null;
-    }
-
-    /**
      * Check if gig worker can view/sign contract
      * Gig worker can only view/sign after employer has signed
      */
     public function canGigWorkerAccess(): bool
-    {
-        return $this->hasEmployerSigned();
-    }
-
-    /**
-     * Check if freelancer can view/sign contract (deprecated - use canGigWorkerAccess)
-     */
-    public function canFreelancerAccess(): bool
     {
         return $this->hasEmployerSigned();
     }

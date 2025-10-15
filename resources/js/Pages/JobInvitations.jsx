@@ -1,6 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, Link, usePage, router } from '@inertiajs/react';
 import { useState, useMemo, useEffect } from 'react';
+import axios from 'axios';
 import {
     DocumentTextIcon,
     MagnifyingGlassIcon,
@@ -50,6 +51,9 @@ export default function JobInvitations({ auth, jobInvitations = [] }) {
     const [showFilters, setShowFilters] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(12);
+    const [realJobInvitations, setRealJobInvitations] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     // Mock enhanced job invitations data for demonstration
     const mockJobInvitations = [
@@ -160,10 +164,82 @@ export default function JobInvitations({ auth, jobInvitations = [] }) {
         }
     ];
 
-    // Use mock data if no real data is provided
+    // Fetch job invitations from API
+     useEffect(() => {
+         const fetchJobInvitations = async () => {
+             try {
+                 setLoading(true);
+                 setError(null);
+                 const response = await axios.get('/api/gig-worker/job-invitations');
+                 
+                 if (response.data.success) {
+                     const invitations = response.data.data || [];
+                     
+                     // Transform API data to match our component structure
+                     const transformedInvitations = invitations.map(invitation => ({
+                         id: invitation.id,
+                         title: invitation.job?.title || 'Untitled Job',
+                         company: {
+                             name: invitation.job?.employer?.company_name || invitation.job?.employer?.name || 'Unknown Company',
+                             logo: invitation.job?.employer?.avatar || '/api/placeholder/60/60',
+                             size: invitation.job?.employer?.company_size || 'Unknown',
+                             industry: invitation.job?.category?.name || 'General'
+                         },
+                         description: invitation.job?.description || 'No description available',
+                         location: {
+                             type: invitation.job?.location_type || 'remote',
+                             city: invitation.job?.location || 'Remote',
+                             country: 'Philippines'
+                         },
+                         workType: invitation.job?.job_type || 'contract',
+                         compensation: {
+                             min: invitation.job?.budget_min || 0,
+                             max: invitation.job?.budget_max || invitation.job?.budget_min || 0,
+                             currency: 'PHP',
+                             period: invitation.job?.payment_type || 'project',
+                             benefits: []
+                         },
+                         requiredSkills: invitation.job?.required_skills ? invitation.job.required_skills.split(',').map(s => s.trim()) : [],
+                         experienceLevel: invitation.job?.experience_level || 'Mid-level',
+                         deadline: invitation.job?.deadline ? new Date(invitation.job.deadline) : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+                         receivedAt: new Date(invitation.sent_at),
+                         status: invitation.status || 'pending',
+                         urgency: invitation.job?.urgency || 'medium',
+                         matchScore: invitation.match_score || 85,
+                         estimatedDuration: invitation.job?.duration || 'To be discussed',
+                         employerName: invitation.employer?.name || 'Unknown Employer',
+                         employerRating: invitation.employer?.rating || 4.5,
+                         projectsCompleted: invitation.employer?.completed_projects || 0,
+                         message: invitation.message
+                     }));
+                     
+                     setRealJobInvitations(transformedInvitations);
+                 } else {
+                     throw new Error(response.data.message || 'Failed to fetch job invitations');
+                 }
+             } catch (err) {
+                 console.error('Error fetching job invitations:', err);
+                 const errorMessage = err.response?.data?.message || 'Failed to load job invitations. Please refresh the page.';
+                 setError(errorMessage);
+                 // Fallback to mock data on error for development
+                 if (process.env.NODE_ENV === 'development') {
+                     setRealJobInvitations(mockJobInvitations);
+                 }
+             } finally {
+                 setLoading(false);
+             }
+         };
+
+         fetchJobInvitations();
+     }, []);
+
+    // Use real data or fallback to mock data
     const enhancedJobInvites = useMemo(() => {
+        if (realJobInvitations.length > 0) {
+            return realJobInvitations;
+        }
         return jobInvitations.length > 0 ? jobInvitations : mockJobInvitations;
-    }, [jobInvitations]);
+    }, [realJobInvitations, jobInvitations]);
 
     // Filtering and sorting logic
     const filteredAndSortedInvitations = useMemo(() => {
@@ -418,14 +494,26 @@ export default function JobInvitations({ auth, jobInvitations = [] }) {
                                     <ShareIcon className="w-5 h-5" />
                                 </button>
                             </div>
-                            <div className="flex space-x-2">
-                                <button className="px-4 py-2 text-sm bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors">
-                                    Decline
-                                </button>
-                                <button className="px-4 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
-                                    Accept
-                                </button>
-                            </div>
+                            {invitation.status === 'pending' ? (
+                                <div className="flex space-x-2">
+                                    <button 
+                                        onClick={() => handleInvitationResponse(invitation.id, 'declined')}
+                                        className="px-4 py-2 text-sm bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                                    >
+                                        Decline
+                                    </button>
+                                    <button 
+                                        onClick={() => handleInvitationResponse(invitation.id, 'accepted')}
+                                        className="px-4 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                                    >
+                                        Accept
+                                    </button>
+                                </div>
+                            ) : (
+                                <div className="px-4 py-2 text-sm text-center rounded-lg bg-gray-100 text-gray-600">
+                                    {invitation.status === 'accepted' ? 'Accepted' : 'Declined'}
+                                </div>
+                            )}
                             <button className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
                                 View Details
                             </button>
@@ -508,20 +596,77 @@ export default function JobInvitations({ auth, jobInvitations = [] }) {
                     </div>
                 </div>
 
-                <div className="flex space-x-2 mb-2">
-                    <button className="flex-1 px-3 py-2 text-sm bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors">
-                        Decline
-                    </button>
-                    <button className="flex-1 px-3 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
-                        Accept
-                    </button>
-                </div>
-                <button className="w-full px-3 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                    View Details
-                </button>
+                {invitation.status === 'pending' ? (
+                    <>
+                        <div className="flex space-x-2 mb-2">
+                            <button 
+                                onClick={() => handleInvitationResponse(invitation.id, 'declined')}
+                                className="flex-1 px-3 py-2 text-sm bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                            >
+                                Decline
+                            </button>
+                            <button 
+                                onClick={() => handleInvitationResponse(invitation.id, 'accepted')}
+                                className="flex-1 px-3 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                            >
+                                Accept
+                            </button>
+                        </div>
+                        <button className="w-full px-3 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                            View Details
+                        </button>
+                    </>
+                ) : (
+                    <>
+                        <div className="mb-2 px-3 py-2 text-sm text-center rounded-lg bg-gray-100 text-gray-600">
+                            {invitation.status === 'accepted' ? 'Accepted' : 'Declined'}
+                        </div>
+                        <button className="w-full px-3 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                            View Details
+                        </button>
+                    </>
+                )}
             </div>
         );
     };
+
+    // Handle invitation response
+     const handleInvitationResponse = async (invitationId, response) => {
+         try {
+             setLoading(true);
+             const apiResponse = await axios.patch(`/api/gig-worker/job-invitations/${invitationId}/respond`, {
+                 response: response === 'accepted' ? 'accept' : 'decline'
+             });
+             
+             if (apiResponse.data.success) {
+                 // Update local state
+                 setRealJobInvitations(prev => 
+                     prev.map(inv => 
+                         inv.id === invitationId 
+                             ? { ...inv, status: response === 'accepted' ? 'accepted' : 'declined' }
+                             : inv
+                     )
+                 );
+                 
+                 // Show success feedback
+                 const successMessage = response === 'accepted' 
+                     ? 'Job invitation accepted successfully!' 
+                     : 'Job invitation declined successfully!';
+                 
+                 // You could add a toast notification here
+                 console.log(successMessage);
+                 setError(null);
+             } else {
+                 throw new Error(apiResponse.data.message || 'Failed to respond to invitation');
+             }
+         } catch (err) {
+             console.error('Error responding to invitation:', err);
+             const errorMessage = err.response?.data?.message || 'Failed to respond to invitation. Please try again.';
+             setError(errorMessage);
+         } finally {
+             setLoading(false);
+         }
+     };
 
     // Clear all filters
     const clearAllFilters = () => {
@@ -746,16 +891,44 @@ export default function JobInvitations({ auth, jobInvitations = [] }) {
                         </div>
                     </div>
 
+                    {/* Loading State */}
+                    {loading && (
+                        <div className="text-center py-12 bg-white/80 backdrop-blur-sm rounded-xl border border-gray-200 mb-8">
+                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                            <p className="text-gray-500">Loading job invitations...</p>
+                        </div>
+                    )}
+
+                    {/* Error State */}
+                    {error && (
+                        <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-8">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center">
+                                    <ExclamationTriangleIcon className="w-5 h-5 text-red-400 mr-2" />
+                                    <p className="text-red-700">{error}</p>
+                                </div>
+                                <button
+                                    onClick={() => window.location.reload()}
+                                    className="px-3 py-1 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                                >
+                                    Retry
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
                     {/* Results Summary */}
-                    <div className="mb-6">
-                        <p className="text-gray-600">
-                            Showing {paginatedInvitations.length} of {filteredAndSortedInvitations.length} invitations
-                            {searchTerm && ` for "${searchTerm}"`}
-                        </p>
-                    </div>
+                    {!loading && (
+                        <div className="mb-6">
+                            <p className="text-gray-600">
+                                Showing {paginatedInvitations.length} of {filteredAndSortedInvitations.length} invitations
+                                {searchTerm && ` for "${searchTerm}"`}
+                            </p>
+                        </div>
+                    )}
 
                     {/* Job Invitations Grid/List */}
-                    {paginatedInvitations.length > 0 ? (
+                    {!loading && paginatedInvitations.length > 0 ? (
                         <div className={`${
                             viewMode === 'grid' 
                                 ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' 

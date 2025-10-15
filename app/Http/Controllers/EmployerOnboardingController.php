@@ -7,27 +7,27 @@ use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class ClientOnboardingController extends Controller
+class EmployerOnboardingController extends Controller
 {
     /**
-     * Show the client onboarding page
+     * Show the employer onboarding page
      */
     public function show(): Response|RedirectResponse
     {
         $user = auth()->user();
 
-        // Redirect if not a client
-        if ($user->user_type !== 'client') {
-            return redirect()->route('jobs.index');
+        // Redirect if not an employer
+        if ($user->user_type !== 'employer') {
+            return redirect()->route('dashboard');
         }
 
-        return Inertia::render('Onboarding/ClientOnboarding', [
+        return Inertia::render('Onboarding/EmployerOnboarding', [
             'user' => $user
         ]);
     }
 
     /**
-     * Handle the client onboarding form submission
+     * Handle the employer onboarding form submission
      */
     public function store(Request $request): RedirectResponse
     {
