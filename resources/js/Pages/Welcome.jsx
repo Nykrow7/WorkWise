@@ -46,8 +46,8 @@ export default function Welcome({ auth }) {
                             <Link href="/jobs" className="text-gray-700 hover:text-blue-600 transition-all duration-300">
                                 Browse Jobs
                             </Link>
-                            <Link href="/freelancers" className="text-gray-700 hover:text-blue-600 transition-all duration-300">
-                                Browse Freelancers
+                            <Link href="/gig-workers" className="text-gray-700 hover:text-blue-600 transition-all duration-300">
+                                Browse Gig Workers
                             </Link>
                             <Link href="/help" className="text-gray-700 hover:text-blue-600 transition-all duration-300">
                                 Help & FAQ
@@ -100,7 +100,7 @@ export default function Welcome({ auth }) {
                                 Browse Jobs
                             </Link>
                             <Link
-                                href="/freelancers"
+                                href="/gig-workers"
                                 className="bg-white text-blue-600 border-2 border-blue-600 px-8 py-4 rounded-xl font-semibold hover:bg-blue-50 transition-all duration-700 hover:shadow-xl hover:scale-105"
                             >
                                 Find Talent
@@ -145,9 +145,9 @@ export default function Welcome({ auth }) {
                         </div>
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                            {/* For Freelancers */}
+                            {/* For Gig Workers */}
                             <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-8 rounded-xl">
-                                <h3 className="text-2xl font-bold text-blue-900 mb-6 text-center">👨‍🎨 For Freelancers</h3>
+                                <h3 className="text-2xl font-bold text-blue-900 mb-6 text-center">👨‍🎨 For Gig Workers</h3>
                                 <div className="space-y-4">
                                     <div className="flex items-start space-x-4">
                                         <div className="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">1</div>
@@ -188,14 +188,14 @@ export default function Welcome({ auth }) {
                                         <div className="bg-green-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">2</div>
                                         <div>
                                             <h4 className="font-semibold text-gray-900">Review Proposals</h4>
-                                            <p className="text-gray-600">Get AI-matched freelancers and review their proposals</p>
+                                            <p className="text-gray-600">Get AI-matched gig workers and review their proposals</p>
                                         </div>
                                     </div>
                                     <div className="flex items-start space-x-4">
                                         <div className="bg-green-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">3</div>
                                         <div>
                                             <h4 className="font-semibold text-gray-900">Manage & Pay</h4>
-                                            <p className="text-gray-600">Collaborate with your freelancer and release payments</p>
+                                            <p className="text-gray-600">Collaborate with your gig worker and release payments</p>
                                         </div>
                                     </div>
                                 </div>

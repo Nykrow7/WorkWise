@@ -122,7 +122,7 @@ class Contract extends Model
     }
 
     /**
-     * Check if contract is pending freelancer signature (deprecated - use isPendingGigWorkerSignature)
+     * Check if contract is pending gig worker signature (deprecated - use isPendingGigWorkerSignature)
      */
     public function isPendingFreelancerSignature(): bool
     {

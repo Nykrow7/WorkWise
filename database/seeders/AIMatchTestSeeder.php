@@ -16,33 +16,33 @@ class AIMatchTestSeeder extends Seeder
     {
         $this->command->info('🤖 Creating AI Match Test Data...');
 
-        // Create a test client specifically for AI matching
-        $testClient = User::create([
+        // Create a test employer specifically for AI matching
+        $testEmployer = User::create([
             'first_name' => 'AI',
-            'last_name' => 'TestClient',
-            'email' => 'ai.testclient@example.com',
+            'last_name' => 'TestEmployer',
+            'email' => 'ai.testemployer@example.com',
             'password' => Hash::make('password'),
             'barangay' => 'Lahug',
-            'user_type' => 'client',
+            'user_type' => 'employer',
             'profile_completed' => true,
             'profile_status' => 'approved',
             'company_name' => 'AI Match Testing Inc',
             'work_type_needed' => 'Web & Mobile Development',
             'budget_range' => '$5,000 - $50,000',
             'project_intent' => 'Testing AI matching algorithms with various job requirements.',
-            'bio' => 'Test client account for AI matching functionality testing.',
+            'bio' => 'Test employer account for AI matching functionality testing.',
             'location' => 'Cebu City, Philippines',
             'escrow_balance' => 50000.00,
         ]);
 
-        $this->command->info('👤 Created test client: ai.testclient@example.com / password');
+        $this->command->info('👤 Created test employer: ai.testemployer@example.com / password');
 
         // Create diverse jobs for AI matching testing
         $this->command->info('📝 Creating test jobs for AI matching...');
 
         // 1. Perfect React/Laravel match (Expert level)
         $job1 = GigJob::create([
-            'employer_id' => $testClient->id,
+            'employer_id' => $testEmployer->id,
             'title' => 'Senior React & Laravel Full Stack Developer',
             'description' => 'Looking for an expert full-stack developer to build a complex web application using React and Laravel. Must have extensive experience with modern JavaScript frameworks, PHP, and database design. This is a long-term project requiring high-quality, scalable code.',
             'required_skills' => ['React', 'Laravel', 'JavaScript', 'PHP', 'MySQL', 'REST API', 'Git', 'Docker'],
@@ -59,7 +59,7 @@ class AIMatchTestSeeder extends Seeder
 
         // 2. Mobile React Native job (Expert level)
         $job2 = GigJob::create([
-            'employer_id' => $testClient->id,
+            'employer_id' => $testEmployer->id,
             'title' => 'React Native Mobile App Developer',
             'description' => 'Need an experienced React Native developer to build a cross-platform mobile application for iOS and Android. Must be familiar with mobile UI/UX patterns, state management, and app store deployment. Experience with Firebase and payment integration preferred.',
             'required_skills' => ['React Native', 'JavaScript', 'Mobile Development', 'Firebase', 'Redux', 'iOS', 'Android'],
@@ -76,7 +76,7 @@ class AIMatchTestSeeder extends Seeder
 
         // 3. Frontend React job (Intermediate level)
         $job3 = GigJob::create([
-            'employer_id' => $testClient->id,
+            'employer_id' => $testEmployer->id,
             'title' => 'Frontend React Developer',
             'description' => 'Looking for a React developer to build responsive user interfaces for our web application. Must be comfortable with modern React patterns, hooks, and component-based architecture. CSS frameworks and responsive design experience required.',
             'required_skills' => ['React', 'JavaScript', 'CSS', 'HTML', 'Responsive Design', 'Git'],
@@ -93,7 +93,7 @@ class AIMatchTestSeeder extends Seeder
 
         // 4. WordPress + PHP job (Intermediate level)
         $job4 = GigJob::create([
-            'employer_id' => $testClient->id,
+            'employer_id' => $testEmployer->id,
             'title' => 'WordPress Developer with PHP Skills',
             'description' => 'Need a WordPress developer to customize themes and plugins for our corporate website. PHP knowledge required for custom functionality. Experience with WooCommerce and custom post types would be beneficial.',
             'required_skills' => ['WordPress', 'PHP', 'CSS', 'JavaScript', 'MySQL', 'WooCommerce'],
@@ -110,7 +110,7 @@ class AIMatchTestSeeder extends Seeder
 
         // 5. Simple HTML/CSS job (Beginner level)
         $job5 = GigJob::create([
-            'employer_id' => $testClient->id,
+            'employer_id' => $testEmployer->id,
             'title' => 'Simple Website Landing Page',
             'description' => 'Need a simple, clean landing page for our startup. Should be responsive and include basic contact form. Perfect opportunity for someone starting their career. No complex functionality required.',
             'required_skills' => ['HTML', 'CSS', 'JavaScript', 'Bootstrap', 'Responsive Design'],
@@ -127,7 +127,7 @@ class AIMatchTestSeeder extends Seeder
 
         // 6. UI/UX Design job (Expert level)
         $job6 = GigJob::create([
-            'employer_id' => $testClient->id,
+            'employer_id' => $testEmployer->id,
             'title' => 'Senior UI/UX Designer for Web Application',
             'description' => 'Looking for a talented UI/UX designer to create wireframes, user flows, and high-fidelity designs for our SaaS platform. Must have experience with design systems, user research, and prototyping tools. Portfolio required.',
             'required_skills' => ['UI Design', 'UX Design', 'Figma', 'Adobe XD', 'Prototyping', 'User Research', 'Wireframing'],
@@ -144,7 +144,7 @@ class AIMatchTestSeeder extends Seeder
 
         // 7. Content Writing job (Intermediate level)
         $job7 = GigJob::create([
-            'employer_id' => $testClient->id,
+            'employer_id' => $testEmployer->id,
             'title' => 'Technical Content Writer',
             'description' => 'Need a technical writer to create documentation, blog posts, and marketing content for our software products. Must be able to explain complex technical concepts in simple terms. SEO knowledge and research skills required.',
             'required_skills' => ['Content Writing', 'Technical Writing', 'SEO', 'Research', 'Blog Writing', 'Documentation'],
@@ -179,7 +179,7 @@ class AIMatchTestSeeder extends Seeder
         $this->command->info('');
         $this->command->info('TESTING INSTRUCTIONS:');
         $this->command->info('   1. Run: php artisan db:seed --class=AIMatchTestSeeder');
-        $this->command->info('   2. Log in as any freelancer to test AI matching');
+        $this->command->info('   2. Log in as any gig worker to test AI matching');
         $this->command->info('   3. Visit /ai/recommendations to see personalized job matches');
         $this->command->info('   4. Check match scores and reasons for each recommendation');
         $this->command->info('');

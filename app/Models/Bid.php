@@ -45,7 +45,7 @@ class Bid extends Model
     }
 
     /**
-     * The freelancer who made this bid (alias for gigWorker for backward compatibility)
+     * The gig worker who made this bid (alias for gigWorker for backward compatibility)
      */
     public function freelancer(): BelongsTo
     {

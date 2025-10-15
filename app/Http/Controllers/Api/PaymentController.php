@@ -16,8 +16,8 @@ class PaymentController extends Controller
 
     public function createPaymentIntent(Request $request, Project $project): JsonResponse
     {
-        // Ensure user is the client
-        if ($project->client_id !== auth()->id()) {
+        // Ensure user is the employer
+        if ($project->employer_id !== auth()->id()) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
@@ -37,8 +37,8 @@ class PaymentController extends Controller
 
     public function releasePayment(Request $request, Project $project): JsonResponse
     {
-        // Ensure user is the client
-        if ($project->client_id !== auth()->id()) {
+        // Ensure user is the employer
+        if ($project->employer_id !== auth()->id()) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
@@ -58,8 +58,8 @@ class PaymentController extends Controller
 
     public function refundPayment(Request $request, Project $project): JsonResponse
     {
-        // Ensure user is the client
-        if ($project->client_id !== auth()->id()) {
+        // Ensure user is the employer
+        if ($project->employer_id !== auth()->id()) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
@@ -74,4 +74,4 @@ class PaymentController extends Controller
 
         return response()->json(['success' => true]);
     }
-} 
+}

@@ -122,7 +122,7 @@ class PaymentService
     }
 
     /**
-     * Release payment from escrow to freelancer
+     * Release payment from escrow to gig worker
      */
     public function releasePayment(Project $project): array
     {

@@ -182,8 +182,8 @@ class ExportService
             $data[] = [
                 'ID' => $proposal->id,
                 'Job Title' => $proposal->job->title,
-                'Freelancer Name' => $proposal->gigWorker->first_name . ' ' . $proposal->gigWorker->last_name,
-                'Freelancer Email' => $proposal->gigWorker->email,
+                'Gig Worker Name' => $proposal->gigWorker->first_name . ' ' . $proposal->gigWorker->last_name,
+                'Gig Worker Email' => $proposal->gigWorker->email,
                 'Bid Amount' => $proposal->bid_amount,
                 'Estimated Days' => $proposal->estimated_days,
                 'Status' => $proposal->status,
@@ -223,7 +223,7 @@ class ExportService
             $data[] = [
                 'ID' => $contract->id,
                 'Job Title' => $contract->job->title,
-                'Freelancer Name' => $contract->gigWorker->first_name . ' ' . $contract->gigWorker->last_name,
+                'Gig Worker Name' => $contract->gigWorker->first_name . ' ' . $contract->gigWorker->last_name,
                 'Agreed Amount' => $contract->agreed_amount,
                 'Status' => $contract->status,
                 'Contract Signed' => $contract->contract_signed ? 'Yes' : 'No',
@@ -447,9 +447,9 @@ class ExportService
             case 'jobs':
                 return ['ID', 'Title', 'Description', 'Status', 'Budget Type', 'Budget Min', 'Budget Max', 'Skills Required', 'Bids Count', 'Created At', 'Updated At'];
             case 'proposals':
-                return ['ID', 'Job Title', 'Freelancer Name', 'Freelancer Email', 'Bid Amount', 'Estimated Days', 'Status', 'Proposal Message', 'Submitted At'];
+                return ['ID', 'Job Title', 'Gig Worker Name', 'Gig Worker Email', 'Bid Amount', 'Estimated Days', 'Status', 'Proposal Message', 'Submitted At'];
             case 'contracts':
-                return ['ID', 'Job Title', 'Freelancer Name', 'Agreed Amount', 'Status', 'Contract Signed', 'Started At', 'Completed At', 'Created At'];
+                return ['ID', 'Job Title', 'Gig Worker Name', 'Agreed Amount', 'Status', 'Contract Signed', 'Started At', 'Completed At', 'Created At'];
             case 'notifications':
                 return ['ID', 'Type', 'Title', 'Message', 'Is Read', 'Created At', 'Read At'];
             case 'deadlines':

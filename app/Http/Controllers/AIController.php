@@ -22,15 +22,15 @@ class AIController extends Controller
     {
         $user = auth()->user();
 
-        if ($user->isFreelancer()) {
+        if ($user->isGigWorker()) {
             $recommendations = $this->aiService->findMatchingJobs($user)->toArray();
 
             return Inertia::render('AI/Recommendations', [
                 'recommendations' => $recommendations,
-                'userType' => 'freelancer'
+                'userType' => 'gig_worker'
             ]);
         } else {
-            // For clients, get freelancer matches for their jobs
+            // For employers, get gig worker matches for their jobs
             $jobs = $user->postedJobs()->where('status', 'open')->get();
             $recommendations = [];
 
@@ -44,35 +44,35 @@ class AIController extends Controller
 
             return Inertia::render('AI/Recommendations', [
                 'recommendations' => $recommendations,
-                'userType' => 'client'
+                'userType' => 'employer'
             ]);
         }
     }
 
     /**
-     * Get matching freelancers for a job with AI enhancement
+     * Get matching gig workers for a job with AI enhancement
      */
-    public function matchingFreelancers(GigJob $job)
+    public function matchingGigWorkers(GigJob $job)
     {
         // Ensure user owns this job
         if ($job->employer_id !== auth()->id()) {
             abort(403, 'Unauthorized');
         }
 
-        $result = $this->aiService->getAIMatchingFreelancers($job);
+        $result = $this->aiService->getAIMatchingGigWorkers($job);
 
         return response()->json($result);
     }
 
     /**
-     * Get AI-powered job suggestions for freelancer
+     * Get AI-powered job suggestions for gig worker
      */
     public function jobSuggestions()
     {
         $user = auth()->user();
 
-        if (!$user->isFreelancer()) {
-            abort(403, 'Only freelancers can access job suggestions');
+        if (!$user->isGigWorker()) {
+            abort(403, 'Only gig workers can access job suggestions');
         }
 
         $suggestions = $this->aiService->findMatchingJobs($user, 15)->toArray();
@@ -129,7 +129,7 @@ class AIController extends Controller
                 'Large projects (3+ months)' => '₱8,000 - ₱25,000'
             ],
             'cost_factors' => [
-                'Experience level of freelancer',
+                'Experience level of gig worker',
                 'Project complexity and scope',
                 'Timeline and urgency',
                 'Additional services required'
@@ -174,7 +174,7 @@ class AIController extends Controller
         return [
             'screening_tips' => [
                 'Review portfolio thoroughly',
-                'Check client testimonials and ratings',
+                'Check employer testimonials and ratings',
                 'Conduct a brief interview or test project',
                 'Verify technical skills with specific questions',
                 'Ensure good communication skills'
@@ -209,7 +209,7 @@ class AIController extends Controller
     {
         $user = auth()->user();
 
-        if ($user->isFreelancer()) {
+        if ($user->isGigWorker()) {
             return response()->json([
                 'profile_score' => $this->calculateProfileScore($user),
                 'improvement_suggestions' => $this->getImprovementSuggestions($user),
@@ -220,7 +220,7 @@ class AIController extends Controller
             return response()->json([
                 'hiring_success_rate' => $this->calculateHiringSuccessRate($user),
                 'budget_optimization' => $this->getBudgetOptimization($user),
-                'preferred_freelancer_types' => $this->getPreferredFreelancerTypes($user)
+                'preferred_gig_worker_types' => $this->getPreferredGigWorkerTypes($user)
             ]);
         }
     }
@@ -280,11 +280,11 @@ class AIController extends Controller
         // Based on rating
         $avgRating = $user->average_rating;
         if ($avgRating < 4.5) {
-            $suggestions[] = 'Work on improving client satisfaction to boost your ratings';
+            $suggestions[] = 'Work on improving employer satisfaction to boost your ratings';
         }
 
         // Based on activity
-        $activeProjects = $user->freelancerProjects()->where('status', 'active')->count();
+        $activeProjects = $user->gigWorkerProjects()->where('status', 'active')->count();
         if ($activeProjects === 0) {
             $suggestions[] = 'Apply to more jobs to increase your activity and visibility';
         }
@@ -339,12 +339,12 @@ class AIController extends Controller
     }
 
     /**
-     * Calculate hiring success rate for clients
+     * Calculate hiring success rate for employers
      */
     private function calculateHiringSuccessRate($user): array
     {
-        $totalProjects = $user->clientProjects()->count();
-        $successfulProjects = $user->clientProjects()->where('status', 'completed')->count();
+        $totalProjects = $user->employerProjects()->count();
+        $successfulProjects = $user->employerProjects()->where('status', 'completed')->count();
 
         $successRate = $totalProjects > 0 ? ($successfulProjects / $totalProjects) * 100 : 0;
 
@@ -362,20 +362,20 @@ class AIController extends Controller
     private function getBudgetOptimization($user): array
     {
         return [
-            'average_project_cost' => $user->clientProjects()->avg('agreed_amount') ?? 0,
+            'average_project_cost' => $user->employerProjects()->avg('agreed_amount') ?? 0,
             'cost_per_successful_project' => 'Calculate based on success rate',
             'optimization_tips' => [
                 'Consider milestone-based payments',
-                'Invest in higher-rated freelancers for critical projects',
+                'Invest in higher-rated gig workers for critical projects',
                 'Use fixed-price contracts for well-defined projects'
             ]
         ];
     }
 
     /**
-     * Get preferred freelancer types
+     * Get preferred gig worker types
      */
-    private function getPreferredFreelancerTypes($user): array
+    private function getPreferredGigWorkerTypes($user): array
     {
         // Analyze past hiring patterns
         return [
@@ -387,14 +387,14 @@ class AIController extends Controller
     }
 
     /**
-     * Get AI-powered skill recommendations for freelancer
+     * Get AI-powered skill recommendations for gig worker
      */
     public function skillRecommendations()
     {
         $user = auth()->user();
 
-        if (!$user->isFreelancer()) {
-            abort(403, 'Only freelancers can access skill recommendations');
+        if (!$user->isGigWorker()) {
+            abort(403, 'Only gig workers can access skill recommendations');
         }
 
         $recommendations = $this->aiService->getAISkillRecommendations($user);
@@ -408,14 +408,14 @@ class AIController extends Controller
     }
 
     /**
-     * Get AI-enhanced job suggestions for freelancer
+     * Get AI-enhanced job suggestions for gig worker
      */
     public function enhancedJobSuggestions()
     {
         $user = auth()->user();
 
-        if (!$user->isFreelancer()) {
-            abort(403, 'Only freelancers can access job suggestions');
+        if (!$user->isGigWorker()) {
+            abort(403, 'Only gig workers can access job suggestions');
         }
 
         $suggestions = $this->aiService->getAIJobRecommendations($user);

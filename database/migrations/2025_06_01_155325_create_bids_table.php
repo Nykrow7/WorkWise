@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('bids', function (Blueprint $table) {
             $table->id();
             $table->foreignId('job_id')->constrained('gig_jobs')->onDelete('cascade');
-            $table->foreignId('freelancer_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('gig_worker_id')->constrained('users')->onDelete('cascade');
             $table->decimal('bid_amount', 10, 2);
             $table->text('proposal_message');
             $table->integer('estimated_days');
@@ -22,8 +22,8 @@ return new class extends Migration
             $table->timestamp('submitted_at')->useCurrent();
             $table->timestamps();
 
-            // Ensure a freelancer can only bid once per job
-            $table->unique(['job_id', 'freelancer_id']);
+            // Ensure a gig worker can only bid once per job
+            $table->unique(['job_id', 'gig_worker_id']);
         });
     }
 

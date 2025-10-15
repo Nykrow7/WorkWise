@@ -171,31 +171,31 @@ class AIJobMatchingService
     /**
      * Calculate budget compatibility
      */
-    private function calculateBudgetMatch(GigJob $job, User $freelancer): float
+    private function calculateBudgetMatch(GigJob $job, User $gigWorker): float
     {
-        $freelancerRate = $freelancer->hourly_rate ?? 25; // Default rate
+        $gigWorkerRate = $gigWorker->hourly_rate ?? 25; // Default rate
         $jobBudgetMin = $job->budget_min ?? 0;
         $jobBudgetMax = $job->budget_max ?? 1000;
 
         if ($job->budget_type === 'hourly') {
             // For hourly jobs, compare rates directly
-            if ($freelancerRate >= $jobBudgetMin && $freelancerRate <= $jobBudgetMax) {
+            if ($gigWorkerRate >= $jobBudgetMin && $gigWorkerRate <= $jobBudgetMax) {
                 return 1.0;
-            } elseif ($freelancerRate < $jobBudgetMin) {
-                return max(0.0, 1.0 - (($jobBudgetMin - $freelancerRate) / $jobBudgetMin));
+            } elseif ($gigWorkerRate < $jobBudgetMin) {
+                return max(0.0, 1.0 - (($jobBudgetMin - $gigWorkerRate) / $jobBudgetMin));
             } else {
-                return max(0.0, 1.0 - (($freelancerRate - $jobBudgetMax) / $jobBudgetMax));
+                return max(0.0, 1.0 - (($gigWorkerRate - $jobBudgetMax) / $jobBudgetMax));
             }
         } else {
             // For fixed jobs, estimate based on duration and hourly rate
             $estimatedHours = ($job->estimated_duration_days ?? 7) * 6; // 6 hours per day
-            $freelancerEstimate = $freelancerRate * $estimatedHours;
+            $gigWorkerEstimate = $gigWorkerRate * $estimatedHours;
             
-            if ($freelancerEstimate >= $jobBudgetMin && $freelancerEstimate <= $jobBudgetMax) {
+            if ($gigWorkerEstimate >= $jobBudgetMin && $gigWorkerEstimate <= $jobBudgetMax) {
                 return 1.0;
             } else {
                 $midpoint = ($jobBudgetMin + $jobBudgetMax) / 2;
-                $difference = abs($freelancerEstimate - $midpoint);
+                $difference = abs($gigWorkerEstimate - $midpoint);
                 return max(0.0, 1.0 - ($difference / $midpoint));
             }
         }
@@ -204,10 +204,10 @@ class AIJobMatchingService
     /**
      * Calculate location match (Lapu-Lapu City focus)
      */
-    private function calculateLocationMatch(GigJob $job, User $freelancer): float
+    private function calculateLocationMatch(GigJob $job, User $gigWorker): float
     {
         // Both in Lapu-Lapu City = perfect match
-        if ($freelancer->barangay && $job->location) {
+        if ($gigWorker->barangay && $job->location) {
             return 1.0; // Both local
         }
         
@@ -220,13 +220,13 @@ class AIJobMatchingService
     }
 
     /**
-     * Calculate freelancer reputation score
+     * Calculate gig worker reputation score
      */
-    private function calculateReputationScore(User $freelancer): float
+    private function calculateReputationScore(User $gigWorker): float
     {
-        $avgRating = $freelancer->receivedReviews()->avg('rating') ?? 3.0;
-        $reviewCount = $freelancer->receivedReviews()->count();
-        $completedProjects = $freelancer->freelancerProjects()->where('status', 'completed')->count();
+        $avgRating = $gigWorker->receivedReviews()->avg('rating') ?? 3.0;
+        $reviewCount = $gigWorker->receivedReviews()->count();
+        $completedProjects = $gigWorker->gigWorkerProjects()->where('status', 'completed')->count();
 
         // Base score from rating
         $ratingScore = ($avgRating - 1) / 4; // Convert 1-5 to 0-1
@@ -240,9 +240,9 @@ class AIJobMatchingService
     /**
      * Calculate availability score
      */
-    private function calculateAvailabilityScore(User $freelancer): float
+    private function calculateAvailabilityScore(User $gigWorker): float
     {
-        $activeProjects = $freelancer->freelancerProjects()->where('status', 'active')->count();
+        $activeProjects = $gigWorker->gigWorkerProjects()->where('status', 'active')->count();
         
         // Less active projects = more available
         return match(true) {
@@ -272,23 +272,23 @@ class AIJobMatchingService
     /**
      * Get human-readable match reasons with AI enhancement
      */
-    private function getMatchReasons(GigJob $job, User $freelancer, float $score): array
+    private function getMatchReasons(GigJob $job, User $gigWorker, float $score): array
     {
         $reasons = [];
 
         // Try to get AI-powered explanation first
         if ($this->aiService->isAvailable()) {
-            $aiExplanation = $this->getAIExplanation($job, $freelancer, $score);
+            $aiExplanation = $this->getAIExplanation($job, $gigWorker, $score);
             if ($aiExplanation) {
                 $reasons[] = "🤖 AI Analysis: " . $aiExplanation;
             }
         }
 
         // Skills match with details (Primary factor)
-        $skillsMatch = $this->calculateSkillsMatch($job->required_skills, $freelancer->skills ?? []);
+        $skillsMatch = $this->calculateSkillsMatch($job->required_skills, $gigWorker->skills ?? []);
         $requiredSkills = array_map('strtolower', $job->required_skills);
-        $freelancerSkills = array_map('strtolower', $freelancer->skills ?? []);
-        $matchingSkills = array_intersect($requiredSkills, $freelancerSkills);
+        $gigWorkerSkills = array_map('strtolower', $gigWorker->skills ?? []);
+        $matchingSkills = array_intersect($requiredSkills, $gigWorkerSkills);
 
         if ($skillsMatch > 0.8) {
             $reasons[] = "✅ Excellent skills match (" . count($matchingSkills) . "/" . count($requiredSkills) . " skills)";
@@ -303,20 +303,20 @@ class AIJobMatchingService
         }
 
         // Experience level details (Secondary factor)
-        $experienceMatch = $this->calculateExperienceMatch($job->experience_level, $freelancer);
+        $experienceMatch = $this->calculateExperienceMatch($job->experience_level, $gigWorker);
         if ($experienceMatch > 0.8) {
-            $reasons[] = "🎯 Perfect experience level match ({$freelancer->experience_level} = {$job->experience_level})";
+            $reasons[] = "🎯 Perfect experience level match ({$gigWorker->experience_level} = {$job->experience_level})";
         } elseif ($experienceMatch > 0.5) {
-            $reasons[] = "🎯 Good experience level match ({$freelancer->experience_level} ≈ {$job->experience_level})";
-        } elseif ($freelancer->experience_level) {
-            $reasons[] = "📊 Experience level: {$freelancer->experience_level} (required: {$job->experience_level})";
+            $reasons[] = "🎯 Good experience level match ({$gigWorker->experience_level} ≈ {$job->experience_level})";
+        } elseif ($gigWorker->experience_level) {
+            $reasons[] = "📊 Experience level: {$gigWorker->experience_level} (required: {$job->experience_level})";
         } else {
             $reasons[] = "📋 Experience level not specified in profile";
         }
 
         // Add success prediction if AI is available
         if ($this->aiService->isAvailable()) {
-            $prediction = $this->getAISuccessPrediction($job, $freelancer);
+            $prediction = $this->getAISuccessPrediction($job, $gigWorker);
             if ($prediction && $prediction['success']) {
                 $probability = $prediction['prediction']['probability'];
                 $reasons[] = "🔮 AI Success Prediction: {$probability}% chance of successful project completion";
@@ -334,109 +334,108 @@ class AIJobMatchingService
     /**
      * Get AI-powered explanation for match
      */
-    private function getAIExplanation(GigJob $job, User $freelancer, float $score): ?string
+    private function getAIExplanation(GigJob $job, User $gigWorker, float $score): ?string
     {
-        $jobData = [
-            'id' => $job->id,
-            'title' => $job->title,
-            'description' => $job->description,
-            'required_skills' => $job->required_skills,
-            'experience_level' => $job->experience_level,
-            'budget_range' => $job->budget_min && $job->budget_max ?
-                "₱{$job->budget_min} - ₱{$job->budget_max}" : 'Budget not specified'
-        ];
-
-        $freelancerData = [
-            'id' => $freelancer->id,
-            'name' => $freelancer->first_name . ' ' . $freelancer->last_name,
-            'skills' => $freelancer->skills ?? [],
-            'experience_level' => $freelancer->experience_level,
-            'bio' => $freelancer->bio
-        ];
-
-        return $this->aiService->generateMatchExplanation($jobData, $freelancerData, $score);
-    }
-
-    /**
-     * Get AI-powered success prediction
-     */
-    private function getAISuccessPrediction(GigJob $job, User $freelancer): ?array
-    {
-        $jobData = [
-            'id' => $job->id,
-            'title' => $job->title,
-            'required_skills' => $job->required_skills,
-            'experience_level' => $job->experience_level,
-            'budget_range' => $job->budget_min && $job->budget_max ?
-                "₱{$job->budget_min} - ₱{$job->budget_max}" : 'Budget not specified'
-        ];
-
-        $freelancerData = [
-            'id' => $freelancer->id,
-            'name' => $freelancer->first_name . ' ' . $freelancer->last_name,
-            'skills' => $freelancer->skills ?? [],
-            'experience_level' => $freelancer->experience_level
-        ];
-
-        return $this->aiService->generateSuccessPrediction($jobData, $freelancerData);
-    }
-
-    /**
-     * Get AI-powered job recommendations with explanations
-     */
-    public function getJobRecommendations(User $freelancer): array
-    {
-        $matches = $this->findMatchingJobs($freelancer, 10);
-        
-        return [
-            'recommended_jobs' => $matches->toArray(),
-            'insights' => [
-                'total_matches' => $matches->count(),
-                'avg_match_score' => $matches->avg('match_score'),
-                'top_skills_in_demand' => $this->getTopSkillsInDemand(),
-                'suggested_improvements' => $this->getSuggestedImprovements($freelancer)
-            ]
-        ];
-    }
-
-    /**
-     * Get top skills currently in demand
-     */
-    private function getTopSkillsInDemand(): array
-    {
-        $jobs = GigJob::where('status', 'open')->get();
-        $skillCounts = [];
-
-        foreach ($jobs as $job) {
-            foreach ($job->required_skills as $skill) {
-                $skillCounts[strtolower($skill)] = ($skillCounts[strtolower($skill)] ?? 0) + 1;
-            }
+        if (!$this->aiService->isAvailable()) {
+            return null;
         }
 
-        arsort($skillCounts);
-        return array_slice(array_keys($skillCounts), 0, 10);
+        try {
+            $jobData = [
+                'id' => $job->id,
+                'title' => $job->title,
+                'description' => $job->description,
+                'required_skills' => $job->required_skills ?? [],
+                'experience_level' => $job->experience_level
+            ];
+
+            $gigWorkerData = [
+                'id' => $gigWorker->id,
+                'name' => $gigWorker->first_name . ' ' . $gigWorker->last_name,
+                'skills' => $gigWorker->skills ?? [],
+                'experience_level' => $gigWorker->experience_level,
+                'bio' => $gigWorker->bio
+            ];
+
+            return $this->aiService->generateMatchExplanation($jobData, $gigWorkerData, $score);
+        } catch (\Exception $e) {
+            \Log::error('AI explanation generation failed', [
+                'job_id' => $job->id,
+                'gig_worker_id' => $gigWorker->id,
+                'error' => $e->getMessage()
+            ]);
+            return $this->getFallbackExplanation($jobData, $gigWorkerData, $score);
+        }
+    }
+
+    private function getAISuccessPrediction(GigJob $job, User $gigWorker): ?array
+    {
+        if (!$this->aiService->isAvailable()) {
+            return null;
+        }
+
+        try {
+            $jobData = [
+                'id' => $job->id,
+                'title' => $job->title,
+                'description' => $job->description,
+                'required_skills' => $job->required_skills ?? [],
+                'experience_level' => $job->experience_level
+            ];
+
+            $gigWorkerData = [
+                'id' => $gigWorker->id,
+                'name' => $gigWorker->first_name . ' ' . $gigWorker->last_name,
+                'skills' => $gigWorker->skills ?? [],
+                'experience_level' => $gigWorker->experience_level
+            ];
+
+            return $this->aiService->generateSuccessPrediction($jobData, $gigWorkerData);
+        } catch (\Exception $e) {
+            \Log::error('AI success prediction failed', [
+                'job_id' => $job->id,
+                'gig_worker_id' => $gigWorker->id,
+                'error' => $e->getMessage()
+            ]);
+            return null;
+        }
     }
 
     /**
-     * Get suggested improvements for freelancer
+     * Get job recommendations for gig worker
      */
-    private function getSuggestedImprovements(User $freelancer): array
+    public function getJobRecommendations(User $gigWorker): array
+    {
+        $matches = $this->findMatchingJobs($gigWorker, 10);
+
+        return [
+            'matches' => $matches->toArray(),
+            'total_jobs' => GigJob::where('status', 'open')->count(),
+            'match_count' => $matches->count(),
+            'suggested_improvements' => $this->getSuggestedImprovements($gigWorker)
+        ];
+    }
+
+    /**
+     * Get suggested improvements for gig worker
+     */
+    private function getSuggestedImprovements(User $gigWorker): array
     {
         $suggestions = [];
 
-        if (!$freelancer->skills || count($freelancer->skills) < 3) {
+        if (!$gigWorker->skills || count($gigWorker->skills) < 3) {
             $suggestions[] = "Add more skills to your profile to increase job matches";
         }
 
-        if (!$freelancer->bio || strlen($freelancer->bio) < 100) {
-            $suggestions[] = "Write a detailed bio to attract more clients";
+        if (!$gigWorker->bio || strlen($gigWorker->bio) < 100) {
+            $suggestions[] = "Write a detailed bio to attract more employers";
         }
 
-        if (!$freelancer->hourly_rate) {
-            $suggestions[] = "Set your hourly rate to appear in budget-filtered searches";
+        if (!$gigWorker->hourly_rate) {
+            $suggestions[] = "Set your hourly rate to help employers understand your pricing";
         }
 
-        $reviewCount = $freelancer->receivedReviews()->count();
+        $reviewCount = $gigWorker->receivedReviews()->count();
         if ($reviewCount < 5) {
             $suggestions[] = "Complete more projects to build your reputation";
         }
@@ -445,99 +444,99 @@ class AIJobMatchingService
     }
 
     /**
-     * Get AI-powered skill recommendations for freelancer
+     * Get AI-powered skill recommendations for gig worker
      */
-    public function getAISkillRecommendations(User $freelancer): array
+    public function getAISkillRecommendations(User $gigWorker): array
     {
         if (!$this->aiService->isAvailable()) {
             return [
                 'success' => false,
-                'recommendations' => [],
-                'error' => 'AI service not available'
+                'message' => 'AI service is not available'
             ];
         }
 
-        $freelancerData = [
-            'id' => $freelancer->id,
-            'name' => $freelancer->first_name . ' ' . $freelancer->last_name,
-            'skills' => $freelancer->skills ?? [],
-            'experience_level' => $freelancer->experience_level,
-            'bio' => $freelancer->bio
-        ];
+        try {
+            $gigWorkerData = [
+                'id' => $gigWorker->id,
+                'name' => $gigWorker->first_name . ' ' . $gigWorker->last_name,
+                'skills' => $gigWorker->skills ?? [],
+                'experience_level' => $gigWorker->experience_level,
+                'bio' => $gigWorker->bio
+            ];
 
-        $marketTrends = [
-            'high_demand' => $this->getTopSkillsInDemand(),
-            'emerging' => [
-                'AI/Machine Learning',
-                'Blockchain Development',
-                'Mobile App Security',
-                'Voice User Interface',
-                'AR/VR Development'
-            ]
-        ];
+            // Get market trends data
+            $marketTrends = [
+                'trending_skills' => $this->getTrendingSkills(),
+                'high_demand_skills' => $this->getHighDemandSkills(),
+                'emerging_technologies' => $this->getEmergingTechnologies()
+            ];
 
-        return $this->aiService->generateSkillRecommendations($freelancerData, $marketTrends);
+            return $this->aiService->generateSkillRecommendations($gigWorkerData, $marketTrends);
+        } catch (\Exception $e) {
+            \Log::error('AI skill recommendations failed', [
+                'gig_worker_id' => $gigWorker->id,
+                'error' => $e->getMessage()
+            ]);
+            return [
+                'success' => false,
+                'message' => 'Failed to generate skill recommendations'
+            ];
+        }
     }
 
     /**
-     * Get AI-powered job recommendations with enhanced insights
+     * Get AI-powered job recommendations for gig worker
      */
-    public function getAIJobRecommendations(User $freelancer): array
+    public function getAIJobRecommendations(User $gigWorker): array
     {
-        $matches = $this->findMatchingJobs($freelancer, 10);
+        $matches = $this->findMatchingJobs($gigWorker, 10);
 
-        $enhancedMatches = $matches->map(function ($match) use ($freelancer) {
-            // Add AI explanation if available
-            if ($this->aiService->isAvailable()) {
-                $aiExplanation = $this->getAIExplanation($match['job'], $freelancer, $match['match_score']);
-                $match['ai_explanation'] = $aiExplanation;
-
-                $prediction = $this->getAISuccessPrediction($match['job'], $freelancer);
-                $match['success_prediction'] = $prediction;
-            }
-
-            return $match;
-        });
-
-        return [
-            'recommended_jobs' => $enhancedMatches->toArray(),
-            'insights' => [
-                'total_matches' => $matches->count(),
-                'avg_match_score' => $matches->avg('match_score'),
-                'top_skills_in_demand' => $this->getTopSkillsInDemand(),
-                'suggested_improvements' => $this->getSuggestedImprovements($freelancer),
-                'ai_service_available' => $this->aiService->isAvailable(),
-                'ai_service_config' => $this->aiService->getConfig()
-            ]
-        ];
-    }
-
-    /**
-     * Get AI-powered freelancer recommendations for a job
-     */
-    public function getAIMatchingFreelancers(GigJob $job): array
-    {
-        $matches = $this->findMatchingFreelancers($job, 20);
-
-        $enhancedMatches = $matches->map(function ($match) use ($job) {
-            // Add AI explanation if available
-            if ($this->aiService->isAvailable()) {
-                $aiExplanation = $this->getAIExplanation($job, $match['freelancer'], $match['match_score']);
-                $match['ai_explanation'] = $aiExplanation;
-
-                $prediction = $this->getAISuccessPrediction($job, $match['freelancer']);
-                $match['success_prediction'] = $prediction;
-            }
-
-            return $match;
+        $enhancedMatches = $matches->map(function ($match) use ($gigWorker) {
+            $job = $match['job'];
+            
+            $aiExplanation = $this->getAIExplanation($match['job'], $gigWorker, $match['match_score']);
+            
+            // Get AI success prediction
+            $prediction = $this->getAISuccessPrediction($match['job'], $gigWorker);
+            
+            return array_merge($match, [
+                'ai_explanation' => $aiExplanation,
+                'success_prediction' => $prediction
+            ]);
         });
 
         return [
             'matches' => $enhancedMatches->toArray(),
-            'total_matches' => $matches->count(),
-            'job' => $job,
-            'ai_service_available' => $this->aiService->isAvailable(),
-            'ai_service_config' => $this->aiService->getConfig()
+            'total_jobs' => GigJob::where('status', 'open')->count(),
+            'match_count' => $matches->count(),
+            'suggested_improvements' => $this->getSuggestedImprovements($gigWorker),
+        ];
+    }
+
+    /**
+     * Get AI-powered gig worker recommendations for a job
+     */
+    public function getAIMatchingGigWorkers(GigJob $job): array
+    {
+        $matches = $this->findMatchingGigWorkers($job, 20);
+
+        $enhancedMatches = $matches->map(function ($match) use ($job) {
+            // Get AI explanation for this match
+            $aiExplanation = $this->getAIExplanation($job, $match['gig_worker'], $match['match_score']);
+            
+            // Get AI success prediction
+            $prediction = $this->getAISuccessPrediction($job, $match['gig_worker']);
+            
+            return array_merge($match, [
+                'ai_explanation' => $aiExplanation,
+                'success_prediction' => $prediction
+            ]);
+        });
+
+        return [
+            'matches' => $enhancedMatches->toArray(),
+            'total_gig_workers' => User::where('user_type', 'gig_worker')->count(),
+            'match_count' => $matches->count()
         ];
     }
 }

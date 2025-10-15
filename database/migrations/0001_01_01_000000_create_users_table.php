@@ -19,7 +19,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('barangay')->nullable();
-            $table->enum('user_type', ['freelancer', 'client'])->default('freelancer');
+            $table->enum('user_type', ['gig_worker', 'employer'])->default('gig_worker');
 
             // Profile completion tracking
             $table->boolean('profile_completed')->default(false);
@@ -31,7 +31,7 @@ return new class extends Migration
             $table->string('phone')->nullable();
             $table->string('profile_photo')->nullable();
 
-            // Freelancer-specific fields
+            // Gig Worker-specific fields
             $table->string('professional_title')->nullable();
             $table->decimal('hourly_rate', 8, 2)->nullable();
             $table->enum('experience_level', ['beginner', 'intermediate', 'expert'])->nullable();
@@ -39,7 +39,7 @@ return new class extends Migration
             $table->json('languages')->nullable();
             $table->string('portfolio_url')->nullable();
 
-            // Client-specific fields
+            // Employer-specific fields
             $table->string('company_name')->nullable();
             $table->string('work_type_needed')->nullable();
             $table->string('budget_range')->nullable();

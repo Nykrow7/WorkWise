@@ -3,7 +3,7 @@ import { Head, useForm, usePage } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { formatDistanceToNow } from 'date-fns';
 
-export default function FreelancerWallet({ 
+export default function GigWorkerWallet({ 
     totalEarnings, 
     pendingEarnings, 
     availableBalance, 

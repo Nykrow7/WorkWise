@@ -44,15 +44,15 @@ class EmployerOnboardingController extends Controller
         // Update user profile
         $user->update(array_merge($validated, [
             'profile_completed' => true,
-            'profile_status' => 'approved' // Clients are auto-approved
+            'profile_status' => 'approved' // Employers are auto-approved
         ]));
 
         return redirect()->route('jobs.index')->with('success',
-            'Welcome to WorkWise! You can now start posting projects and hiring freelancers.');
+            'Welcome to WorkWise! You can now start posting projects and hiring gig workers.');
     }
 
     /**
-     * Skip onboarding (optional for clients)
+     * Skip onboarding (optional for employers)
      */
     public function skip(): RedirectResponse
     {

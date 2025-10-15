@@ -332,6 +332,52 @@ export default function JobsIndex({ jobs, availableSkills = [] }) {
                 <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-700/20 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
 
                 <div className="relative z-20 max-w-7xl mx-auto sm:px-6 lg:px-8">
+                    {/* Welcome Banner */}
+                    <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 rounded-xl shadow-lg mb-8 overflow-hidden">
+                        <div className="px-8 py-6 text-white relative">
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <h1 className="text-3xl font-bold mb-2 flex items-center">
+                                        <svg className="w-8 h-8 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6.294a23.946 23.946 0 01-4-.748M16 6H8m0 0v-.5a.5.5 0 01.5-.5h7a.5.5 0 01.5.5V6m-8 0a2 2 0 00-2 2v6.294c.103-.017.206-.035.31-.054M8 6h8m-8 0H6a2 2 0 00-2 2v6.294" />
+                                        </svg>
+                                        {isEmployer ? 'Manage Your Jobs' : 'Find Your Next Opportunity'}
+                                    </h1>
+                                    <p className="text-blue-100 text-lg">
+                                        {isEmployer 
+                                            ? 'Track your job postings and review proposals from talented gig workers'
+                                            : 'Discover amazing gig opportunities that match your skills and expertise'
+                                        }
+                                    </p>
+                                    <div className="flex items-center mt-4 space-x-6">
+                                        <div className="flex items-center">
+                                            <svg className="w-5 h-5 mr-2 text-yellow-300" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                            </svg>
+                                            <span className="text-sm">{isEmployer ? 'Active Jobs' : 'Available Jobs'}: {filteredJobs.length}</span>
+                                        </div>
+                                        <div className="flex items-center">
+                                            <svg className="w-5 h-5 mr-2 text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                            </svg>
+                                            <span className="text-sm">{isEmployer ? 'Employer Dashboard' : 'Gig Worker Hub'}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="hidden md:block">
+                                    <div className="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                                        <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6.294a23.946 23.946 0 01-4-.748M16 6H8m0 0v-.5a.5.5 0 01.5-.5h7a.5.5 0 01.5.5V6m-8 0a2 2 0 00-2 2v6.294c.103-.017.206-.035.31-.054M8 6h8m-8 0H6a2 2 0 00-2 2v6.294" />
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                            {/* Decorative elements */}
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
+                            <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full -ml-12 -mb-12"></div>
+                        </div>
+                    </div>
+
                     {/* Search and Filters with Sidebar Layout for Gig Workers */}
                     {!isEmployer ? (
                         <div className="grid gap-6 lg:grid-cols-[320px_1fr] mb-8">
@@ -856,7 +902,7 @@ export default function JobsIndex({ jobs, availableSkills = [] }) {
                                                                 href={link.url || '#'}
                                                                 className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
                                                                     link.active
-                                                                        ? 'z-10 bg-blue-50 border-blue-500 text-blue-600'
+                                                                        ? 'z-10 bg-blue-500 border-blue-500 text-blue-600'
                                                                         : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
                                                                 } ${index === 0 ? 'rounded-l-md' : ''} ${
                                                                     index === jobs.links.length - 1 ? 'rounded-r-md' : ''

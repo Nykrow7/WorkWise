@@ -18,51 +18,51 @@ class WorkWiseBasicTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function test_user_can_register_as_freelancer(): void
+    public function test_user_can_register_as_gig_worker(): void
     {
         // Set the session to simulate role selection
-        session(['selected_user_type' => 'freelancer']);
+        session(['selected_user_type' => 'gig_worker']);
 
         $response = $this->post('/register', [
-            'name' => 'Test Freelancer',
-            'email' => 'freelancer@test.com',
+            'name' => 'Test Gig Worker',
+            'email' => 'gigworker@test.com',
             'password' => 'password',
             'password_confirmation' => 'password',
         ]);
 
         $response->assertRedirect('/dashboard');
         $this->assertDatabaseHas('users', [
-            'email' => 'freelancer@test.com',
-            'user_type' => 'freelancer',
+            'email' => 'gigworker@test.com',
+            'user_type' => 'gig_worker',
         ]);
     }
 
-    public function test_user_can_register_as_client(): void
+    public function test_user_can_register_as_employer(): void
     {
         // Set the session to simulate role selection
-        session(['selected_user_type' => 'client']);
+        session(['selected_user_type' => 'employer']);
 
         $response = $this->post('/register', [
-            'name' => 'Test Client',
-            'email' => 'client@test.com',
+            'name' => 'Test Employer',
+            'email' => 'employer@test.com',
             'password' => 'password',
             'password_confirmation' => 'password',
         ]);
 
         $response->assertRedirect('/dashboard');
         $this->assertDatabaseHas('users', [
-            'email' => 'client@test.com',
-            'user_type' => 'client',
+            'email' => 'employer@test.com',
+            'user_type' => 'employer',
         ]);
     }
 
-    public function test_client_can_create_job(): void
+    public function test_employer_can_create_job(): void
     {
-        $client = User::factory()->create(['user_type' => 'client']);
+        $employer = User::factory()->create(['user_type' => 'employer']);
 
-        $response = $this->actingAs($client)->post('/jobs', [
+        $response = $this->actingAs($employer)->post('/jobs', [
             'title' => 'Test Job',
-            'description' => 'This is a test job description.',
+            'description' => 'This is a test job description that meets the minimum length requirement of 100 characters for proper validation.',
             'required_skills' => ['PHP', 'Laravel'],
             'budget_type' => 'fixed',
             'budget_min' => 1000,
@@ -72,24 +72,25 @@ class WorkWiseBasicTest extends TestCase
             'is_remote' => true,
         ]);
 
+        $response->assertRedirect();
         $this->assertDatabaseHas('gig_jobs', [
             'title' => 'Test Job',
-            'employer_id' => $client->id,
+            'employer_id' => $employer->id,
         ]);
     }
 
-    public function test_freelancer_can_submit_bid(): void
+    public function test_gig_worker_can_submit_bid(): void
     {
-        $client = User::factory()->create(['user_type' => 'client']);
-        $freelancer = User::factory()->create(['user_type' => 'freelancer']);
+        $employer = User::factory()->create(['user_type' => 'employer']);
+        $gigWorker = User::factory()->create(['user_type' => 'gig_worker']);
 
         $job = GigJob::factory()->create([
-            'employer_id' => $client->id,
+            'employer_id' => $employer->id,
             'title' => 'Test Job',
             'status' => 'open',
         ]);
 
-        $response = $this->actingAs($freelancer)->post('/bids', [
+        $response = $this->actingAs($gigWorker)->post('/bids', [
             'job_id' => $job->id,
             'bid_amount' => 1500,
             'proposal_message' => 'This is a test proposal message that is long enough to meet the minimum requirements.',
@@ -98,7 +99,7 @@ class WorkWiseBasicTest extends TestCase
 
         $this->assertDatabaseHas('bids', [
             'job_id' => $job->id,
-            'freelancer_id' => $freelancer->id,
+            'gig_worker_id' => $gigWorker->id,
             'bid_amount' => 1500,
         ]);
     }
@@ -126,11 +127,11 @@ class WorkWiseBasicTest extends TestCase
     public function test_role_selection_redirects_to_register(): void
     {
         $response = $this->post('/join', [
-            'user_type' => 'freelancer'
+            'user_type' => 'gig_worker'
         ]);
 
         $response->assertRedirect('/register');
-        $this->assertEquals('freelancer', session('selected_user_type'));
+        $this->assertEquals('gig_worker', session('selected_user_type'));
     }
 
     public function test_register_redirects_to_role_selection_without_session(): void

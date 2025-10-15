@@ -33,9 +33,9 @@ class AdminSettingsController extends Controller
             ],
 
             'limits' => [
-                'max_active_projects_per_client' => 10,
-                'max_active_projects_per_freelancer' => 5,
-                'max_bids_per_freelancer_per_day' => 20,
+                'max_active_projects_per_employer' => 10,
+                'max_active_projects_per_gig_worker' => 5,
+                'max_bids_per_gig_worker_per_day' => 20,
                 'max_reports_per_user_per_day' => 5,
                 'max_messages_per_conversation' => 1000,
             ],
@@ -105,9 +105,9 @@ class AdminSettingsController extends Controller
     public function updateLimits(Request $request)
     {
         $request->validate([
-            'limits.max_active_projects_per_client' => 'required|integer|min:1|max:100',
-            'limits.max_active_projects_per_freelancer' => 'required|integer|min:1|max:50',
-            'limits.max_bids_per_freelancer_per_day' => 'required|integer|min:1|max:100',
+            'limits.max_active_projects_per_employer' => 'required|integer|min:1|max:100',
+            'limits.max_active_projects_per_gig_worker' => 'required|integer|min:1|max:50',
+            'limits.max_bids_per_gig_worker_per_day' => 'required|integer|min:1|max:100',
             'limits.max_reports_per_user_per_day' => 'required|integer|min:1|max:20',
             'limits.max_messages_per_conversation' => 'required|integer|min:100|max:5000',
         ]);
@@ -184,9 +184,9 @@ class AdminSettingsController extends Controller
                 'withdrawal_fee' => 2.5,
             ]),
             'limits' => Cache::get('system_limits', [
-                'max_active_projects_per_client' => 10,
-                'max_active_projects_per_freelancer' => 5,
-                'max_bids_per_freelancer_per_day' => 20,
+                'max_active_projects_per_employer' => 10,
+                'max_active_projects_per_gig_worker' => 5,
+                'max_bids_per_gig_worker_per_day' => 20,
                 'max_reports_per_user_per_day' => 5,
                 'max_messages_per_conversation' => 1000,
             ]),

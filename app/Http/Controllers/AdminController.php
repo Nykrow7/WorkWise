@@ -20,8 +20,8 @@ class AdminController extends Controller
     {
         $stats = [
             'total_users' => User::where('is_admin', false)->count(),
-            'total_freelancers' => User::where('user_type', 'freelancer')->count(),
-            'total_clients' => User::where('user_type', 'client')->count(),
+            'total_gig_workers' => User::where('user_type', 'gig_worker')->count(),
+            'total_employers' => User::where('user_type', 'employer')->count(),
             'total_admins' => User::where('is_admin', true)->count(),
             'new_users_this_week' => User::where('is_admin', false)->where('created_at', '>=', now()->startOfWeek())->count(),
             'verified_users' => User::where('profile_status', 'approved')->count(),
@@ -39,7 +39,7 @@ class AdminController extends Controller
         // Get recent activities for the dashboard
         $recentUsers = User::latest()->limit(10)->get();
         $recentReports = Report::with(['reporter', 'reportedUser'])->latest()->limit(5)->get();
-        $recentProjects = Project::with(['client', 'freelancer'])->latest()->limit(5)->get();
+        $recentProjects = Project::with(['employer', 'gigWorker'])->latest()->limit(5)->get();
 
         // Get recent activities (combine different types)
         $recentActivities = collect();
@@ -63,13 +63,13 @@ class AdminController extends Controller
         // Add recent completed projects
         $recentProjects->where('status', 'completed')->take(2)->each(function ($project) use ($recentActivities) {
             $jobTitle = $project->job ? $project->job->title : 'Untitled Project';
-            $clientName = $project->client ? $project->client->first_name . ' ' . $project->client->last_name : 'Unknown Client';
-            $freelancerName = $project->freelancer ? $project->freelancer->first_name . ' ' . $project->freelancer->last_name : 'Unknown Freelancer';
+            $employerName = $project->employer ? $project->employer->first_name . ' ' . $project->employer->last_name : 'Unknown Employer';
+            $gigWorkerName = $project->gigWorker ? $project->gigWorker->first_name . ' ' . $project->gigWorker->last_name : 'Unknown Gig Worker';
             $recentActivities->push([
                 'id' => $project->id,
                 'type' => 'project_completed',
                 'title' => "Project '{$jobTitle}' completed",
-                'subtitle' => "Client: {$clientName} • Freelancer: {$freelancerName}",
+                'subtitle' => "Employer: {$employerName} • Gig Worker: {$gigWorkerName}",
                 'time' => $project->updated_at->diffForHumans(),
                 'icon' => 'task_alt',
                 'color' => 'pink',
@@ -196,10 +196,10 @@ class AdminController extends Controller
     public function showUser(User $user): Response
     {
         $user->load([
-            'clientProjects' => function ($query) {
+            'employerProjects' => function ($query) {
                 $query->latest()->limit(5);
             },
-            'freelancerProjects' => function ($query) {
+            'gigWorkerProjects' => function ($query) {
                 $query->latest()->limit(5);
             },
             'reportsSubmitted' => function ($query) {
@@ -211,11 +211,11 @@ class AdminController extends Controller
         ]);
 
         $stats = [
-            'total_projects' => $user->clientProjects()->count() + $user->freelancerProjects()->count(),
-            'completed_projects' => $user->clientProjects()->where('status', 'completed')->count() +
-                                  $user->freelancerProjects()->where('status', 'completed')->count(),
-            'total_earnings' => $user->isFreelancer() ? $user->total_earnings : 0,
-            'total_spent' => $user->isClient() ? $user->paymentsMade()->where('status', 'completed')->sum('amount') : 0,
+            'total_projects' => $user->employerProjects()->count() + $user->gigWorkerProjects()->count(),
+            'completed_projects' => $user->employerProjects()->where('status', 'completed')->count() +
+                                  $user->gigWorkerProjects()->where('status', 'completed')->count(),
+            'total_earnings' => $user->isGigWorker() ? $user->total_earnings : 0,
+            'total_spent' => $user->isEmployer() ? $user->paymentsMade()->where('status', 'completed')->sum('amount') : 0,
             'reports_submitted' => $user->reportsSubmitted()->count(),
             'reports_received' => $user->reportsReceived()->count(),
         ];
@@ -234,7 +234,7 @@ class AdminController extends Controller
         $request->validate([
             'profile_status' => 'required|in:pending,approved,rejected',
             'is_admin' => 'boolean',
-            'user_type' => 'required|in:freelancer,client,admin',
+            'user_type' => 'required|in:gig_worker,employer,admin',
         ]);
 
         $user->update([
@@ -442,8 +442,8 @@ class AdminController extends Controller
     {
         $analytics = [
             'total_users' => User::where('is_admin', false)->count(),
-            'freelancers' => User::where('user_type', 'freelancer')->count(),
-            'clients' => User::where('user_type', 'client')->count(),
+            'gig_workers' => User::where('user_type', 'gig_worker')->count(),
+            'employers' => User::where('user_type', 'employer')->count(),
             'verified_users' => User::where('profile_status', 'approved')->count(),
             'pending_users' => User::where('profile_status', 'pending')->count(),
             'suspended_users' => User::where('profile_status', 'rejected')->count(),
@@ -469,21 +469,21 @@ class AdminController extends Controller
      */
     public function projects(Request $request): Response
     {
-        $query = Project::with(['client', 'freelancer', 'job']);
+        $query = Project::with(['employer', 'gigWorker', 'job']);
 
         // Filter by status
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
-        // Filter by client
-        if ($request->filled('client_id')) {
-            $query->where('client_id', $request->client_id);
+        // Filter by employer
+        if ($request->filled('employer_id')) {
+            $query->where('employer_id', $request->employer_id);
         }
 
-        // Filter by freelancer
-        if ($request->filled('freelancer_id')) {
-            $query->where('freelancer_id', $request->freelancer_id);
+        // Filter by gig worker
+        if ($request->filled('gig_worker_id')) {
+            $query->where('gig_worker_id', $request->gig_worker_id);
         }
 
         // Search by project title
@@ -506,7 +506,7 @@ class AdminController extends Controller
         return Inertia::render('Admin/Projects/Index', [
             'projects' => $projects,
             'stats' => $stats,
-            'filters' => $request->only(['status', 'client_id', 'freelancer_id', 'search']),
+            'filters' => $request->only(['status', 'employer_id', 'gig_worker_id', 'search']),
             'url' => request()->path(),
         ]);
     }
@@ -573,7 +573,7 @@ class AdminController extends Controller
     public function exportProjects(Request $request)
     {
         $format = $request->get('format', 'csv');
-        $query = Project::with(['job', 'client', 'freelancer']);
+        $query = Project::with(['job', 'employer', 'gigWorker']);
 
         // Apply filters if provided
         if ($request->filled('status')) {
@@ -600,7 +600,7 @@ class AdminController extends Controller
 
                 // Add headers
                 fputcsv($file, [
-                    'ID', 'Project Title', 'Client', 'Freelancer', 'Amount', 'Status',
+                    'ID', 'Project Title', 'Employer', 'Gig Worker', 'Amount', 'Status',
                     'Started', 'Completed', 'Created', 'Updated'
                 ]);
 
@@ -609,8 +609,8 @@ class AdminController extends Controller
                     fputcsv($file, [
                         $project->id,
                         $project->job->title ?? 'N/A',
-                        $project->client->first_name . ' ' . $project->client->last_name ?? 'N/A',
-                        $project->freelancer->first_name . ' ' . $project->freelancer->last_name ?? 'N/A',
+                        $project->employer->first_name . ' ' . $project->employer->last_name ?? 'N/A',
+                        $project->gigWorker->first_name . ' ' . $project->gigWorker->last_name ?? 'N/A',
                         $project->agreed_amount ?? '0',
                         $project->status,
                         $project->started_at?->format('Y-m-d') ?? 'N/A',

@@ -7,7 +7,7 @@ export default function Help() {
 
     const categories = [
         { id: 'getting-started', name: 'Getting Started', icon: '🚀' },
-        { id: 'freelancers', name: 'For Freelancers', icon: '👨‍💻' },
+        { id: 'gig-workers', name: 'For Gig Workers', icon: '👨‍💻' },
         { id: 'employers', name: 'For Employers', icon: '🏢' },
         { id: 'payments', name: 'Payments & Billing', icon: '💳' },
         { id: 'account', name: 'Account & Security', icon: '🔒' },
@@ -18,7 +18,7 @@ export default function Help() {
         'getting-started': [
             {
                 question: 'How do I get started on WorkWise?',
-                answer: 'Getting started is easy! First, choose whether you want to join as a freelancer or employer during registration. Complete your profile with relevant information, and you\'ll be ready to start browsing jobs or posting projects.'
+                answer: 'Getting started is easy! First, choose whether you want to join as a gig worker or employer during registration. Complete your profile with relevant information, and you\'ll be ready to start browsing jobs or posting projects.'
             },
             {
                 question: 'Is WorkWise free to use?',
@@ -29,9 +29,9 @@ export default function Help() {
                 answer: 'Our AI analyzes your skills, experience, work history, and preferences to match you with the most suitable opportunities. The more you use WorkWise, the better our recommendations become.'
             }
         ],
-        'freelancers': [
+        'gig-workers': [
             {
-                question: 'How do I create an attractive freelancer profile?',
+                question: 'How do I create an attractive gig worker profile?',
                 answer: 'Include a professional photo, detailed description of your skills, portfolio samples, and clear pricing. Highlight your unique strengths and past successes to stand out to potential clients.'
             },
             {
@@ -49,12 +49,12 @@ export default function Help() {
                 answer: 'Be specific about your requirements, provide clear project scope, set realistic budgets and timelines, and include any necessary files or references. The more detailed your job post, the better quality proposals you\'ll receive.'
             },
             {
-                question: 'How do I choose the right freelancer?',
+                question: 'How do I choose the right gig worker?',
                 answer: 'Review portfolios, check ratings and reviews, conduct interviews if needed, and consider both skills and communication style. Our AI recommendations can help narrow down the best matches.'
             },
             {
                 question: 'How does the payment protection work?',
-                answer: 'Our escrow system holds your payment securely until you\'re satisfied with the work. This protects both you and the freelancer, ensuring fair transactions for everyone.'
+                answer: 'Our escrow system holds your payment securely until you\'re satisfied with the work. This protects both you and the gig worker, ensuring fair transactions for everyone.'
             }
         ],
         'payments': [
@@ -64,7 +64,7 @@ export default function Help() {
             },
             {
                 question: 'What are your service fees?',
-                answer: 'We charge a small percentage fee on completed transactions. Freelancers pay 10% on earnings, while employers pay a 3% processing fee. No hidden charges or monthly subscriptions.'
+                answer: 'We charge a small percentage fee on completed transactions. Gig workers pay 10% on earnings, while employers pay a 3% processing fee. No hidden charges or monthly subscriptions.'
             },
             {
                 question: 'How long do payments take to process?',
@@ -74,7 +74,7 @@ export default function Help() {
         'account': [
             {
                 question: 'How do I change my account type?',
-                answer: 'You can switch between freelancer and employer modes in your account settings. This allows you to both offer services and hire talent using the same account.'
+                answer: 'You can switch between gig worker and employer modes in your account settings. This allows you to both offer services and hire talent using the same account.'
             },
             {
                 question: 'How do I update my profile information?',

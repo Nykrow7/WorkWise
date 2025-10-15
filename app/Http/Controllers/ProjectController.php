@@ -110,7 +110,7 @@ class ProjectController extends Controller
     }
 
     /**
-     * Approve completed project (client only)
+     * Approve completed project (employer only)
      */
     public function approve(Project $project)
     {
@@ -207,7 +207,7 @@ class ProjectController extends Controller
 
         $project->update([
             'status' => 'cancelled',
-            'completion_notes' => 'Cancelled by client: ' . $request->cancellation_reason
+            'completion_notes' => 'Cancelled by employer: ' . $request->cancellation_reason
         ]);
 
         return back()->with('success', 'Project cancelled. Refund will be processed if payment was made.');

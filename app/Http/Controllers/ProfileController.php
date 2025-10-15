@@ -71,7 +71,7 @@ class ProfileController extends Controller
     {
         $requiredFields = ['first_name', 'last_name', 'email', 'bio', 'barangay'];
 
-        if ($user->user_type === 'freelancer') {
+        if ($user->user_type === 'gig_worker') {
             $requiredFields = array_merge($requiredFields, [
                 'professional_title', 'hourly_rate', 'skills'
             ]);

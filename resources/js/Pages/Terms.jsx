@@ -57,11 +57,11 @@ export default function Terms() {
                         <section className="mb-8">
                             <h2 className="text-2xl font-bold text-gray-900 mb-4">2. Description of Service</h2>
                             <p className="text-gray-700 mb-4">
-                                WorkWise is an AI-driven marketplace platform that connects freelancers with employers seeking professional services. Our platform facilitates:
+                                WorkWise is an AI-driven marketplace platform that connects gig workers with employers seeking professional services. Our platform facilitates:
                             </p>
                             <ul className="list-disc list-inside text-gray-700 mb-4 space-y-2">
                                 <li>Job posting and discovery</li>
-                                <li>AI-powered matching between freelancers and projects</li>
+                                <li>AI-powered matching between gig workers and projects</li>
                                 <li>Secure payment processing through escrow services</li>
                                 <li>Communication tools for project collaboration</li>
                                 <li>Project management and milestone tracking</li>
@@ -115,7 +115,7 @@ export default function Terms() {
                                 WorkWise charges service fees for successful transactions:
                             </p>
                             <ul className="list-disc list-inside text-gray-700 mb-4 space-y-2">
-                                <li>Freelancers: 10% service fee on earnings</li>
+                                <li>Gig Workers: 10% service fee on earnings</li>
                                 <li>Employers: 3% payment processing fee</li>
                             </ul>
 
@@ -131,7 +131,7 @@ export default function Terms() {
                                 The Service and its original content, features, and functionality are and will remain the exclusive property of WorkWise and its licensors. The Service is protected by copyright, trademark, and other laws.
                             </p>
                             <p className="text-gray-700 mb-4">
-                                Work created by freelancers for employers through our platform belongs to the employer upon full payment, unless otherwise agreed upon in writing between the parties.
+                                Work created by gig workers for employers through our platform belongs to the employer upon full payment, unless otherwise agreed upon in writing between the parties.
                             </p>
                         </section>
 
@@ -161,7 +161,7 @@ export default function Terms() {
                         <section className="mb-8">
                             <h2 className="text-2xl font-bold text-gray-900 mb-4">9. Limitation of Liability</h2>
                             <p className="text-gray-700 mb-4">
-                                WorkWise acts as a platform connecting freelancers and employers. We are not responsible for the quality of work, payment disputes, or any damages arising from user interactions.
+                                WorkWise acts as a platform connecting gig workers and employers. We are not responsible for the quality of work, payment disputes, or any damages arising from user interactions.
                             </p>
                             <div className="bg-red-50 border-l-4 border-red-400 p-4 mb-4">
                                 <p className="text-red-800">

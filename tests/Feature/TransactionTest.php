@@ -20,7 +20,7 @@ class TransactionTest extends TestCase
 
     private $paymentService;
     private $client;
-    private $freelancer;
+    private $gigWorker;
     private $project;
 
     protected function setUp(): void
@@ -44,7 +44,7 @@ class TransactionTest extends TestCase
 
         // Get test data
         $this->client = User::where('email', 'test.client@example.com')->first();
-        $this->freelancer = User::where('email', 'test.freelancer@example.com')->first();
+        $this->gigWorker = User::where('email', 'test.gigworker@example.com')->first();
         $this->project = Project::first();
 
         // Authenticate client
@@ -220,4 +220,4 @@ class TransactionTest extends TestCase
         $this->assertNotNull($refundTransaction);
         $this->assertEquals('completed', $refundTransaction->status);
     }
-} 
+}

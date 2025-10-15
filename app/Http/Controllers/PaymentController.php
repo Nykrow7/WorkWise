@@ -21,13 +21,13 @@ class PaymentController extends Controller
      */
     public function show(Project $project): Response
     {
-        // Ensure user is the client for this project
-        if ($project->client_id !== auth()->id()) {
+        // Ensure user is the employer for this project
+        if ($project->employer_id !== auth()->id()) {
             abort(403, 'Unauthorized');
         }
 
         return Inertia::render('Payment/Show', [
-            'project' => $project->load(['job', 'freelancer', 'acceptedBid']),
+            'project' => $project->load(['job', 'gigWorker', 'acceptedBid']),
             'testCards' => $this->paymentService->getTestCards(),
             'stripeKey' => config('services.stripe.key')
         ]);
@@ -38,8 +38,8 @@ class PaymentController extends Controller
      */
     public function createPaymentIntent(Request $request, Project $project): JsonResponse
     {
-        // Ensure user is the client
-        if ($project->client_id !== auth()->id()) {
+        // Ensure user is the employer
+        if ($project->employer_id !== auth()->id()) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
@@ -76,12 +76,12 @@ class PaymentController extends Controller
     }
 
     /**
-     * Release payment to freelancer
+     * Release payment to gig worker
      */
     public function releasePayment(Request $request, Project $project): JsonResponse
     {
-        // Ensure user is the client
-        if ($project->client_id !== auth()->id()) {
+        // Ensure user is the employer
+        if ($project->employer_id !== auth()->id()) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
@@ -100,12 +100,12 @@ class PaymentController extends Controller
     }
 
     /**
-     * Refund payment to client
+     * Refund payment to employer
      */
     public function refundPayment(Request $request, Project $project): JsonResponse
     {
-        // Ensure user is the client
-        if ($project->client_id !== auth()->id()) {
+        // Ensure user is the employer
+        if ($project->employer_id !== auth()->id()) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 

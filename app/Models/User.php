@@ -157,7 +157,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Get freelancer projects (alias for gigWorkerProjects for backward compatibility)
+     * Get gig worker projects (alias for gigWorkerProjects for backward compatibility)
      */
     public function freelancerProjects(): HasMany
     {

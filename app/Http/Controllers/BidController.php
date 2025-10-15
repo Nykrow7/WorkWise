@@ -136,9 +136,9 @@ class BidController extends Controller
             DB::beginTransaction();
 
             if ($request->status === 'accepted') {
-                // Check client balance
-                $client = auth()->user();
-                if ($client->escrow_balance < $bid->bid_amount) {
+                // Check employer balance
+                $employer = auth()->user();
+                if ($employer->escrow_balance < $bid->bid_amount) {
                     throw new \Exception('Insufficient escrow balance.');
                 }
 
@@ -184,12 +184,12 @@ class BidController extends Controller
                 ]);
 
                 // Deduct from employer balance
-                $client->decrement('escrow_balance', $bid->bid_amount);
+                $employer->decrement('escrow_balance', $bid->bid_amount);
 
                 // Create transaction record
                 Transaction::create([
                     'project_id' => $project->id,
-                    'payer_id' => $client->id,
+                    'payer_id' => $employer->id,
                     'payee_id' => $bid->gig_worker_id,
                     'amount' => $bid->bid_amount,
                     'platform_fee' => $platformFee,
@@ -212,25 +212,25 @@ class BidController extends Controller
                     'project_id' => $project->id
                 ]);
 
-                $this->notificationService->createContractSigningNotification($client, [
+                $this->notificationService->createContractSigningNotification($employer, [
                     'job_title' => $bid->job->title,
                     'contract_id' => $contract->id,
                     'project_id' => $project->id
                 ]);
 
                 // Send messaging capability notifications to both parties
-                $employerName = $client->first_name . ' ' . $client->last_name;
+                $employerName = $employer->first_name . ' ' . $employer->last_name;
                 $gigWorkerName = $bid->gigWorker->first_name . ' ' . $bid->gigWorker->last_name;
 
                 $this->notificationService->createBidAcceptedMessagingNotification($bid->gigWorker, [
                     'job_title' => $bid->job->title,
                     'other_user_name' => $employerName,
-                    'other_user_id' => $client->id,
+                    'other_user_id' => $employer->id,
                     'project_id' => $project->id,
                     'bid_id' => $bid->id
                 ]);
 
-                $this->notificationService->createBidAcceptedMessagingNotification($client, [
+                $this->notificationService->createBidAcceptedMessagingNotification($employer, [
                     'job_title' => $bid->job->title,
                     'other_user_name' => $gigWorkerName,
                     'other_user_id' => $bid->gig_worker_id,

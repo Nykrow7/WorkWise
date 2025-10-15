@@ -592,7 +592,7 @@ export default function GigWorkerDashboard({ auth, stats, activeContracts, jobIn
                                 <div>
                                     <h1 className="text-3xl font-bold mb-2 flex items-center">
                                         <GiftIcon className="w-8 h-8 mr-3" />
-                                        Welcome back, Freelancer!
+                                        Welcome back, Gig Worker!
                                     </h1>
                                     <p className="text-blue-100 text-lg">
                                         Ready to take on new challenges and grow your career?

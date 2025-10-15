@@ -124,7 +124,7 @@ class SearchService
                     'description' => $proposal->proposal_message,
                     'status' => $proposal->status,
                     'amount' => "₱{$proposal->bid_amount}",
-                    'freelancer' => $proposal->gigWorker->first_name . ' ' . $proposal->gigWorker->last_name,
+                    'gig_worker' => $proposal->gigWorker->first_name . ' ' . $proposal->gigWorker->last_name,
                     'created_at' => $proposal->created_at->format('M j, Y'),
                     'url' => route('bids.show', $proposal->id),
                     'relevance_score' => $this->calculateRelevanceScore(
@@ -182,7 +182,7 @@ class SearchService
                     'description' => "Contract with {$contract->gigWorker->first_name} {$contract->gigWorker->last_name}",
                     'status' => $contract->status,
                     'amount' => "₱{$contract->agreed_amount}",
-                    'freelancer' => $contract->gigWorker->first_name . ' ' . $contract->gigWorker->last_name,
+                    'gig_worker' => $contract->gigWorker->first_name . ' ' . $contract->gigWorker->last_name,
                     'created_at' => $contract->created_at->format('M j, Y'),
                     'url' => route('projects.show', $contract->id),
                     'relevance_score' => $this->calculateRelevanceScore(
@@ -265,8 +265,8 @@ class SearchService
             ->pluck('title')
             ->take(5);
 
-        // Freelancer name suggestions
-        $freelancerSuggestions = \App\Models\User::where('user_type', 'gig_worker')
+        // Gig worker name suggestions
+        $gigWorkerSuggestions = \App\Models\User::where('user_type', 'gig_worker')
             ->where(function (Builder $q) use ($query) {
                 $q->where('first_name', 'LIKE', "%{$query}%")
                   ->orWhere('last_name', 'LIKE', "%{$query}%");
@@ -287,7 +287,7 @@ class SearchService
 
         return [
             'jobs' => $jobSuggestions->toArray(),
-            'freelancers' => $freelancerSuggestions->toArray(),
+            'gig_workers' => $gigWorkerSuggestions->toArray(),
             'skills' => $skillSuggestions->toArray()
         ];
     }

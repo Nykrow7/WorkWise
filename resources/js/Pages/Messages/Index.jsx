@@ -343,6 +343,56 @@ export default function MessagesIndex({ conversations = [], auth }) {
             <Head title="Messages" />
 
             <div className="h-screen flex flex-col">
+                {/* Page Banner */}
+                <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 shadow-lg overflow-hidden">
+                    <div className="px-8 py-6 text-white relative">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <h1 className="text-3xl font-bold mb-2 flex items-center">
+                                    <svg className="w-8 h-8 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                                        <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                                    </svg>
+                                    Message Center
+                                </h1>
+                                <p className="text-blue-100 text-lg">
+                                    Stay connected with your clients and manage all your conversations
+                                </p>
+                                <div className="flex items-center mt-4 space-x-6">
+                                    <div className="flex items-center">
+                                        <svg className="w-5 h-5 mr-2 text-yellow-300" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                                            <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                                        </svg>
+                                        <span className="text-sm">
+                                            Total Conversations: {conversationList.length}
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center">
+                                        <svg className="w-5 h-5 mr-2 text-yellow-300" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                                        </svg>
+                                        <span className="text-sm">
+                                            Unread: {conversationList.reduce((acc, conv) => acc + (conv.unread_count || 0), 0)}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="hidden md:block">
+                                <div className="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                                    <svg className="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                                        <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        {/* Decorative elements */}
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
+                        <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full -ml-12 -mb-12"></div>
+                    </div>
+                </div>
+
                 {/* Main Container - Fixed Height */}
                 <div className="flex-1 flex overflow-hidden">
                     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col h-full py-6">

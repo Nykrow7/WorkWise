@@ -44,7 +44,7 @@ class DeadlineTracker
         $deadlinesNeedingReminders = ContractDeadline::where('due_date', '=', now()->addDays(3)->toDateString())
             ->where('status', 'pending')
             ->where('reminder_sent', false)
-            ->with(['contract.employer', 'contract.freelancer'])
+            ->with(['contract.employer', 'contract.gigWorker'])
             ->get();
 
         foreach ($deadlinesNeedingReminders as $deadline) {
@@ -116,9 +116,9 @@ class DeadlineTracker
             ]);
         }
 
-        // Send notification to freelancer
-        if ($contract->freelancer) {
-            $this->notificationManager->createDeadlineAlert($contract->freelancer, [
+        // Send notification to gig worker
+        if ($contract->gigWorker) {
+            $this->notificationManager->createDeadlineAlert($contract->gigWorker, [
                 'project_id' => $contract->id,
                 'milestone_name' => $deadline->milestone_name,
                 'due_date' => $deadline->due_date->format('M j, Y'),

@@ -7,7 +7,7 @@ import {
     ClockIcon
 } from '@heroicons/react/24/outline';
 
-export default function FreelancerPerformance() {
+export default function GigWorkerPerformance() {
     return (
         <AuthenticatedLayout
             header={
@@ -54,7 +54,7 @@ export default function FreelancerPerformance() {
                                 
                                 <div className="bg-gray-50 p-6 rounded-lg">
                                     <StarIcon className="h-8 w-8 text-yellow-500 mx-auto mb-3" />
-                                    <h4 className="font-medium text-gray-900 mb-2">Employer Satisfaction</h4>
+                                    <h4 className="font-medium text-gray-900 mb-2">Client Satisfaction</h4>
                                     <p className="text-sm text-gray-600">
                                         Analyze client feedback and improve your service quality
                                     </p>

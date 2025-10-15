@@ -20,12 +20,12 @@ class AIService
     }
 
     /**
-     * Generate AI-powered match explanation for job-freelancer pairing
+     * Generate AI-powered match explanation for job-gig worker pairing
      */
-    public function generateMatchExplanation(array $jobData, array $freelancerData, float $matchScore): string
+    public function generateMatchExplanation(array $jobData, array $gigWorkerData, float $matchScore): string
     {
         try {
-            $prompt = $this->buildMatchExplanationPrompt($jobData, $freelancerData, $matchScore);
+            $prompt = $this->buildMatchExplanationPrompt($jobData, $gigWorkerData, $matchScore);
 
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $this->apiKey,
@@ -58,26 +58,26 @@ class AIService
                 'response' => $response->body()
             ]);
 
-            return $this->getFallbackExplanation($jobData, $freelancerData, $matchScore);
+            return $this->getFallbackExplanation($jobData, $gigWorkerData, $matchScore);
 
         } catch (\Exception $e) {
             Log::error('AI service error', [
                 'error' => $e->getMessage(),
                 'job_id' => $jobData['id'] ?? null,
-                'freelancer_id' => $freelancerData['id'] ?? null
+                'gig_worker_id' => $gigWorkerData['id'] ?? null
             ]);
 
-            return $this->getFallbackExplanation($jobData, $freelancerData, $matchScore);
+            return $this->getFallbackExplanation($jobData, $gigWorkerData, $matchScore);
         }
     }
 
     /**
-     * Generate AI-powered skill recommendations for freelancer
+     * Generate AI-powered skill recommendations for gig worker
      */
-    public function generateSkillRecommendations(array $freelancerData, array $marketTrends): array
+    public function generateSkillRecommendations(array $gigWorkerData, array $marketTrends): array
     {
         try {
-            $prompt = $this->buildSkillRecommendationPrompt($freelancerData, $marketTrends);
+            $prompt = $this->buildSkillRecommendationPrompt($gigWorkerData, $marketTrends);
 
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $this->apiKey,
@@ -120,7 +120,7 @@ class AIService
         } catch (\Exception $e) {
             Log::error('AI skill recommendation error', [
                 'error' => $e->getMessage(),
-                'freelancer_id' => $freelancerData['id'] ?? null
+                'gig_worker_id' => $gigWorkerData['id'] ?? null
             ]);
 
             return [
@@ -134,10 +134,10 @@ class AIService
     /**
      * Generate AI-powered project success predictions
      */
-    public function generateSuccessPrediction(array $jobData, array $freelancerData): array
+    public function generateSuccessPrediction(array $jobData, array $gigWorkerData): array
     {
         try {
-            $prompt = $this->buildSuccessPredictionPrompt($jobData, $freelancerData);
+            $prompt = $this->buildSuccessPredictionPrompt($jobData, $gigWorkerData);
 
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $this->apiKey,
@@ -181,7 +181,7 @@ class AIService
             Log::error('AI success prediction error', [
                 'error' => $e->getMessage(),
                 'job_id' => $jobData['id'] ?? null,
-                'freelancer_id' => $freelancerData['id'] ?? null
+                'gig_worker_id' => $gigWorkerData['id'] ?? null
             ]);
 
             return [
@@ -195,32 +195,32 @@ class AIService
     /**
      * Build prompt for match explanation
      */
-    private function buildMatchExplanationPrompt(array $jobData, array $freelancerData, float $matchScore): string
+    private function buildMatchExplanationPrompt(array $jobData, array $gigWorkerData, float $matchScore): string
     {
         return sprintf(
-            "Analyze this job-freelancer match:\n\n" .
+            "Analyze this job-gig worker match:\n\n" .
             "JOB DETAILS:\n" .
             "Title: %s\n" .
             "Description: %s\n" .
             "Required Skills: %s\n" .
             "Experience Level: %s\n" .
             "Budget: %s\n\n" .
-            "FREELANCER DETAILS:\n" .
+            "GIG WORKER DETAILS:\n" .
             "Name: %s\n" .
             "Skills: %s\n" .
             "Experience Level: %s\n" .
             "Bio: %s\n" .
             "Match Score: %.1f%%\n\n" .
-            "Provide a concise explanation (2-3 sentences) of why this freelancer is a %s match for this job, focusing on skills and experience compatibility.",
+            "Provide a concise explanation (2-3 sentences) of why this gig worker is a %s match for this job, focusing on skills and experience compatibility.",
             $jobData['title'] ?? 'N/A',
             $jobData['description'] ?? 'N/A',
             implode(', ', $jobData['required_skills'] ?? []),
             $jobData['experience_level'] ?? 'Not specified',
             $jobData['budget_range'] ?? 'Not specified',
-            $freelancerData['name'] ?? 'N/A',
-            implode(', ', $freelancerData['skills'] ?? []),
-            $freelancerData['experience_level'] ?? 'Not specified',
-            $freelancerData['bio'] ?? 'Not provided',
+            $gigWorkerData['name'] ?? 'N/A',
+            implode(', ', $gigWorkerData['skills'] ?? []),
+            $gigWorkerData['experience_level'] ?? 'Not specified',
+            $gigWorkerData['bio'] ?? 'Not provided',
             $matchScore * 100,
             $matchScore >= 0.8 ? 'excellent' : ($matchScore >= 0.6 ? 'good' : 'moderate')
         );
@@ -229,11 +229,11 @@ class AIService
     /**
      * Build prompt for skill recommendations
      */
-    private function buildSkillRecommendationPrompt(array $freelancerData, array $marketTrends): string
+    private function buildSkillRecommendationPrompt(array $gigWorkerData, array $marketTrends): string
     {
         return sprintf(
-            "Based on this freelancer's profile and current market trends, recommend 3-4 specific skills to learn:\n\n" .
-            "FREELANCER PROFILE:\n" .
+            "Based on this gig worker's profile and current market trends, recommend 3-4 specific skills to learn:\n\n" .
+            "GIG WORKER PROFILE:\n" .
             "Current Skills: %s\n" .
             "Experience Level: %s\n" .
             "Bio: %s\n\n" .
@@ -241,9 +241,9 @@ class AIService
             "High Demand Skills: %s\n" .
             "Emerging Technologies: %s\n\n" .
             "Provide specific, actionable skill recommendations that complement their existing skills and align with market demand.",
-            implode(', ', $freelancerData['skills'] ?? []),
-            $freelancerData['experience_level'] ?? 'Not specified',
-            $freelancerData['bio'] ?? 'Not provided',
+            implode(', ', $gigWorkerData['skills'] ?? []),
+            $gigWorkerData['experience_level'] ?? 'Not specified',
+            $gigWorkerData['bio'] ?? 'Not provided',
             implode(', ', $marketTrends['high_demand'] ?? []),
             implode(', ', $marketTrends['emerging'] ?? [])
         );
@@ -252,22 +252,22 @@ class AIService
     /**
      * Build prompt for success prediction
      */
-    private function buildSuccessPredictionPrompt(array $jobData, array $freelancerData): string
+    private function buildSuccessPredictionPrompt(array $jobData, array $gigWorkerData): string
     {
         return sprintf(
-            "Predict the success probability of this freelancer-job pairing:\n\n" .
+            "Predict the success probability of this gig worker-job pairing:\n\n" .
             "JOB: %s (%s, %s)\n" .
-            "FREELANCER: %s (%s experience)\n" .
+            "GIG WORKER: %s (%s experience)\n" .
             "Required Skills: %s\n" .
-            "Freelancer Skills: %s\n\n" .
+            "Gig Worker Skills: %s\n\n" .
             "Provide a realistic success probability (percentage) and 2-3 key factors that will determine success or failure.",
             $jobData['title'] ?? 'N/A',
             $jobData['experience_level'] ?? 'Any level',
             $jobData['budget_range'] ?? 'Budget not specified',
-            $freelancerData['name'] ?? 'N/A',
-            $freelancerData['experience_level'] ?? 'Not specified',
+            $gigWorkerData['name'] ?? 'N/A',
+            $gigWorkerData['experience_level'] ?? 'Not specified',
             implode(', ', $jobData['required_skills'] ?? []),
-            implode(', ', $freelancerData['skills'] ?? [])
+            implode(', ', $gigWorkerData['skills'] ?? [])
         );
     }
 
@@ -332,16 +332,14 @@ class AIService
     /**
      * Get fallback explanation when AI service fails
      */
-    private function getFallbackExplanation(array $jobData, array $freelancerData, float $matchScore): string
+    private function getFallbackExplanation(array $jobData, array $gigWorkerData, float $matchScore): string
     {
-        $scorePercentage = round($matchScore * 100);
-
-        if ($scorePercentage >= 80) {
-            return "This freelancer shows excellent compatibility with the job requirements based on their skills and experience level.";
-        } elseif ($scorePercentage >= 60) {
-            return "This freelancer demonstrates good alignment with the project needs and has relevant experience for the role.";
+        if ($matchScore >= 0.8) {
+            return "This gig worker shows excellent compatibility with the job requirements based on their skills and experience level.";
+        } elseif ($matchScore >= 0.6) {
+            return "This gig worker demonstrates good alignment with the project needs and has relevant experience for the role.";
         } else {
-            return "This freelancer has some relevant skills but may need additional training or experience for optimal project success.";
+            return "This gig worker has some relevant skills but may need additional training or experience for optimal project success.";
         }
     }
 

@@ -26,17 +26,17 @@ class AnalyticsController extends Controller
 
         \Log::info('Analytics index accessed', ['user_id' => $user->id, 'user_type' => $user->user_type]);
 
-        if ($user->isFreelancer()) {
-            return $this->freelancerAnalytics();
+        if ($user->isGigWorker()) {
+            return $this->gigWorkerAnalytics();
         } else {
-            return $this->clientAnalytics();
+            return $this->employerAnalytics();
         }
     }
 
     /**
-     * Freelancer analytics dashboard
+     * Gig worker analytics dashboard
      */
-    private function freelancerAnalytics(): Response
+    private function gigWorkerAnalytics(): Response
     {
         $user = auth()->user();
         
@@ -46,13 +46,13 @@ class AnalyticsController extends Controller
             ->where('status', 'completed')
             ->sum('net_amount');
             
-        $completedProjects = $user->freelancerProjects()
+        $completedProjects = $user->gigWorkerProjects()
             ->where('status', 'completed')
             ->count();
             
         $averageRating = $user->receivedReviews()->avg('rating') ?? 0;
         
-        $activeProjects = $user->freelancerProjects()
+        $activeProjects = $user->gigWorkerProjects()
             ->whereIn('status', ['active', 'in_progress'])
             ->count();
 
@@ -87,14 +87,14 @@ class AnalyticsController extends Controller
         $bidSuccessRate = $totalBids > 0 ? ($acceptedBids / $totalBids) * 100 : 0;
 
         // Recent projects
-        $recentProjects = $user->freelancerProjects()
-            ->with(['job:id,title', 'client:id,first_name,last_name'])
+        $recentProjects = $user->gigWorkerProjects()
+            ->with(['job:id,title', 'employer:id,first_name,last_name'])
             ->orderBy('created_at', 'desc')
             ->limit(5)
             ->get();
 
         // Skills performance
-        $skillsPerformance = $this->getFreelancerSkillsPerformance($user);
+        $skillsPerformance = $this->getGigWorkerSkillsPerformance($user);
 
         // Ensure we have some skills data
         if ($skillsPerformance->isEmpty()) {
@@ -103,7 +103,7 @@ class AnalyticsController extends Controller
             ]);
         }
 
-        return Inertia::render('Analytics/FreelancerDashboard', [
+        return Inertia::render('Analytics/GigWorkerDashboard', [
             'overview' => [
                 'total_earnings' => $totalEarnings,
                 'completed_projects' => $completedProjects,
@@ -118,9 +118,9 @@ class AnalyticsController extends Controller
     }
 
     /**
-     * Client analytics dashboard
+     * Employer analytics dashboard
      */
-    private function clientAnalytics(): Response
+    private function employerAnalytics(): Response
     {
         $user = auth()->user();
         
@@ -130,7 +130,7 @@ class AnalyticsController extends Controller
             ->where('status', 'completed')
             ->sum('amount');
             
-        $completedProjects = $user->clientProjects()
+        $completedProjects = $user->employerProjects()
             ->where('status', 'completed')
             ->count();
             
@@ -138,8 +138,8 @@ class AnalyticsController extends Controller
             ->where('status', 'open')
             ->count();
             
-        $totalFreelancersHired = $user->clientProjects()
-            ->distinct('freelancer_id')
+        $totalGigWorkersHired = $user->employerProjects()
+            ->distinct('gig_worker_id')
             ->count();
 
         // Monthly spending for chart - Database agnostic
@@ -168,29 +168,29 @@ class AnalyticsController extends Controller
         }
 
         // Project success rate
-        $totalProjects = $user->clientProjects()->count();
-        $successfulProjects = $user->clientProjects()
+        $totalProjects = $user->employerProjects()->count();
+        $successfulProjects = $user->employerProjects()
             ->where('status', 'completed')
-            ->where('client_approved', true)
+            ->where('employer_approved', true)
             ->count();
         $projectSuccessRate = $totalProjects > 0 ? ($successfulProjects / $totalProjects) * 100 : 0;
 
         // Recent projects
-        $recentProjects = $user->clientProjects()
-            ->with(['job:id,title', 'freelancer:id,first_name,last_name'])
+        $recentProjects = $user->employerProjects()
+            ->with(['job:id,title', 'gigWorker:id,first_name,last_name'])
             ->orderBy('created_at', 'desc')
             ->limit(5)
             ->get();
 
         // Hiring insights
-        $hiringInsights = $this->getClientHiringInsights($user);
+        $hiringInsights = $this->getEmployerHiringInsights($user);
 
-        return Inertia::render('Analytics/ClientDashboard', [
+        return Inertia::render('Analytics/EmployerDashboard', [
             'overview' => [
                 'total_spent' => $totalSpent,
                 'completed_projects' => $completedProjects,
                 'active_jobs' => $activeJobs,
-                'freelancers_hired' => $totalFreelancersHired,
+                'gig_workers_hired' => $totalGigWorkersHired,
                 'project_success_rate' => round($projectSuccessRate, 1)
             ],
             'monthly_spending' => $monthlySpending,
@@ -200,13 +200,13 @@ class AnalyticsController extends Controller
     }
 
     /**
-     * Detailed earnings report for freelancers
+     * Detailed earnings report for gig workers
      */
     public function earnings(Request $request)
     {
         $user = auth()->user();
         
-        if (!$user->isFreelancer()) {
+        if (!$user->isGigWorker()) {
             abort(403, 'Access denied');
         }
 
@@ -217,7 +217,7 @@ class AnalyticsController extends Controller
             ->where('type', 'release')
             ->where('status', 'completed')
             ->where('created_at', '>=', $startDate)
-            ->with(['project.job:id,title', 'project.client:id,first_name,last_name'])
+            ->with(['project.job:id,title', 'project.employer:id,first_name,last_name'])
             ->orderBy('created_at', 'desc')
             ->paginate(20);
 
@@ -244,16 +244,16 @@ class AnalyticsController extends Controller
         $period = $request->get('period', '12months');
         $startDate = $this->getStartDate($period);
 
-        if ($user->isFreelancer()) {
-            $projects = $user->freelancerProjects()
+        if ($user->isGigWorker()) {
+            $projects = $user->gigWorkerProjects()
                 ->where('created_at', '>=', $startDate)
-                ->with(['job:id,title', 'client:id,first_name,last_name', 'reviews'])
+                ->with(['job:id,title', 'employer:id,first_name,last_name', 'reviews'])
                 ->orderBy('created_at', 'desc')
                 ->paginate(20);
         } else {
-            $projects = $user->clientProjects()
+            $projects = $user->employerProjects()
                 ->where('created_at', '>=', $startDate)
-                ->with(['job:id,title', 'freelancer:id,first_name,last_name', 'reviews'])
+                ->with(['job:id,title', 'gigWorker:id,first_name,last_name', 'reviews'])
                 ->orderBy('created_at', 'desc')
                 ->paginate(20);
         }
@@ -272,10 +272,10 @@ class AnalyticsController extends Controller
     {
         $user = auth()->user();
         
-        if ($user->isFreelancer()) {
-            return $this->freelancerPerformance($request);
+        if ($user->isGigWorker()) {
+            return $this->gigWorkerPerformance($request);
         } else {
-            return $this->clientPerformance($request);
+            return $this->employerPerformance($request);
         }
     }
 
@@ -294,10 +294,10 @@ class AnalyticsController extends Controller
 
             $startDate = $this->getStartDate($period);
 
-            if ($user->isFreelancer()) {
-                return $this->exportFreelancerData($user, $type, $startDate, $format);
+            if ($user->isGigWorker()) {
+                return $this->exportGigWorkerData($user, $type, $startDate, $format);
             } else {
-                return $this->exportClientData($user, $type, $startDate, $format);
+                return $this->exportEmployerData($user, $type, $startDate, $format);
             }
         } catch (\Exception $e) {
             \Log::error('Export failed', ['error' => $e->getMessage()]);
@@ -306,16 +306,16 @@ class AnalyticsController extends Controller
     }
 
     /**
-     * Get freelancer skills performance
+     * Get gig worker skills performance
      */
-    private function getFreelancerSkillsPerformance($user)
+    private function getGigWorkerSkillsPerformance($user)
     {
         // Analyze which skills generate most income
         $skills = $user->skills ?? [];
         $skillsData = [];
         
         foreach ($skills as $skill) {
-            $projectsWithSkill = $user->freelancerProjects()
+            $projectsWithSkill = $user->gigWorkerProjects()
                 ->whereHas('job', function($query) use ($skill) {
                     $query->whereJsonContains('required_skills', $skill);
                 })
@@ -341,28 +341,28 @@ class AnalyticsController extends Controller
     }
 
     /**
-     * Get client hiring insights
+     * Get employer hiring insights
      */
-    private function getClientHiringInsights($user)
+    private function getEmployerHiringInsights($user)
     {
         // Database agnostic date difference calculation
         $dateSql = $this->getDateExtractionSql();
-        $avgProjectDuration = $user->clientProjects()
+        $avgProjectDuration = $user->employerProjects()
             ->whereNotNull('completed_at')
             ->whereNotNull('started_at')
             ->selectRaw("AVG({$dateSql['date_diff']}) as avg_duration")
             ->value('avg_duration');
 
-        $repeatFreelancers = $user->clientProjects()
-            ->select('freelancer_id')
-            ->groupBy('freelancer_id')
+        $repeatGigWorkers = $user->employerProjects()
+            ->select('gig_worker_id')
+            ->groupBy('gig_worker_id')
             ->havingRaw('COUNT(*) > 1')
             ->count();
 
         return [
             'avg_project_duration' => round($avgProjectDuration ?? 0, 1),
-            'repeat_freelancers' => $repeatFreelancers,
-            'avg_project_cost' => $user->clientProjects()->avg('agreed_amount') ?? 0
+            'repeat_gig_workers' => $repeatGigWorkers,
+            'avg_project_cost' => $user->employerProjects()->avg('agreed_amount') ?? 0
         ];
     }
 
@@ -385,41 +385,41 @@ class AnalyticsController extends Controller
     }
 
     /**
-     * Freelancer performance metrics
+     * Gig worker performance metrics
      */
-    private function freelancerPerformance($request)
+    private function gigWorkerPerformance($request)
     {
-        // Implementation for detailed freelancer performance
-        return Inertia::render('Analytics/FreelancerPerformance');
+        // Implementation for detailed gig worker performance
+        return Inertia::render('Analytics/GigWorkerPerformance');
     }
 
     /**
-     * Client performance metrics
+     * Employer performance metrics
      */
-    private function clientPerformance($request)
+    private function employerPerformance($request)
     {
-        // Implementation for detailed client performance
-        return Inertia::render('Analytics/ClientPerformance');
+        // Implementation for detailed employer performance
+        return Inertia::render('Analytics/EmployerPerformance');
     }
 
     /**
-     * Export freelancer data
+     * Export gig worker data
      */
-    private function exportFreelancerData($user, $type, $startDate, $format)
+    private function exportGigWorkerData($user, $type, $startDate, $format)
     {
         if ($type === 'earnings') {
             $data = $user->paymentsReceived()
                 ->where('type', 'release')
                 ->where('status', 'completed')
                 ->where('created_at', '>=', $startDate)
-                ->with(['project.job:id,title', 'project.client:id,first_name,last_name'])
+                ->with(['project.job:id,title', 'project.employer:id,first_name,last_name'])
                 ->orderBy('created_at', 'desc')
                 ->get()
                 ->map(function ($earning) {
                     return [
                         'Date' => $earning->created_at->format('Y-m-d'),
                         'Project' => $earning->project->job->title ?? 'Untitled Project',
-                        'Client' => ($earning->project->client->first_name ?? '') . ' ' . ($earning->project->client->last_name ?? ''),
+                        'Employer' => ($earning->project->employer->first_name ?? '') . ' ' . ($earning->project->employer->last_name ?? ''),
                         'Amount' => $earning->amount,
                         'Platform Fee' => $earning->platform_fee,
                         'Net Amount' => $earning->net_amount,
@@ -441,19 +441,19 @@ class AnalyticsController extends Controller
                 'totalFees' => $totalFees,
                 'netAmount' => $netAmount,
                 'totalProjects' => $totalProjects
-            ], "freelancer_earnings_" . now()->format('Y-m-d'));
+            ], "gig_worker_earnings_" . now()->format('Y-m-d'));
 
         } else {
             // Projects export
-            $data = $user->freelancerProjects()
+            $data = $user->gigWorkerProjects()
                 ->where('created_at', '>=', $startDate)
-                ->with(['job:id,title', 'client:id,first_name,last_name'])
+                ->with(['job:id,title', 'employer:id,first_name,last_name'])
                 ->orderBy('created_at', 'desc')
                 ->get()
                 ->map(function ($project) {
                     return [
                         'Project' => $project->job->title ?? 'Untitled Project',
-                        'Client' => ($project->client->first_name ?? '') . ' ' . ($project->client->last_name ?? ''),
+                        'Employer' => ($project->employer->first_name ?? '') . ' ' . ($project->employer->last_name ?? ''),
                         'Amount' => $project->agreed_amount,
                         'Status' => $project->status,
                         'Started' => $project->started_at ? $project->started_at->format('Y-m-d') : '',
@@ -470,35 +470,35 @@ class AnalyticsController extends Controller
 
             return $this->generatePdfResponse($data, 'projects-pdf', [
                 'user' => $user,
-                'userRole' => 'freelancer',
+                'userRole' => 'gig_worker',
                 'period' => $this->getPeriodLabel($startDate),
                 'generatedAt' => now(),
                 'totalProjects' => $totalProjects,
                 'completedProjects' => $completedProjects,
                 'activeProjects' => $activeProjects,
                 'totalValue' => $totalValue
-            ], "freelancer_projects_" . now()->format('Y-m-d'));
+            ], "gig_worker_projects_" . now()->format('Y-m-d'));
         }
     }
 
     /**
-     * Export client data
+     * Export employer data
      */
-    private function exportClientData($user, $type, $startDate, $format)
+    private function exportEmployerData($user, $type, $startDate, $format)
     {
         if ($type === 'spending') {
             $data = $user->paymentsMade()
                 ->where('type', 'release')
                 ->where('status', 'completed')
                 ->where('created_at', '>=', $startDate)
-                ->with(['project.job:id,title', 'project.freelancer:id,first_name,last_name'])
+                ->with(['project.job:id,title', 'project.gig_worker:id,first_name,last_name'])
                 ->orderBy('created_at', 'desc')
                 ->get()
                 ->map(function ($payment) {
                     return [
                         'Date' => $payment->created_at->format('Y-m-d'),
                         'Project' => $payment->project->job->title ?? 'Untitled Project',
-                        'Freelancer' => ($payment->project->freelancer->first_name ?? '') . ' ' . ($payment->project->freelancer->last_name ?? ''),
+                        'Gig Worker' => ($payment->project->gig_worker->first_name ?? '') . ' ' . ($payment->project->gig_worker->last_name ?? ''),
                         'Amount' => $payment->amount,
                         'Platform Fee' => $payment->platform_fee,
                         'Status' => $payment->status
@@ -519,19 +519,19 @@ class AnalyticsController extends Controller
                 'totalFees' => $totalFees,
                 'totalProjects' => $totalProjects,
                 'averageSpending' => $averageSpending
-            ], "client_spending_" . now()->format('Y-m-d'));
+            ], "employer_spending_" . now()->format('Y-m-d'));
 
         } else {
             // Projects export
-            $data = $user->clientProjects()
+            $data = $user->employerProjects()
                 ->where('created_at', '>=', $startDate)
-                ->with(['job:id,title', 'freelancer:id,first_name,last_name'])
+                ->with(['job:id,title', 'gig_worker:id,first_name,last_name'])
                 ->orderBy('created_at', 'desc')
                 ->get()
                 ->map(function ($project) {
                     return [
                         'Project' => $project->job->title ?? 'Untitled Project',
-                        'Freelancer' => ($project->freelancer->first_name ?? '') . ' ' . ($project->freelancer->last_name ?? ''),
+                        'Gig Worker' => ($project->gig_worker->first_name ?? '') . ' ' . ($project->gig_worker->last_name ?? ''),
                         'Amount' => $project->agreed_amount,
                         'Status' => $project->status,
                         'Started' => $project->started_at ? $project->started_at->format('Y-m-d') : '',
@@ -548,14 +548,14 @@ class AnalyticsController extends Controller
 
             return $this->generatePdfResponse($data, 'projects-pdf', [
                 'user' => $user,
-                'userRole' => 'client',
+                'userRole' => 'employer',
                 'period' => $this->getPeriodLabel($startDate),
                 'generatedAt' => now(),
                 'totalProjects' => $totalProjects,
                 'completedProjects' => $completedProjects,
                 'activeProjects' => $activeProjects,
                 'totalValue' => $totalValue
-            ], "client_projects_" . now()->format('Y-m-d'));
+            ], "employer_projects_" . now()->format('Y-m-d'));
         }
     }
 

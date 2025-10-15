@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
-export default function FreelancerRecommendations({ recommendations, user }) {
+export default function GigWorkerRecommendations({ recommendations, user }) {
     const [selectedJob, setSelectedJob] = useState(null);
 
     const getMatchScoreColor = (score) => {

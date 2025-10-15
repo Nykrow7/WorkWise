@@ -96,7 +96,7 @@ export default function FreelancerDashboard({ overview, monthly_earnings, recent
                             Analytics Dashboard
                         </h2>
                         <p className="text-sm text-gray-600 mt-1">
-                            Track your freelance performance and earnings
+                            Track your gig work performance and earnings
                         </p>
                     </div>
                     <div className="flex space-x-3">

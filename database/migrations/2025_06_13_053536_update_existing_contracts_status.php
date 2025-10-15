@@ -9,17 +9,17 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     * Update existing contracts to use the new client-first signing workflow
+     * Update existing contracts to use the new employer-first signing workflow
      */
     public function up(): void
     {
-        // Update any existing contracts with 'pending_freelancer_signature' status
-        // to 'pending_client_signature' to enforce client-first signing
+        // Update any existing contracts with 'pending_gig_worker_signature' status
+        // to 'pending_employer_signature' to enforce employer-first signing
         DB::table('contracts')
-            ->where('status', 'pending_freelancer_signature')
-            ->whereNull('client_signed_at')
-            ->whereNull('freelancer_signed_at')
-            ->update(['status' => 'pending_client_signature']);
+            ->where('status', 'pending_gig_worker_signature')
+            ->whereNull('employer_signed_at')
+            ->whereNull('gig_worker_signed_at')
+            ->update(['status' => 'pending_employer_signature']);
     }
 
     /**
@@ -29,9 +29,9 @@ return new class extends Migration
     {
         // Revert back to the old workflow if needed
         DB::table('contracts')
-            ->where('status', 'pending_client_signature')
-            ->whereNull('client_signed_at')
-            ->whereNull('freelancer_signed_at')
-            ->update(['status' => 'pending_freelancer_signature']);
+            ->where('status', 'pending_employer_signature')
+            ->whereNull('employer_signed_at')
+            ->whereNull('gig_worker_signed_at')
+            ->update(['status' => 'pending_gig_worker_signature']);
     }
 };

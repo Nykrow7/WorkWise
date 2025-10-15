@@ -41,7 +41,7 @@ class SmartEscrowService
             $escrowAccount = EscrowAccount::create([
                 'project_id' => $project->id,
                 'client_id' => $project->client_id,
-                'freelancer_id' => $project->freelancer_id,
+                'gig_worker_id' => $project->gig_worker_id,
                 'total_amount' => $project->agreed_amount,
                 'platform_fee' => $this->calculatePlatformFee($project->agreed_amount),
                 'available_amount' => $project->agreed_amount,
@@ -93,7 +93,7 @@ class SmartEscrowService
     {
         $factors = [
             'client_history' => $this->analyzeClientHistory($project->client),
-            'freelancer_history' => $this->analyzeFreelancerHistory($project->freelancer),
+            'gig_worker_history' => $this->analyzeGigWorkerHistory($project->gigWorker),
             'project_complexity' => $this->analyzeProjectComplexity($project),
             'communication_quality' => $this->analyzeCommunicationQuality($project),
             'timeline_realism' => $this->analyzeTimelineRealism($project),
@@ -381,13 +381,13 @@ class SmartEscrowService
     }
 
     /**
-     * Analyze freelancer history for risk assessment
+     * Analyze gig worker history for risk assessment
      */
-    private function analyzeFreelancerHistory(User $freelancer): float
+    private function analyzeGigWorkerHistory(User $gigWorker): float
     {
-        $completedProjects = $freelancer->freelancerProjects()->where('status', 'completed')->count();
-        $avgRating = $freelancer->receivedReviews()->avg('rating') ?? 3.0;
-        $verificationLevel = $freelancer->verification_level ?? 'none';
+        $completedProjects = $gigWorker->gigWorkerProjects()->where('status', 'completed')->count();
+        $avgRating = $gigWorker->receivedReviews()->avg('rating') ?? 3.0;
+        $verificationLevel = $gigWorker->verification_level ?? 'none';
 
         $riskScore = 0.4; // Base risk
 
@@ -481,7 +481,7 @@ class SmartEscrowService
     {
         $weights = [
             'client_history' => 0.25,
-            'freelancer_history' => 0.25,
+            'gig_worker_history' => 0.25,
             'project_complexity' => 0.15,
             'communication_quality' => 0.10,
             'timeline_realism' => 0.10,

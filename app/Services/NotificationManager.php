@@ -92,7 +92,7 @@ class NotificationManager
     {
         // Get all upcoming deadlines (within 3 days)
         $upcomingDeadlines = ContractDeadline::upcoming(3)
-            ->with(['contract.employer', 'contract.freelancer'])
+            ->with(['contract.employer', 'contract.gigWorker'])
             ->get();
 
         foreach ($upcomingDeadlines as $deadline) {
@@ -101,7 +101,7 @@ class NotificationManager
 
         // Check for overdue deadlines
         $overdueDeadlines = ContractDeadline::overdue()
-            ->with(['contract.employer', 'contract.freelancer'])
+            ->with(['contract.employer', 'contract.gigWorker'])
             ->get();
 
         foreach ($overdueDeadlines as $deadline) {
@@ -206,9 +206,9 @@ class NotificationManager
             ]);
         }
 
-        // Notify freelancer
-        if ($contract->freelancer) {
-            $this->createDeadlineAlert($contract->freelancer, [
+        // Notify gig worker
+        if ($contract->gigWorker) {
+            $this->createDeadlineAlert($contract->gigWorker, [
                 'project_id' => $contract->id,
                 'milestone_name' => $deadline->milestone_name,
                 'due_date' => $deadline->due_date->format('M j, Y'),
@@ -241,9 +241,9 @@ class NotificationManager
                 ]);
             }
 
-            // Notify freelancer
-            if ($contract->freelancer) {
-                $this->createDeadlineAlert($contract->freelancer, [
+            // Notify gig worker
+            if ($contract->gigWorker) {
+                $this->createDeadlineAlert($contract->gigWorker, [
                     'project_id' => $contract->id,
                     'milestone_name' => $deadline->milestone_name,
                     'due_date' => $deadline->due_date->format('M j, Y'),

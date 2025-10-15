@@ -25,8 +25,8 @@ class AdminAnalyticsController extends Controller
         $overview = [
             'users' => [
                 'total' => User::where('is_admin', false)->count(),
-                'freelancers' => User::where('user_type', 'freelancer')->count(),
-                'clients' => User::where('user_type', 'client')->count(),
+                'gig_workers' => User::where('user_type', 'gig_worker')->count(),
+                'employers' => User::where('user_type', 'employer')->count(),
                 'admins' => User::where('is_admin', true)->count(),
                 'new_this_month' => User::where('is_admin', false)->where('created_at', '>=', Carbon::now()->startOfMonth())->count(),
                 'verified_profiles' => User::where('profile_status', 'approved')->count(),
@@ -82,8 +82,8 @@ class AdminAnalyticsController extends Controller
         $userGrowth = User::selectRaw('
                 DATE_FORMAT(created_at, "%Y-%m") as month,
                 COUNT(*) as count,
-                SUM(CASE WHEN user_type = "freelancer" THEN 1 ELSE 0 END) as freelancers,
-                SUM(CASE WHEN user_type = "client" THEN 1 ELSE 0 END) as clients
+                SUM(CASE WHEN user_type = "gig_worker" THEN 1 ELSE 0 END) as gig_workers,
+                SUM(CASE WHEN user_type = "employer" THEN 1 ELSE 0 END) as employers
             ')
             ->where('created_at', '>=', Carbon::now()->subMonths($months))
             ->groupBy('month')
@@ -91,8 +91,8 @@ class AdminAnalyticsController extends Controller
             ->get();
 
         $userTypes = [
-            'freelancers' => User::where('user_type', 'freelancer')->count(),
-            'clients' => User::where('user_type', 'client')->count(),
+            'gig_workers' => User::where('user_type', 'gig_worker')->count(),
+            'employers' => User::where('user_type', 'employer')->count(),
             'admins' => User::where('is_admin', true)->count(),
         ];
 
@@ -214,7 +214,7 @@ class AdminAnalyticsController extends Controller
      */
     private function exportUsers($format)
     {
-        $users = User::with(['clientProjects', 'freelancerProjects'])
+        $users = User::with(['employerProjects', 'gigWorkerProjects'])
             ->orderBy('created_at', 'desc')
             ->get()
             ->map(function ($user) {
@@ -225,8 +225,8 @@ class AdminAnalyticsController extends Controller
                     'Profile Status' => $user->profile_status,
                     'Is Admin' => $user->is_admin ? 'Yes' : 'No',
                     'Joined' => $user->created_at->format('Y-m-d'),
-                    'Projects Completed' => $user->clientProjects()->where('status', 'completed')->count() +
-                                           $user->freelancerProjects()->where('status', 'completed')->count(),
+                    'Projects Completed' => $user->employerProjects()->where('status', 'completed')->count() +
+                                           $user->gigWorkerProjects()->where('status', 'completed')->count(),
                 ];
             });
 
@@ -262,14 +262,14 @@ class AdminAnalyticsController extends Controller
      */
     private function exportProjects($format)
     {
-        $projects = Project::with(['job', 'client', 'freelancer'])
+        $projects = Project::with(['job', 'employer', 'gigWorker'])
             ->orderBy('created_at', 'desc')
             ->get()
             ->map(function ($project) {
                 return [
                     'Title' => $project->job->title ?? 'N/A',
-                    'Client' => $project->client->full_name ?? 'N/A',
-                    'Freelancer' => $project->freelancer->full_name ?? 'N/A',
+                    'Employer' => $project->employer->full_name ?? 'N/A',
+                    'Gig Worker' => $project->gigWorker->full_name ?? 'N/A',
                     'Amount' => $project->agreed_amount,
                     'Status' => $project->status,
                     'Started' => $project->started_at?->format('Y-m-d') ?? 'N/A',
@@ -288,8 +288,8 @@ class AdminAnalyticsController extends Controller
     {
         $overview = [
             ['Metric' => 'Total Users', 'Value' => User::where('is_admin', false)->count()],
-            ['Metric' => 'Total Freelancers', 'Value' => User::where('user_type', 'freelancer')->count()],
-            ['Metric' => 'Total Clients', 'Value' => User::where('user_type', 'client')->count()],
+            ['Metric' => 'Total Gig Workers', 'Value' => User::where('user_type', 'gig_worker')->count()],
+            ['Metric' => 'Total Employers', 'Value' => User::where('user_type', 'employer')->count()],
             ['Metric' => 'Total Projects', 'Value' => Project::count()],
             ['Metric' => 'Completed Projects', 'Value' => Project::where('status', 'completed')->count()],
             ['Metric' => 'Total Revenue', 'Value' => Transaction::where('type', 'release')->where('status', 'completed')->sum('platform_fee')],

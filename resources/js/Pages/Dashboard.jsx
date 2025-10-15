@@ -495,7 +495,7 @@ export default function Dashboard({ auth, stats, activeContracts, jobInvites, ea
                             <div className="flex items-center justify-between">
                                 <div>
                                     <h1 className="text-2xl font-bold mb-2">
-                                        {isGigWorker ? 'Welcome back, Freelancer!' : 'Welcome back, Employer!'}
+                                        {isGigWorker ? 'Welcome back, Gig Worker!' : 'Welcome back, Employer!'}
                                     </h1>
                                     <p className="text-blue-100">
                                         {isGigWorker 
@@ -553,7 +553,7 @@ export default function Dashboard({ auth, stats, activeContracts, jobInvites, ea
                                 color="green"
                                 trend={stats?.hiredTrend}
                                 trendValue={stats?.hiredTrendValue}
-                                subtitle="Freelancers hired"
+                                subtitle="Gig Workers hired"
                             />
                             <StatCard
                                 title="Total Spent"
@@ -624,7 +624,7 @@ export default function Dashboard({ auth, stats, activeContracts, jobInvites, ea
                                             <span className="text-sm font-medium text-gray-900">Post Job</span>
                                         </Link>
                                         <Link
-                                            href="/freelancers"
+                                            href="/gig-workers"
                                             className="flex flex-col items-center p-4 bg-green-50 rounded-lg hover:bg-green-100 transition-colors group"
                                         >
                                             <UserIcon className="w-8 h-8 text-green-600 mb-2 group-hover:scale-110 transition-transform" />

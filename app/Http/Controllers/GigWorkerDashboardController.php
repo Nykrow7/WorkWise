@@ -125,7 +125,7 @@ class GigWorkerDashboardController extends Controller
                 return [
                     'id' => $project->id,
                     'title' => $project->job->title,
-                    'client' => $project->employer->first_name . ' ' . $project->employer->last_name,
+                    'employer' => $project->employer->first_name . ' ' . $project->employer->last_name,
                     'amount' => $project->agreed_amount,
                     'status' => $project->status,
                     'progress' => $project->progress_percentage ?? 0,
@@ -163,7 +163,7 @@ class GigWorkerDashboardController extends Controller
                 return [
                     'id' => $job->id,
                     'title' => $job->title,
-                    'client' => $job->employer->first_name . ' ' . $job->employer->last_name,
+                    'employer' => $job->employer->first_name . ' ' . $job->employer->last_name,
                     'budget' => $job->getBudgetDisplayAttribute(),
                     'skills' => $job->required_skills,
                     'posted_at' => $job->created_at,
@@ -279,7 +279,7 @@ class GigWorkerDashboardController extends Controller
                 return [
                     'id' => $job->id,
                     'title' => $job->title,
-                    'client' => $job->employer->first_name . ' ' . $job->employer->last_name,
+                    'client' => $job->employer->name ?? ($job->employer->first_name . ' ' . $job->employer->last_name),
                     'budget' => $job->getBudgetDisplayAttribute(),
                     'skills' => $job->required_skills,
                     'matchScore' => round($matchScore),
@@ -401,7 +401,7 @@ class GigWorkerDashboardController extends Controller
             return [
                 'id' => $project->id,
                 'projectTitle' => $project->job->title ?? 'Untitled Project',
-                'clientName' => $project->employer->name ?? 'Unknown Client',
+                'clientName' => $project->employer->name ?? 'Unknown Employer',
                 'daysLeft' => max(0, $daysLeft),
                 'completionPercentage' => $project->completion_percentage ?? 0,
                 'deadline' => $deadline->toDateString()

@@ -110,7 +110,7 @@ class ActivityService
                 $query->where('employer_id', $employer->id);
             })
             ->where('created_at', '>=', Carbon::now()->subDays(7))
-            ->with(['job', 'freelancer'])
+            ->with(['job', 'gigWorker'])
             ->latest()
             ->limit(3)
             ->get();
@@ -119,7 +119,7 @@ class ActivityService
             $activities->push([
                 'type' => 'proposal_received',
                 'title' => 'New Proposal',
-                'description' => "Received proposal from {$proposal->freelancer->first_name} {$proposal->freelancer->last_name} for {$proposal->job->title}",
+                'description' => "Received proposal from {$proposal->gigWorker->first_name} {$proposal->gigWorker->last_name} for {$proposal->job->title}",
                 'time' => $this->getTimeAgo($proposal->created_at),
                 'icon' => 'document-text',
                 'color' => 'green',

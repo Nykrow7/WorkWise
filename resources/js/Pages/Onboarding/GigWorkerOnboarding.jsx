@@ -6,7 +6,7 @@ import TextInput from '@/Components/TextInput';
 import InputError from '@/Components/InputError';
 import PrimaryButton from '@/Components/PrimaryButton';
 
-export default function FreelancerOnboarding({ user }) {
+export default function GigWorkerOnboarding({ user }) {
     const [currentStep, setCurrentStep] = useState(1);
     const totalSteps = 3;
 

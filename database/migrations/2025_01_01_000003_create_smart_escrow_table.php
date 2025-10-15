@@ -95,7 +95,7 @@ return new class extends Migration
             $table->text('description');
             $table->json('evidence')->nullable();
             $table->enum('status', ['open', 'investigating', 'mediation', 'resolved', 'escalated']);
-            $table->enum('resolution', ['client_favor', 'freelancer_favor', 'partial_refund', 'full_refund', 'no_action'])->nullable();
+            $table->enum('resolution', ['employer_favor', 'gig_worker_favor', 'partial_refund', 'full_refund', 'no_action'])->nullable();
             $table->decimal('resolution_amount', 10, 2)->nullable();
             $table->text('resolution_notes')->nullable();
             $table->foreignId('resolved_by')->nullable()->constrained('users')->onDelete('set null');

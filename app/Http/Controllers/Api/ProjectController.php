@@ -11,8 +11,8 @@ class ProjectController extends Controller
 {
     public function complete(Request $request, Project $project): JsonResponse
     {
-        // Ensure user is the client
-        if ($project->client_id !== auth()->id()) {
+        // Ensure user is the employer
+        if ($project->employer_id !== auth()->id()) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
@@ -30,4 +30,4 @@ class ProjectController extends Controller
 
         return response()->json(['success' => true]);
     }
-} 
+}

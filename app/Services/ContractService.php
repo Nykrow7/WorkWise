@@ -168,7 +168,7 @@ class ContractService
 
     /**
      * Update contract status after signature
-     * Client must sign first, then freelancer
+     * Client must sign first, then gig worker
      */
     public function updateContractAfterSignature(Contract $contract, string $signerRole): void
     {

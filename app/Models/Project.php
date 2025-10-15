@@ -55,7 +55,7 @@ class Project extends Model
     }
 
     /**
-     * Get the gig worker (freelancer) of the project
+     * Get the gig worker of the project
      */
     public function gigWorker(): BelongsTo
     {

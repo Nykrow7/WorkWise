@@ -195,7 +195,7 @@ class ReportController extends Controller
             ],
 
             'prevention_tips' => [
-                'Always verify freelancer credentials before hiring',
+                'Always verify gig worker credentials before hiring',
                 'Use the platform\'s escrow system for payments',
                 'Be cautious of unusually low bids or prices',
                 'Report suspicious behavior immediately',

@@ -19,19 +19,19 @@ class ContractSeeder extends Seeder
     public function run(): void
     {
         // Get existing users
-        $client = User::where('user_type', 'client')->first();
-        $freelancer = User::where('user_type', 'freelancer')->first();
+        $employer = User::where('user_type', 'employer')->first();
+        $gigWorker = User::where('user_type', 'gig_worker')->first();
 
-        if (!$client || !$freelancer) {
-            $this->command->info('No client or freelancer found. Please run UserSeeder first.');
+        if (!$employer || !$gigWorker) {
+            $this->command->info('No employer or gig worker found. Please run UserSeeder first.');
             return;
         }
 
         // Get or create a job
-        $job = GigJob::where('employer_id', $client->id)->first();
+        $job = GigJob::where('employer_id', $employer->id)->first();
         if (!$job) {
             $job = GigJob::create([
-                'employer_id' => $client->id,
+                'employer_id' => $employer->id,
                 'title' => 'Sample Web Development Project',
                 'description' => 'Build a modern e-commerce website with React and Laravel backend. The project includes user authentication, product catalog, shopping cart, and payment integration.',
                 'budget_min' => 15000,
@@ -46,11 +46,11 @@ class ContractSeeder extends Seeder
         }
 
         // Get or create a bid
-        $bid = Bid::where('job_id', $job->id)->where('freelancer_id', $freelancer->id)->first();
+        $bid = Bid::where('job_id', $job->id)->where('gig_worker_id', $gigWorker->id)->first();
         if (!$bid) {
             $bid = Bid::create([
                 'job_id' => $job->id,
-                'freelancer_id' => $freelancer->id,
+                'gig_worker_id' => $gigWorker->id,
                 'bid_amount' => 20000,
                 'estimated_days' => 21,
                 'proposal_message' => 'I am excited to work on your e-commerce project. With 5+ years of experience in React and Laravel, I can deliver a high-quality, scalable solution. My approach includes: 1) Setting up the Laravel backend with API endpoints, 2) Building the React frontend with modern UI/UX, 3) Implementing secure payment integration, 4) Thorough testing and deployment.',
@@ -67,8 +67,8 @@ class ContractSeeder extends Seeder
 
             $project = Project::create([
                 'job_id' => $job->id,
-                'client_id' => $client->id,
-                'freelancer_id' => $freelancer->id,
+                'employer_id' => $employer->id,
+                'gig_worker_id' => $gigWorker->id,
                 'bid_id' => $bid->id,
                 'agreed_amount' => $bid->bid_amount,
                 'platform_fee' => $platformFee,
@@ -80,12 +80,12 @@ class ContractSeeder extends Seeder
         // Create contract using the service
         $contractService = new ContractService();
         
-        // Create a contract that's ready for freelancer signature
+        // Create a contract that's ready for gig worker signature
         $contract1 = Contract::create([
             'contract_id' => Contract::generateContractId(),
             'project_id' => $project->id,
-            'client_id' => $client->id,
-            'freelancer_id' => $freelancer->id,
+            'employer_id' => $employer->id,
+            'gig_worker_id' => $gigWorker->id,
             'job_id' => $job->id,
             'bid_id' => $bid->id,
             'scope_of_work' => $contractService->generateScopeOfWork($job, $bid),
@@ -93,20 +93,20 @@ class ContractSeeder extends Seeder
             'contract_type' => 'Fixed-Price Contract',
             'project_start_date' => now()->addDays(2)->toDateString(),
             'project_end_date' => now()->addDays(23)->toDateString(),
-            'client_responsibilities' => [
+            'employer_responsibilities' => [
                 'Provide detailed requirements and feedback promptly.',
                 'Supply all necessary content and materials for the project.',
                 'Approve milestones and release payments as per the agreed schedule.'
             ],
-            'freelancer_responsibilities' => [
+            'gig_worker_responsibilities' => [
                 'Complete the tasks as outlined in the scope of work.',
-                'Communicate regularly with the client regarding progress.',
+                'Communicate regularly with the employer regarding progress.',
                 'Deliver work according to the agreed deadlines and quality standards.',
-                'Make revisions based on client feedback within reasonable limits.'
+                'Make revisions based on employer feedback within reasonable limits.'
             ],
             'preferred_communication' => 'Email and WorkWise messaging',
             'communication_frequency' => 'Weekly updates',
-            'status' => 'pending_client_signature'
+            'status' => 'pending_employer_signature'
         ]);
 
         // Update project with contract reference
@@ -116,7 +116,7 @@ class ContractSeeder extends Seeder
 
         // Create another contract that's fully signed for demonstration
         $job2 = GigJob::create([
-            'employer_id' => $client->id,
+            'employer_id' => $employer->id,
             'title' => 'Mobile App UI/UX Design',
             'description' => 'Design a modern mobile app interface for a fitness tracking application. Includes wireframes, mockups, and interactive prototypes.',
             'budget_min' => 8000,
@@ -131,7 +131,7 @@ class ContractSeeder extends Seeder
 
         $bid2 = Bid::create([
             'job_id' => $job2->id,
-            'freelancer_id' => $freelancer->id,
+            'gig_worker_id' => $gigWorker->id,
             'bid_amount' => 10000,
             'estimated_days' => 10,
             'proposal_message' => 'I specialize in mobile app UI/UX design with a focus on user-centered design principles. I will create intuitive, modern interfaces that enhance user experience.',
@@ -144,8 +144,8 @@ class ContractSeeder extends Seeder
 
         $project2 = Project::create([
             'job_id' => $job2->id,
-            'client_id' => $client->id,
-            'freelancer_id' => $freelancer->id,
+            'employer_id' => $employer->id,
+            'gig_worker_id' => $gigWorker->id,
             'bid_id' => $bid2->id,
             'agreed_amount' => $bid2->bid_amount,
             'platform_fee' => $platformFee2,
@@ -159,8 +159,8 @@ class ContractSeeder extends Seeder
         $contract2 = Contract::create([
             'contract_id' => Contract::generateContractId(),
             'project_id' => $project2->id,
-            'client_id' => $client->id,
-            'freelancer_id' => $freelancer->id,
+            'employer_id' => $employer->id,
+            'gig_worker_id' => $gigWorker->id,
             'job_id' => $job2->id,
             'bid_id' => $bid2->id,
             'scope_of_work' => "Design a modern mobile app interface for a fitness tracking application.\n\nDeliverables:\n1. User research and persona development\n2. Wireframes for key screens\n3. High-fidelity mockups\n4. Interactive prototypes\n5. Design system and style guide",
@@ -168,31 +168,31 @@ class ContractSeeder extends Seeder
             'contract_type' => 'Fixed-Price Contract',
             'project_start_date' => now()->subDays(1)->toDateString(),
             'project_end_date' => now()->addDays(9)->toDateString(),
-            'client_responsibilities' => [
+            'employer_responsibilities' => [
                 'Provide detailed requirements and feedback promptly.',
                 'Supply all necessary content and materials for the project.',
                 'Approve milestones and release payments as per the agreed schedule.'
             ],
-            'freelancer_responsibilities' => [
+            'gig_worker_responsibilities' => [
                 'Complete the tasks as outlined in the scope of work.',
-                'Communicate regularly with the client regarding progress.',
+                'Communicate regularly with the employer regarding progress.',
                 'Deliver work according to the agreed deadlines and quality standards.',
-                'Make revisions based on client feedback within reasonable limits.'
+                'Make revisions based on employer feedback within reasonable limits.'
             ],
             'preferred_communication' => 'Email and WorkWise messaging',
             'communication_frequency' => 'Daily updates',
             'status' => 'fully_signed',
-            'freelancer_signed_at' => now()->subDays(1),
-            'client_signed_at' => now()->subDays(1),
+            'gig_worker_signed_at' => now()->subDays(1),
+            'employer_signed_at' => now()->subDays(1),
             'fully_signed_at' => now()->subDays(1)
         ]);
 
         // Create signatures for the fully signed contract
         ContractSignature::create([
             'contract_id' => $contract2->id,
-            'user_id' => $freelancer->id,
-            'full_name' => $freelancer->first_name . ' ' . $freelancer->last_name,
-            'role' => 'freelancer',
+            'user_id' => $gigWorker->id,
+            'full_name' => $gigWorker->first_name . ' ' . $gigWorker->last_name,
+            'role' => 'gig_worker',
             'ip_address' => '127.0.0.1',
             'user_agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
             'signed_at' => now()->subDays(1),
@@ -202,9 +202,9 @@ class ContractSeeder extends Seeder
 
         ContractSignature::create([
             'contract_id' => $contract2->id,
-            'user_id' => $client->id,
-            'full_name' => $client->first_name . ' ' . $client->last_name,
-            'role' => 'client',
+            'user_id' => $employer->id,
+            'full_name' => $employer->first_name . ' ' . $employer->last_name,
+            'role' => 'employer',
             'ip_address' => '127.0.0.1',
             'user_agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
             'signed_at' => now()->subDays(1),
@@ -218,7 +218,7 @@ class ContractSeeder extends Seeder
         ]);
 
         $this->command->info('Contract test data created successfully!');
-        $this->command->info("Contract 1 (Pending Freelancer Signature): {$contract1->contract_id}");
+        $this->command->info("Contract 1 (Pending Gig Worker Signature): {$contract1->contract_id}");
         $this->command->info("Contract 2 (Fully Signed): {$contract2->contract_id}");
     }
 
@@ -227,7 +227,7 @@ class ContractSeeder extends Seeder
      */
     private function generateScopeOfWork($job, $bid): string
     {
-        $scope = "The freelancer, {$bid->freelancer->first_name} {$bid->freelancer->last_name}, agrees to provide the following services for the client, {$job->employer->first_name} {$job->employer->last_name}:\n\n";
+        $scope = "The gig worker, {$bid->gigWorker->first_name} {$bid->gigWorker->last_name}, agrees to provide the following services for the employer, {$job->employer->first_name} {$job->employer->last_name}:\n\n";
         
         // Add job description as main scope
         $scope .= "Project: {$job->title}\n\n";
