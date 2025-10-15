@@ -156,6 +156,22 @@ class User extends Authenticatable
         return $this->hasMany(Project::class, 'gig_worker_id');
     }
 
+    /**
+     * Get freelancer projects (alias for gigWorkerProjects for backward compatibility)
+     */
+    public function freelancerProjects(): HasMany
+    {
+        return $this->hasMany(Project::class, 'gig_worker_id');
+    }
+
+    /**
+     * Get client projects (alias for employerProjects for backward compatibility)
+     */
+    public function clientProjects(): HasMany
+    {
+        return $this->hasMany(Project::class, 'employer_id');
+    }
+
     // Review relationships
     public function givenReviews(): HasMany
     {
