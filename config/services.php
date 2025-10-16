@@ -69,4 +69,10 @@ return [
         'redirect' => env('GOOGLE_REDIRECT_URI'),
     ],
 
+    'voyage' => [
+        'api_key' => env('VOYAGE_API_KEY'),
+        'base_url' => env('VOYAGE_BASE_URL', 'https://api.voyageai.com/v1'),
+        'model' => env('VOYAGE_MODEL', 'voyage-3'),
+    ],
+
 ];

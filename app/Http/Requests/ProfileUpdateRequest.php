@@ -37,7 +37,7 @@ class ProfileUpdateRequest extends FormRequest
             'profile_photo' => ['nullable', 'image', 'max:2048'], // 2MB max
         ];
 
-        if ($isFreelancer) {
+        if ($isGigWorker) {
             // Freelancer-specific fields
             $rules = array_merge($rules, [
                 'professional_title' => ['required', 'string', 'max:255'],

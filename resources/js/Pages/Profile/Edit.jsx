@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Head, useForm, usePage } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Transition } from '@headlessui/react';
+import { MatchCalculationService } from '@/Services/MatchCalculationService';
 
 export default function Edit({ mustVerifyEmail, status }) {
     const { auth } = usePage().props;
@@ -9,6 +10,8 @@ export default function Edit({ mustVerifyEmail, status }) {
     const [activeTab, setActiveTab] = useState('basic');
     const [skillInput, setSkillInput] = useState('');
     const [languageInput, setLanguageInput] = useState('');
+    const [isUpdatingRecommendations, setIsUpdatingRecommendations] = useState(false);
+    const [recommendationUpdateStatus, setRecommendationUpdateStatus] = useState(null);
 
     const isGigWorker = user.user_type === 'gig_worker';
     const isEmployer = user.user_type === 'employer';
@@ -38,6 +41,75 @@ export default function Edit({ mustVerifyEmail, status }) {
         project_intent: user.project_intent || '',
     });
 
+    // Track original skills to detect changes
+    const [originalSkills, setOriginalSkills] = useState(user.skills || []);
+
+    // Function to trigger AI recommendation updates
+    const triggerRecommendationUpdate = async (updatedSkills) => {
+        if (!isGigWorker) return; // Only update for gig workers
+        
+        setIsUpdatingRecommendations(true);
+        setRecommendationUpdateStatus('updating');
+        
+        try {
+            // Call backend API to recalculate recommendations
+            const response = await fetch('/api/ai/recommendations/update-profile', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                },
+                credentials: 'same-origin',
+                body: JSON.stringify({
+                    skills: updatedSkills,
+                    experience_level: data.experience_level,
+                    hourly_rate: data.hourly_rate,
+                    location: data.location,
+                    professional_title: data.professional_title
+                })
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                setRecommendationUpdateStatus('success');
+                
+                // Broadcast update event for other components to listen
+                window.dispatchEvent(new CustomEvent('recommendationsUpdated', {
+                    detail: { 
+                        updatedRecommendations: result.data,
+                        skillsChanged: true 
+                    }
+                }));
+                
+                setTimeout(() => setRecommendationUpdateStatus(null), 3000);
+            } else {
+                throw new Error('Failed to update recommendations');
+            }
+        } catch (error) {
+            console.error('Error updating recommendations:', error);
+            setRecommendationUpdateStatus('error');
+            setTimeout(() => setRecommendationUpdateStatus(null), 3000);
+        } finally {
+            setIsUpdatingRecommendations(false);
+        }
+    };
+
+    // Detect skills changes and trigger updates
+    useEffect(() => {
+        const skillsChanged = JSON.stringify(data.skills.sort()) !== JSON.stringify(originalSkills.sort());
+        
+        if (skillsChanged && data.skills.length > 0) {
+            // Debounce the update to avoid too many API calls
+            const timeoutId = setTimeout(() => {
+                triggerRecommendationUpdate(data.skills);
+            }, 1000);
+            
+            return () => clearTimeout(timeoutId);
+        }
+    }, [data.skills]);
+
     const handleSubmit = (e) => {
         e.preventDefault();
         
@@ -55,6 +127,15 @@ export default function Edit({ mustVerifyEmail, status }) {
         patch(route('profile.update'), formData, {
             preserveScroll: true,
             preserveState: true,
+            onSuccess: () => {
+                // Update original skills after successful save
+                setOriginalSkills([...data.skills]);
+                
+                // Trigger final recommendation update after profile save
+                if (isGigWorker) {
+                    triggerRecommendationUpdate(data.skills);
+                }
+            },
             onError: (errors) => {
                 console.error(errors);
             },
@@ -63,13 +144,15 @@ export default function Edit({ mustVerifyEmail, status }) {
 
     const addSkill = () => {
         if (skillInput.trim() && !data.skills.includes(skillInput.trim()) && data.skills.length < 15) {
-            setData('skills', [...data.skills, skillInput.trim()]);
+            const newSkills = [...data.skills, skillInput.trim()];
+            setData('skills', newSkills);
             setSkillInput('');
         }
     };
 
     const removeSkill = (skillToRemove) => {
-        setData('skills', data.skills.filter(skill => skill !== skillToRemove));
+        const newSkills = data.skills.filter(skill => skill !== skillToRemove);
+        setData('skills', newSkills);
     };
 
     const addLanguage = () => {
@@ -836,6 +919,24 @@ export default function Edit({ mustVerifyEmail, status }) {
                                                     >
                                                         <p className="text-sm text-green-600">✓ Profile updated successfully!</p>
                                                     </Transition>
+                                                    
+                                                    {/* Recommendation Update Status */}
+                                                    {recommendationUpdateStatus && (
+                                                        <div className="mt-2">
+                                                            {recommendationUpdateStatus === 'updating' && (
+                                                                <div className="flex items-center text-sm text-blue-600">
+                                                                    <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-blue-600 mr-2"></div>
+                                                                    Updating AI recommendations...
+                                                                </div>
+                                                            )}
+                                                            {recommendationUpdateStatus === 'success' && (
+                                                                <p className="text-sm text-green-600">✓ AI recommendations updated!</p>
+                                                            )}
+                                                            {recommendationUpdateStatus === 'error' && (
+                                                                <p className="text-sm text-red-600">⚠ Failed to update recommendations</p>
+                                                            )}
+                                                        </div>
+                                                    )}
                                                 </div>
                                                 <div className="flex items-center space-x-4">
                                                     <button

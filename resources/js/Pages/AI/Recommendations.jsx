@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 
 import { Head, Link } from "@inertiajs/react";
 
@@ -9,10 +9,16 @@ import usePagination from "@/Hooks/usePagination";
 export default function Recommendations({
     recommendations,
     userType,
-    hasError,
+    hasError: initialHasError,
     skills = [],
 }) {
     const isGigWorker = userType === "gig_worker";
+    
+    // State for AI recommendations
+    const [aiRecommendations, setAiRecommendations] = useState(null);
+    const [isLoadingAI, setIsLoadingAI] = useState(false);
+    const [hasError, setHasError] = useState(initialHasError || false);
+    const [useAI, setUseAI] = useState(true); // Toggle between AI and fallback
 
     const experienceOptions = [
         { label: "All experience levels", value: "all" },
@@ -275,7 +281,12 @@ export default function Recommendations({
             return baseFreelancerRecommendations;
         }
 
-        return baseFreelancerRecommendations.filter((match) => {
+        // Use AI recommendations if available, otherwise use base recommendations
+        const sourceRecommendations = useAI && aiRecommendations?.gigWorkerRecommendations 
+            ? aiRecommendations.gigWorkerRecommendations 
+            : baseFreelancerRecommendations;
+
+        return sourceRecommendations.filter((match) => {
             const job = match.job || {};
 
             if (!matchesExperience(job.experience_level)) {
@@ -296,6 +307,10 @@ export default function Recommendations({
         isGigWorker,
 
         baseFreelancerRecommendations,
+
+        aiRecommendations,
+
+        useAI,
 
         filters,
 
@@ -948,6 +963,105 @@ export default function Recommendations({
         );
     };
 
+    // Fetch AI recommendations from Voyage AI
+    const fetchAIRecommendations = async () => {
+        if (isLoadingAI) return;
+        
+        setIsLoadingAI(true);
+        setHasError(false);
+        
+        try {
+            const endpoint = isGigWorker 
+                ? '/api/ai/recommendations/jobs'
+                : '/api/ai/recommendations/workers';
+                
+            const response = await fetch(endpoint, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                    'Authorization': `Bearer ${document.querySelector('meta[name="api-token"]')?.getAttribute('content') || ''}`,
+                },
+                credentials: 'same-origin',
+            });
+            
+            // Handle specific HTTP error statuses
+            if (response.status === 401) {
+                console.warn('Authentication required for AI recommendations');
+                setUseAI(false); // Fall back to existing recommendations
+                return;
+            }
+            
+            if (response.status === 404) {
+                console.warn('AI recommendations endpoint not found');
+                setUseAI(false); // Fall back to existing recommendations
+                return;
+            }
+            
+            if (!response.ok && response.status >= 500) {
+                throw new Error(`Server error: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                setAiRecommendations(data.data || data);
+                setUseAI(true);
+            } else {
+                console.warn('AI recommendations not available:', data.message);
+                setUseAI(false); // Fall back to existing recommendations
+            }
+        } catch (error) {
+            console.error('Error fetching AI recommendations:', error);
+            // Only show error for critical failures (server errors)
+            if (error.message.includes('Server error') || error.message.includes('Failed to fetch')) {
+                setHasError(true);
+            }
+            setUseAI(false); // Fall back to existing recommendations
+        } finally {
+            setIsLoadingAI(false);
+        }
+    };
+
+    // Load AI recommendations on component mount
+    useEffect(() => {
+        // Add a small delay to prevent race conditions during component mounting
+        const timer = setTimeout(() => {
+            fetchAIRecommendations();
+        }, 100);
+        
+        return () => clearTimeout(timer);
+    }, [isGigWorker]);
+
+    // Listen for profile update events to refresh recommendations
+    useEffect(() => {
+        const handleRecommendationsUpdate = (event) => {
+            console.log('Profile updated, refreshing recommendations...', event.detail);
+            
+            // Set loading state
+            setIsLoading(true);
+            setError(null);
+            
+            // Refresh recommendations after a short delay
+            setTimeout(() => {
+                fetchAIRecommendations();
+            }, 500);
+        };
+
+        // Add event listener for profile updates
+        window.addEventListener('recommendationsUpdated', handleRecommendationsUpdate);
+
+        // Cleanup event listener on component unmount
+        return () => {
+            window.removeEventListener('recommendationsUpdated', handleRecommendationsUpdate);
+        };
+    }, []);
+
+    // Use AI recommendations if available, otherwise fall back to existing data
+    const currentRecommendations = useAI && aiRecommendations ? aiRecommendations : recommendations;
+
     return (
         <AuthenticatedLayout
             header={
@@ -1234,29 +1348,49 @@ export default function Recommendations({
                         </aside>
 
                         <div className="space-y-6">
-                            {hasError ? (
+                            {isLoadingAI ? (
                                 <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-xl border border-gray-200">
                                     <div className="p-8 text-center">
-                                        <div className="text-6xl mb-4">:(</div>
+                                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+                                        <h3 className="text-lg font-medium text-gray-900 mb-2">
+                                            Loading AI Recommendations
+                                        </h3>
+                                        <p className="text-gray-600">
+                                            Our AI is analyzing the best matches for you...
+                                        </p>
+                                    </div>
+                                </div>
+                            ) : hasError ? (
+                                <div className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg sm:rounded-xl border border-gray-200">
+                                    <div className="p-8 text-center">
+                                        <div className="text-6xl mb-4">⚠️</div>
 
                                         <h3 className="text-lg font-medium text-gray-900 mb-2">
-                                            Recommendations Temporarily
-                                            Unavailable
+                                            Server Error
                                         </h3>
 
                                         <p className="text-gray-600 mb-4">
-                                            We're experiencing high demand.
-                                            Please try again in a few moments.
+                                            We're experiencing technical difficulties. 
+                                            Please try again or use basic recommendations below.
                                         </p>
 
-                                        <button
-                                            onClick={() =>
-                                                window.location.reload()
-                                            }
-                                            className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 border border-transparent rounded-xl font-semibold text-sm text-white uppercase tracking-widest shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
-                                        >
-                                            Try Again
-                                        </button>
+                                        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                                            <button
+                                                onClick={() => fetchAIRecommendations()}
+                                                className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 border border-transparent rounded-xl font-semibold text-sm text-white uppercase tracking-widest shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+                                            >
+                                                Retry AI Recommendations
+                                            </button>
+                                            <button
+                                                onClick={() => {
+                                                    setHasError(false);
+                                                    setUseAI(false);
+                                                }}
+                                                className="inline-flex items-center px-6 py-3 bg-gray-500 hover:bg-gray-600 border border-transparent rounded-xl font-semibold text-sm text-white uppercase tracking-widest shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+                                            >
+                                                Use Basic Recommendations
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             ) : isGigWorker ? (

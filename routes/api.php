@@ -55,6 +55,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('gig-worker')->group(function () {
         Route::get('/job-invitations', [JobInvitationController::class, 'getInvitations']);
         Route::patch('/job-invitations/{invitation}/respond', [JobInvitationController::class, 'respondToInvitation']);
+        
+        // AI-powered job recommendations for gig workers
+        Route::get('/ai-recommendations', [AIRecommendationController::class, 'getJobRecommendations']);
+    });
+
+    // Employer routes for AI recommendations
+    Route::prefix('employer')->group(function () {
+        // AI-powered gig worker recommendations for specific job
+        Route::get('/jobs/{jobId}/ai-recommendations', [AIRecommendationController::class, 'getWorkerRecommendations']);
     });
 });
 
@@ -75,3 +84,10 @@ Route::match(['GET', 'POST'], '/ai/test-connection', [AIRecommendationController
 
 Route::post('/recommendations/skills', [AIRecommendationController::class, 'recommendSkills']);
 Route::post('/recommendations/skills/accept', [AIRecommendationController::class, 'acceptSuggestion']);
+
+// AI-powered recommendation endpoints
+Route::get('/gig-worker/ai-recommendations', [AIRecommendationController::class, 'getJobRecommendations']);
+Route::get('/employer/jobs/{jobId}/ai-recommendations', [AIRecommendationController::class, 'getWorkerRecommendations']);
+
+// Profile update recommendation endpoint
+Route::middleware('auth:sanctum')->post('/ai/recommendations/update-profile', [AIRecommendationController::class, 'updateProfileRecommendations']);
